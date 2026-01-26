@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 #include <glad/glad.h>
+#include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 
 #include "../Macro.h"
 
@@ -49,11 +51,11 @@ namespace ENGINE_NAME
 
 		void SetUniform(const char* _name, const Vector3u& _value);
 		void SetUniform(const char* _name, const Vector3i& _value);
-		void SetUniform(const char* _name, const Vector3f& _value);
+		void SetUniform(const char* _name, const glm::vec3& _value);
 
 		void SetUniform(const char* _name, const Vector4u& _value);
 		void SetUniform(const char* _name, const Vector4i& _value);
-		void SetUniform(const char* _name, const Vector4f& _value);
+		void SetUniform(const char* _name, const glm::vec4& _value);
 
 		void SetUniform(const char* _name, const GLfloat* _matrix4fv, int _size);
 	private:

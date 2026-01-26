@@ -1,17 +1,12 @@
 #include "Camera.h"
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/fwd.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/vector_angle.hpp>
+
 
 #include "../Shader/Shader.h"
 
 namespace ENGINE_NAME
 {
-	Camera::Camera(const glm::vec3& _position, const glm::vec2& _size, Shader* _shader)
+	Camera::Camera(const glm::vec3& _position, const glm::vec2& _size)
 	{
 		m_position = _position;
 		m_orientation = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -23,8 +18,6 @@ namespace ENGINE_NAME
 		m_nearPlane = 0.1f;
 		m_farPlane = 100.f;
 
-		m_shader = _shader;
-
 		m_speed = 0.1f;
 		m_sensitivity = 100.f;
 
@@ -35,7 +28,7 @@ namespace ENGINE_NAME
 	{
 	}
 
-	void Camera::Update(GLFWwindow* _window)
+	void Camera::Input(GLFWwindow* _window)
 	{
 		if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
 		{
@@ -104,8 +97,22 @@ namespace ENGINE_NAME
 			glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			m_firstClick = true;
 		}
+	}
 
-		Matrix();
+	void Camera::UpdateMatrix()
+	{
+		glm::mat4 view = glm::mat4(1.0f);
+		glm::mat4 proj = glm::mat4(1.0f);
+
+		view = glm::lookAt(m_position, m_position + m_orientation, m_up);
+		proj = glm::perspective(glm::radians(m_fov), m_size.x / m_size.y, m_nearPlane, m_farPlane);
+		m_camMatrix = proj * view;
+	}
+
+	void Camera::Matrix(Shader* _shader)
+	{
+
+		_shader->SetUniform("uCamMatrix", glm::value_ptr(m_camMatrix), 1);
 	}
 
 	void Camera::SetPositon(const glm::vec3& _position)
@@ -146,16 +153,5 @@ namespace ENGINE_NAME
 	const float& Camera::GetFarPlane() const
 	{
 		return m_farPlane;
-	}
-
-	void Camera::Matrix()
-	{
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 proj = glm::mat4(1.0f);
-
-		view = glm::lookAt(m_position, m_position + m_orientation, m_up);
-		proj = glm::perspective(glm::radians(m_fov), m_size.x / m_size.y, m_nearPlane, m_farPlane);
-
-		m_shader->SetUniform("uCamMatrix", glm::value_ptr(proj * view), 1);
 	}
 }

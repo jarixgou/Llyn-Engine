@@ -159,6 +159,8 @@
     <ClInclude Include="EBO\EBO.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Shader\FragmentShaderDefault.h" />
+    <ClInclude Include="Shader\lightFragmentShader.h" />
+    <ClInclude Include="Shader\lightVertexShader.h" />
     <ClInclude Include="Shader\Shader.h" />
     <ClInclude Include="Shader\VertexShaderDefault.h" />
     <ClInclude Include="Texture\Texture.h" />

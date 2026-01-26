@@ -4,11 +4,15 @@
 #include <glad/glad.h>      
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/fwd.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/vector_angle.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include "Camera.h"
-#include "Camera.h"
 #include "../Macro.h"
 
 namespace ENGINE_NAME
@@ -22,23 +26,25 @@ namespace ENGINE_NAME
 		glm::vec3 m_orientation;
 		glm::vec3 m_up;
 		
+		glm::mat4 m_camMatrix;
+
 		glm::vec2 m_size;
 
 		float m_fov;
 		float m_nearPlane;
 		float m_farPlane;
 
-		Shader* m_shader;
-
 		float m_speed;
 		float m_sensitivity;
 
 		bool m_firstClick;
 	public:
-		Camera(const glm::vec3& _position, const glm::vec2& _size, Shader* _shader);
+		Camera(const glm::vec3& _position, const glm::vec2& _size);
 		~Camera();
 
-		void Update(GLFWwindow* _window);
+		void Input(GLFWwindow* _window);
+		void UpdateMatrix();
+		void Matrix(Shader* _shader);
 
 		void SetPositon(const glm::vec3& _position);
 		const glm::vec3& GetPosition() const;
@@ -52,7 +58,6 @@ namespace ENGINE_NAME
 		void SetFarPlane(const float& _farPlane);
 		const float& GetFarPlane() const;
 	private:
-		void Matrix();
 	};
 }
 

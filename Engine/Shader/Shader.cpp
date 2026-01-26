@@ -78,7 +78,7 @@ namespace ENGINE_NAME
 		glUniform3i(GetUniformLocation(_name), _value.x, _value.y, _value.z);
 	}
 
-	void Shader::SetUniform(const char* _name, const Vector3f& _value)
+	void Shader::SetUniform(const char* _name, const glm::vec3& _value)
 	{
 		glUniform3f(GetUniformLocation(_name), _value.x, _value.y, _value.z);
 	}
@@ -93,7 +93,7 @@ namespace ENGINE_NAME
 		glUniform4i(GetUniformLocation(_name), _value.x, _value.y, _value.z, _value.w);
 	}
 
-	void Shader::SetUniform(const char* _name, const Vector4f& _value)
+	void Shader::SetUniform(const char* _name, const glm::vec4& _value)
 	{
 		glUniform4f(GetUniformLocation(_name), _value.x, _value.y, _value.z, _value.w);
 	}
