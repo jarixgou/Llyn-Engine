@@ -1,8 +1,9 @@
 #ifndef EBO__H
 #define EBO__H
 #include <glad/glad.h>
+#include "../Macro.h"
 
-namespace Llyn
+namespace ENGINE_NAME
 {
 	class EBO
 	{

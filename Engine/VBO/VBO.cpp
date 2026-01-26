@@ -1,6 +1,6 @@
 #include "VBO.h"
 
-namespace Llyn
+namespace ENGINE_NAME
 {
 	VBO::VBO(const GLfloat* _vertices, GLsizeiptr _size)
 	{

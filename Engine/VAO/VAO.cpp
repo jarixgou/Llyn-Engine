@@ -2,7 +2,7 @@
 
 #include "../VBO/VBO.h"
 
-namespace Llyn
+namespace ENGINE_NAME
 {
 	VAO::VAO()
 	{

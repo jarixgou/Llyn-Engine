@@ -147,16 +147,20 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
+    <ClCompile Include="stb.cpp" />
     <ClCompile Include="VAO\VAO.cpp" />
     <ClCompile Include="VBO\VBO.cpp" />
+    <ClCompile Include="Vector\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EBO\EBO.h" />
+    <ClInclude Include="Macro.h" />
     <ClInclude Include="Shader\FragmentShaderDefault.h" />
     <ClInclude Include="Shader\Shader.h" />
     <ClInclude Include="Shader\VertexShaderDefault.h" />
     <ClInclude Include="VAO\VAO.h" />
     <ClInclude Include="VBO\VBO.h" />
+    <ClInclude Include="Vector\Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

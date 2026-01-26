@@ -1,11 +1,13 @@
 #include "Shader.h"
 
+#include "../Vector/Vector.h"
+
 #include <fstream>
 #include <ios>
 #include <cerrno>
 #include <iostream>
 
-namespace Llyn
+namespace ENGINE_NAME
 {
 	Shader::Shader(const char* _vertexShader, const char* _fragmentShader)
 	{
@@ -34,6 +36,66 @@ namespace Llyn
 	const GLuint& Shader::getID() const
 	{
 		return m_id;
+	}
+
+	void Shader::SetUniform(const GLuint& _value, const char* _name)
+	{
+		glUniform1ui(GetUniformLocation(_name), _value);
+	}
+
+	void Shader::SetUniform(const GLint& _value, const char* _name)
+	{
+		glUniform1i(GetUniformLocation(_name), _value);
+	}
+
+	void Shader::SetUniform(const GLfloat& _value, const char* _name)
+	{
+		glUniform1f(GetUniformLocation(_name), _value);
+	}
+
+	void Shader::SetUniform(const Vector2u& _value, const char* _name)
+	{
+		glUniform2ui(GetUniformLocation(_name), _value.x, _value.y);
+	}
+
+	void Shader::SetUniform(const Vector2i& _value, const char* _name)
+	{
+		glUniform2i(GetUniformLocation(_name), _value.x, _value.y);
+	}
+
+	void Shader::SetUniform(const Vector2f& _value, const char* _name)
+	{
+		glUniform2f(GetUniformLocation(_name), _value.x, _value.y);
+	}
+
+	void Shader::SetUniform(const Vector3u& _value, const char* _name)
+	{
+		glUniform3ui(GetUniformLocation(_name), _value.x, _value.y, _value.z);
+	}
+
+	void Shader::SetUniform(const Vector3i& _value, const char* _name)
+	{
+		glUniform3i(GetUniformLocation(_name), _value.x, _value.y, _value.z);
+	}
+
+	void Shader::SetUniform(const Vector3f& _value, const char* _name)
+	{
+		glUniform3f(GetUniformLocation(_name), _value.x, _value.y, _value.z);
+	}
+
+	void Shader::SetUniform(const Vector4u& _value, const char* _name)
+	{
+		glUniform4ui(GetUniformLocation(_name), _value.x, _value.y, _value.z, _value.w);
+	}
+
+	void Shader::SetUniform(const Vector4i& _value, const char* _name)
+	{
+		glUniform4i(GetUniformLocation(_name), _value.x, _value.y, _value.z, _value.w);
+	}
+
+	void Shader::SetUniform(const Vector4f& _value, const char* _name)
+	{
+		glUniform4f(GetUniformLocation(_name), _value.x, _value.y, _value.z, _value.w);
 	}
 
 
@@ -74,5 +136,22 @@ namespace Llyn
 		glLinkProgram(m_id);
 		glDeleteShader(shader);
 
+	}
+
+	int Shader::GetUniformLocation(const char* _name)
+	{
+		if (m_uniformLocationCache.find(_name) != m_uniformLocationCache.end())
+		{
+			return m_uniformLocationCache[_name];
+		}
+
+		int location = glGetUniformLocation(m_id, _name);
+		if (location == -1)
+		{
+			std::cout << "Warning : uniform '" << _name << "' doesn't exist !" << std::endl;
+		}
+
+		m_uniformLocationCache[_name] = location;
+		return location;
 	}
 }

@@ -3,7 +3,9 @@
 
 #include <glad/glad.h>
 
-namespace Llyn
+#include "../Macro.h"
+
+namespace ENGINE_NAME
 {
 	class VBO;
 

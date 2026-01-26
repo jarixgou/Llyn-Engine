@@ -1,6 +1,6 @@
 #include "EBO.h"
 
-namespace Llyn
+namespace ENGINE_NAME
 {
 	EBO::EBO(const GLuint* _indices, GLsizeiptr _size)
 	{
