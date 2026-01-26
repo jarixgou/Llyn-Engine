@@ -13,9 +13,10 @@ namespace ENGINE_NAME
 	private:
 		GLuint m_id;
 		GLenum m_type;
+		GLint m_slot;
 		Vector2u m_size;
 	public:
-		Texture(const char* _filePath, GLenum _type, GLenum _slot, GLenum _pixelType);
+		Texture(const char* _filePath, GLenum _type, GLint _slot, GLenum _pixelType);
 		~Texture();
 
 		void Bind() const;

@@ -5,9 +5,10 @@
 
 namespace ENGINE_NAME
 {
-	Texture::Texture(const char* _filePath, GLenum _type, GLenum _slot, GLenum _pixelType)
+	Texture::Texture(const char* _filePath, GLenum _type, GLint _slot, GLenum _pixelType)
 	{
 		m_type = _type;
+		m_slot = _slot;
 
 		int widthImage;
 		int heightImage;
@@ -42,7 +43,7 @@ namespace ENGINE_NAME
 		}
 
 		glGenTextures(1, &m_id);
-		glActiveTexture(_slot);
+		glActiveTexture(GL_TEXTURE0 + m_slot);
 		Bind();
 
 		SetFilter(GL_TEXTURE_MIN_FILTER, GL_TEXTURE_MAG_FILTER);
@@ -61,6 +62,7 @@ namespace ENGINE_NAME
 
 	void Texture::Bind() const
 	{
+		glActiveTexture(GL_TEXTURE0 + m_slot);
 		glBindTexture(m_type, m_id);
 	}
 

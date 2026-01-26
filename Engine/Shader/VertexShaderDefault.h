@@ -26,7 +26,7 @@ void main()
     gl_Position = uCamMatrix * vec4(crntPos, 1.f);
 	color = aColor;
 	texCoord = aTexCoord;
-	Normal = aNormal;
+	Normal = mat3(transpose(inverse(model))) * aNormal;
 }
 )";
 }

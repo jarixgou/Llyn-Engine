@@ -29,37 +29,18 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLfloat vertices[] =
-	{ //     COORDINATES     /        COLORS          /    TexCoord   /        NORMALS       //
-		-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-		-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-		 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-		 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-
-		-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-		-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-
-		-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-		 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-
-		 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
-		 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
-		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.8f, 0.5f,  0.0f, // Right side
-
-		 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
-		-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
-		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f  // Facing side
+	{ //     COORDINATES     /        COLORS        /    TexCoord    /       NORMALS     //
+		-1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 0.0f,		0.0f, 1.0f, 0.0f,
+		-1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 1.0f,		0.0f, 1.0f, 0.0f,
+		 1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 1.0f,		0.0f, 1.0f, 0.0f,
+		 1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 0.0f,		0.0f, 1.0f, 0.0f
 	};
 
+	// Indices for vertices order
 	GLuint indices[] =
 	{
-		0, 1, 2, // Bottom side
-		0, 2, 3, // Bottom side
-		4, 6, 5, // Left side
-		7, 9, 8, // Non-facing side
-		10, 12, 11, // Right side
-		13, 15, 14 // Facing side
+		0, 1, 2,
+		0, 2, 3
 	};
 
 	GLfloat lightVertices[]
@@ -91,7 +72,7 @@ int main()
 	};
 
 	// Create a GLFW window
-	GLFWwindow* window = glfwCreateWindow(800, 800, "Llyn Engine", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Llyn Engine", NULL, NULL);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -104,7 +85,7 @@ int main()
 	gladLoadGL();
 
 	// Set the viewport
-	glViewport(0, 0, 800, 800);
+	glViewport(0, 0, 1920, 1080);
 
 
 	Llyn::Shader shader(static_cast<const void*>(Llyn::vertexShaderSource), static_cast<const void*>(Llyn::fragmentShaderSource));
@@ -123,13 +104,18 @@ int main()
 	vbo.Unbind();
 	ebo.Unbind();
 
-	Llyn::Texture texture("texture.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+	Llyn::Texture texture("planks.png", GL_TEXTURE_2D, 0, GL_UNSIGNED_BYTE);
 	texture.Bind();
 	texture.GenerateMipmap();
 	texture.Unbind();
+	Llyn::Texture specular("planksSpec.png", GL_TEXTURE_2D, 1, GL_UNSIGNED_BYTE);
+	specular.Bind();
+	specular.GenerateMipmap();
+	specular.Unbind();
 
 	shader.Activate();
 	shader.SetUniform("uTexture", 0);
+	shader.SetUniform("uTexture1", 1);
 
 	Llyn::Shader lightShader(static_cast<const void*>(Llyn::lightVertexShader), static_cast<const void*>(Llyn::lightFragmentShader));
 	Llyn::VAO lightVAO;
@@ -165,7 +151,7 @@ int main()
 	float rotation = 0.f;
 	double prevTime = glfwGetTime();
 
-	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(800.f, 800.f));
+	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(1920, 1080.f));
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -194,6 +180,7 @@ int main()
 		camera.Matrix(&shader);
 
 		texture.Bind();
+		specular.Bind();
 		vao.Bind();
 		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 
