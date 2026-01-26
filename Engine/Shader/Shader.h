@@ -39,22 +39,23 @@ namespace ENGINE_NAME
 
 		const GLuint& getID() const;
 
-		void SetUniform(const GLuint& _value, const char* _name);
-		void SetUniform(const GLint& _value, const char* _name);
-		void SetUniform(const GLfloat& _value, const char* _name);
+		void SetUniform(const char* _name, const GLuint& _value);
+		void SetUniform(const char* _name, const GLint& _value);
+		void SetUniform(const char* _name, const GLfloat& _value);
 
-		void SetUniform(const Vector2u& _value, const char* _name);
-		void SetUniform(const Vector2i& _value, const char* _name);
-		void SetUniform(const Vector2f& _value, const char* _name);
+		void SetUniform(const char* _name, const Vector2u& _value);
+		void SetUniform(const char* _name, const Vector2i& _value);
+		void SetUniform(const char* _name, const Vector2f& _value);
 
-		void SetUniform(const Vector3u& _value, const char* _name);
-		void SetUniform(const Vector3i& _value, const char* _name);
-		void SetUniform(const Vector3f& _value, const char* _name);
+		void SetUniform(const char* _name, const Vector3u& _value);
+		void SetUniform(const char* _name, const Vector3i& _value);
+		void SetUniform(const char* _name, const Vector3f& _value);
 
-		void SetUniform(const Vector4u& _value, const char* _name);
-		void SetUniform(const Vector4i& _value, const char* _name);
-		void SetUniform(const Vector4f& _value, const char* _name);
+		void SetUniform(const char* _name, const Vector4u& _value);
+		void SetUniform(const char* _name, const Vector4i& _value);
+		void SetUniform(const char* _name, const Vector4f& _value);
 
+		void SetUniform(const char* _name, const GLfloat* _matrix4fv, int _size);
 	private:
 		const std::string& ReadFile(const char* _filePath);
 		void CompileShader(const char* _source, GLenum _type) const;

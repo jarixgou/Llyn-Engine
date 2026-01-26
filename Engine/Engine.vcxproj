@@ -143,21 +143,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="EBO\EBO.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
     <ClCompile Include="stb.cpp" />
+    <ClCompile Include="Texture\Texture.cpp" />
     <ClCompile Include="VAO\VAO.cpp" />
     <ClCompile Include="VBO\VBO.cpp" />
     <ClCompile Include="Vector\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="EBO\EBO.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Shader\FragmentShaderDefault.h" />
     <ClInclude Include="Shader\Shader.h" />
     <ClInclude Include="Shader\VertexShaderDefault.h" />
+    <ClInclude Include="Texture\Texture.h" />
     <ClInclude Include="VAO\VAO.h" />
     <ClInclude Include="VBO\VBO.h" />
     <ClInclude Include="Vector\Vector.h" />

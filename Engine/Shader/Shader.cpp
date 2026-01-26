@@ -38,64 +38,69 @@ namespace ENGINE_NAME
 		return m_id;
 	}
 
-	void Shader::SetUniform(const GLuint& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const GLuint& _value)
 	{
 		glUniform1ui(GetUniformLocation(_name), _value);
 	}
 
-	void Shader::SetUniform(const GLint& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const GLint& _value)
 	{
 		glUniform1i(GetUniformLocation(_name), _value);
 	}
 
-	void Shader::SetUniform(const GLfloat& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const GLfloat& _value)
 	{
 		glUniform1f(GetUniformLocation(_name), _value);
 	}
 
-	void Shader::SetUniform(const Vector2u& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const Vector2u& _value)
 	{
 		glUniform2ui(GetUniformLocation(_name), _value.x, _value.y);
 	}
 
-	void Shader::SetUniform(const Vector2i& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const Vector2i& _value)
 	{
 		glUniform2i(GetUniformLocation(_name), _value.x, _value.y);
 	}
 
-	void Shader::SetUniform(const Vector2f& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const Vector2f& _value)
 	{
 		glUniform2f(GetUniformLocation(_name), _value.x, _value.y);
 	}
 
-	void Shader::SetUniform(const Vector3u& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const Vector3u& _value)
 	{
 		glUniform3ui(GetUniformLocation(_name), _value.x, _value.y, _value.z);
 	}
 
-	void Shader::SetUniform(const Vector3i& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const Vector3i& _value)
 	{
 		glUniform3i(GetUniformLocation(_name), _value.x, _value.y, _value.z);
 	}
 
-	void Shader::SetUniform(const Vector3f& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const Vector3f& _value)
 	{
 		glUniform3f(GetUniformLocation(_name), _value.x, _value.y, _value.z);
 	}
 
-	void Shader::SetUniform(const Vector4u& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const Vector4u& _value)
 	{
 		glUniform4ui(GetUniformLocation(_name), _value.x, _value.y, _value.z, _value.w);
 	}
 
-	void Shader::SetUniform(const Vector4i& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const Vector4i& _value)
 	{
 		glUniform4i(GetUniformLocation(_name), _value.x, _value.y, _value.z, _value.w);
 	}
 
-	void Shader::SetUniform(const Vector4f& _value, const char* _name)
+	void Shader::SetUniform(const char* _name, const Vector4f& _value)
 	{
 		glUniform4f(GetUniformLocation(_name), _value.x, _value.y, _value.z, _value.w);
+	}
+
+	void Shader::SetUniform(const char* _name, const GLfloat* _matrix4fv, int _size)
+	{
+		glUniformMatrix4fv(GetUniformLocation(_name), _size, GL_FALSE, _matrix4fv);
 	}
 
 
