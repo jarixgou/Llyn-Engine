@@ -2,12 +2,12 @@
 
 namespace ENGINE_NAME
 {
-	EBO::EBO(const GLuint* _indices, GLsizeiptr _size)
+	EBO::EBO(std::vector<GLuint>& _indices)
 	{
 		glGenBuffers(1, &m_id);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _size, _indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(GLuint), _indices.data(), GL_STATIC_DRAW);
 	}
 
 	EBO::~EBO()

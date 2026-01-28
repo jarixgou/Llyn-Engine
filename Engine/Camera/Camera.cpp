@@ -109,10 +109,10 @@ namespace ENGINE_NAME
 		m_camMatrix = proj * view;
 	}
 
-	void Camera::Matrix(Shader* _shader)
+	void Camera::Matrix(Shader& _shader)
 	{
 
-		_shader->SetUniform("uCamMatrix", glm::value_ptr(m_camMatrix), 1);
+		_shader.SetUniform("uCamMatrix", glm::value_ptr(m_camMatrix), 1);
 	}
 
 	void Camera::SetPositon(const glm::vec3& _position)

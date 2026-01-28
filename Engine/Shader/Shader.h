@@ -4,8 +4,10 @@
 #include <string>
 #include <unordered_map>
 #include <glad/glad.h>
+#include <glm/fwd.hpp>
 #include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
+#include <glm/mat3x3.hpp>
 
 #include "../Macro.h"
 
@@ -58,8 +60,8 @@ namespace ENGINE_NAME
 		void SetUniform(const char* _name, const glm::vec4& _value);
 
 		void SetUniform(const char* _name, const GLfloat* _matrix4fv, int _size);
+		void SetUniform(const char* _name, const glm::mat3& _value);
 	private:
-		const std::string& ReadFile(const char* _filePath);
 		void CompileShader(const char* _source, GLenum _type) const;
 		int GetUniformLocation(const char* _name);
 	};

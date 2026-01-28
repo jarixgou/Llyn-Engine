@@ -9,13 +9,13 @@ namespace ENGINE_NAME
 #version 460 core
 out vec4 FragColor;
 
+in vec3 crntPos;
+in vec3 Normal;
 in vec3 color;
 in vec2 texCoord;
-in vec3 Normal;
-in vec3 crntPos;
 
-uniform sampler2D uTexture;
-uniform sampler2D uTexture1;
+uniform sampler2D diffuse0;
+uniform sampler2D specular0;
 uniform vec4 lightColor;
 uniform vec3 lightPos;
 uniform vec3 camPos;
@@ -47,7 +47,7 @@ vec4 PointLight()
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;
 
-	return (texture(uTexture, texCoord) * (diffuse * inten + ambient) + texture(uTexture1, texCoord).r * specular * inten) * lightColor;
+	return (texture(diffuse0, texCoord) * (diffuse * inten + ambient) + texture(specular0, texCoord).r * specular * inten) * lightColor;
 }
 
 vec4 DirectLight()
@@ -67,7 +67,7 @@ vec4 DirectLight()
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;
 
-	return (texture(uTexture, texCoord) * (diffuse + ambient) + texture(uTexture1, texCoord).r * specular) * lightColor;
+	return (texture(diffuse0, texCoord) * (diffuse + ambient) + texture(specular0, texCoord).r * specular) * lightColor;
 }
 
 vec4 SpotLight()
@@ -95,14 +95,14 @@ vec4 SpotLight()
 	float angle = dot(vec3(0.0f, -1.0f, 0.0f), -lightDirection);
 	float inten = clamp((angle - outerCone) / (innerCone - outerCone), 0.0f, 1.0f);
 
-	return (texture(uTexture, texCoord) * (diffuse * inten + ambient) + texture(uTexture1, texCoord).r * specular * inten) * lightColor;
+	return (texture(diffuse0, texCoord) * (diffuse * inten + ambient) + texture(specular0, texCoord).r * specular * inten) * lightColor;
 }
 
 
 void main()
 {
 	// outputs final color
-	FragColor = PointLight();
+	FragColor = PointLight() * vec4(color, 1.0);
 }
 )";
 }

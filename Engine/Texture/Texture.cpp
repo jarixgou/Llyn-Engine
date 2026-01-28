@@ -3,9 +3,11 @@
 #include <iostream>
 #include <stb/stb_image.h>
 
+#include "../Shader/Shader.h"
+
 namespace ENGINE_NAME
 {
-	Texture::Texture(const char* _filePath, GLenum _type, GLint _slot, GLenum _pixelType)
+	Texture::Texture(const char* _filePath, const char* _type, GLuint _slot)
 	{
 		m_type = _type;
 		m_slot = _slot;
@@ -39,8 +41,12 @@ namespace ENGINE_NAME
 		case 4:
 			format = GL_RGBA;
 			break;
-		default: ;
+		default:
+			throw std::invalid_argument("Automatic Texture type recognition failed !");
 		}
+
+		m_name = std::string(_filePath);
+		m_name = m_name.substr(m_name.find_last_of("/\\") + 1);
 
 		glGenTextures(1, &m_id);
 		glActiveTexture(GL_TEXTURE0 + m_slot);
@@ -48,8 +54,9 @@ namespace ENGINE_NAME
 
 		SetFilter(GL_TEXTURE_MIN_FILTER, GL_TEXTURE_MAG_FILTER);
 		SetRepeated(true);
+		GenerateMipmap();
 
-		glTexImage2D(m_type, 0, GL_RGBA, widthImage, heightImage, 0, format, _pixelType, bytes);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImage, heightImage, 0, format, GL_UNSIGNED_BYTE, bytes);
 
 		stbi_image_free(bytes);
 		Unbind();
@@ -63,34 +70,55 @@ namespace ENGINE_NAME
 	void Texture::Bind() const
 	{
 		glActiveTexture(GL_TEXTURE0 + m_slot);
-		glBindTexture(m_type, m_id);
+		glBindTexture(GL_TEXTURE_2D, m_id);
 	}
 
 	void Texture::Unbind() const
 	{
-		glBindTexture(m_type, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void Texture::TexUnit(Shader& _shader, const char* _uniform, GLuint& _unit)
+	{
+		_shader.Activate();
+		_shader.SetUniform(_uniform, _unit);
 	}
 
 	void Texture::SetRepeated(bool _repeated) const
 	{
 		GLenum wrapMode = _repeated ? GL_REPEAT : GL_CLAMP_TO_EDGE;
-		glTexParameteri(m_type, GL_TEXTURE_WRAP_S, wrapMode);
-		glTexParameteri(m_type, GL_TEXTURE_WRAP_T, wrapMode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 	}
 
 	void Texture::SetFilter(GLenum _minFilter, GLenum _magFilter) const
 	{
-		glTexParameteri(m_type, _minFilter, GL_NEAREST);
-		glTexParameteri(m_type, _magFilter, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, _minFilter, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, _magFilter, GL_NEAREST);
+	}
+
+	void Texture::SetType(const char* _type)
+	{
+		m_type = _type;
+	}
+
+	const char* Texture::GetType() const
+	{
+		return m_type;
 	}
 
 	void Texture::GenerateMipmap() const
 	{
-		glGenerateMipmap(m_type);
+		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
 	const Vector2u& Texture::GetSize() const
 	{
 		return m_size;
+	}
+
+	const std::string& Texture::GetName()
+	{
+		return m_name;
 	}
 }

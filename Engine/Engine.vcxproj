@@ -147,9 +147,13 @@
     <ClCompile Include="EBO\EBO.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mesh\Mesh.cpp" />
+    <ClCompile Include="Model\Model.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Texture\Texture.cpp" />
+    <ClCompile Include="Transform\Transform.cpp" />
+    <ClCompile Include="Utils\Utils.cpp" />
     <ClCompile Include="VAO\VAO.cpp" />
     <ClCompile Include="VBO\VBO.cpp" />
     <ClCompile Include="Vector\Vector.cpp" />
@@ -158,15 +162,20 @@
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="EBO\EBO.h" />
     <ClInclude Include="Macro.h" />
+    <ClInclude Include="Mesh\Mesh.h" />
+    <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Shader\FragmentShaderDefault.h" />
     <ClInclude Include="Shader\lightFragmentShader.h" />
     <ClInclude Include="Shader\lightVertexShader.h" />
     <ClInclude Include="Shader\Shader.h" />
     <ClInclude Include="Shader\VertexShaderDefault.h" />
     <ClInclude Include="Texture\Texture.h" />
+    <ClInclude Include="Transform\Transform.h" />
+    <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="VAO\VAO.h" />
     <ClInclude Include="VBO\VBO.h" />
     <ClInclude Include="Vector\Vector.h" />
+    <ClInclude Include="Vertex\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

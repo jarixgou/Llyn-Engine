@@ -44,7 +44,7 @@ namespace ENGINE_NAME
 
 		void Input(GLFWwindow* _window);
 		void UpdateMatrix();
-		void Matrix(Shader* _shader);
+		void Matrix(Shader& _shader);
 
 		void SetPositon(const glm::vec3& _position);
 		const glm::vec3& GetPosition() const;

@@ -17,6 +17,10 @@
 #include "Shader/lightFragmentShader.h"
 #include "Shader/lightVertexShader.h"
 #include "Texture/Texture.h"
+#include "Vertex/Vertex.h"
+
+#include "Mesh/Mesh.h"
+#include "Transform/Transform.h"
 
 int main()
 {
@@ -28,12 +32,13 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLfloat vertices[] =
-	{ //     COORDINATES     /        COLORS        /    TexCoord    /       NORMALS     //
-		-1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 0.0f,		0.0f, 1.0f, 0.0f,
-		-1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-		 1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-		 1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 0.0f,		0.0f, 1.0f, 0.0f
+	// Vertices coordinates
+	Llyn::Vertex vertices[] =
+	{ //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
+		Llyn::Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+		Llyn::Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
+		Llyn::Vertex{glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
+		Llyn::Vertex{glm::vec3(1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
 	};
 
 	// Indices for vertices order
@@ -43,16 +48,16 @@ int main()
 		0, 2, 3
 	};
 
-	GLfloat lightVertices[]
-	{
-		-0.1f, -0.1f,  0.1f,
-		-0.1f, -0.1f, -0.1f,
-		 0.1f, -0.1f, -0.1f,
-		 0.1f, -0.1f,  0.1f,
-		-0.1f,  0.1f,  0.1f,
-		-0.1f,  0.1f, -0.1f,
-		 0.1f,  0.1f, -0.1f,
-		 0.1f,  0.1f,  0.1f
+	Llyn::Vertex lightVertices[]
+	{ //     COORDINATES     //
+		Llyn::Vertex{glm::vec3(-0.1f, -0.1f,  0.1f)},
+		Llyn::Vertex{glm::vec3(-0.1f, -0.1f, -0.1f)},
+		Llyn::Vertex{glm::vec3(0.1f, -0.1f, -0.1f)},
+		Llyn::Vertex{glm::vec3(0.1f, -0.1f,  0.1f)},
+		Llyn::Vertex{glm::vec3(-0.1f,  0.1f,  0.1f)},
+		Llyn::Vertex{glm::vec3(-0.1f,  0.1f, -0.1f)},
+		Llyn::Vertex{glm::vec3(0.1f,  0.1f, -0.1f)},
+		Llyn::Vertex{glm::vec3(0.1f,  0.1f,  0.1f)}
 	};
 
 	GLuint lightIndices[] =
@@ -87,68 +92,38 @@ int main()
 	// Set the viewport
 	glViewport(0, 0, 1920, 1080);
 
+	Llyn::Texture texture[] =
+	{
+		Llyn::Texture("planks.png", "diffuse", 0),
+		Llyn::Texture("planksSpec.png", "specular", 1),
+	};
 
 	Llyn::Shader shader(static_cast<const void*>(Llyn::vertexShaderSource), static_cast<const void*>(Llyn::fragmentShaderSource));
-
-	Llyn::VAO vao;
-	vao.Bind();
-
-	Llyn::VBO vbo(vertices, sizeof(vertices));
-	Llyn::EBO ebo(indices, sizeof(indices));
-
-	vao.LinkAttrib(&vbo, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
-	vao.LinkAttrib(&vbo, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
-	vao.LinkAttrib(&vbo, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
-	vao.LinkAttrib(&vbo, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-	vao.Unbind();
-	vbo.Unbind();
-	ebo.Unbind();
-
-	Llyn::Texture texture("planks.png", GL_TEXTURE_2D, 0, GL_UNSIGNED_BYTE);
-	texture.Bind();
-	texture.GenerateMipmap();
-	texture.Unbind();
-	Llyn::Texture specular("planksSpec.png", GL_TEXTURE_2D, 1, GL_UNSIGNED_BYTE);
-	specular.Bind();
-	specular.GenerateMipmap();
-	specular.Unbind();
-
-	shader.Activate();
-	shader.SetUniform("uTexture", 0);
-	shader.SetUniform("uTexture1", 1);
+	std::vector<Llyn::Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Llyn::Vertex));
+	std::vector<GLuint> inds(indices, indices + sizeof(indices) / sizeof(GLuint));
+	std::vector<Llyn::Texture> texs(texture, texture + sizeof(texture) / sizeof(Llyn::Texture));
+	Llyn::Mesh plane(verts, inds, texs);
 
 	Llyn::Shader lightShader(static_cast<const void*>(Llyn::lightVertexShader), static_cast<const void*>(Llyn::lightFragmentShader));
-	Llyn::VAO lightVAO;
-	lightVAO.Bind();
+	std::vector<Llyn::Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Llyn::Vertex));
+	std::vector<GLuint> lightInds(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
+	Llyn::Mesh light(lightVerts, lightInds, texs);
+	auto lightTransform = light.GetTransform();
+	lightTransform->position = glm::vec3(0.5f, 0.5f, 0.5f);
 
-	Llyn::VBO lightVBO(lightVertices, sizeof(lightVertices));
-	Llyn::EBO lightEBO(lightIndices, sizeof(lightIndices));
-
-	lightVAO.LinkAttrib(&lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-
-	lightVAO.Unbind();
-	lightVBO.Unbind();
-	lightEBO.Unbind();
-
-	glm::vec4 lightColor = glm::vec4(1.f, 1.f, 1.f, 1.f);
+	glm::vec4 lightColor = glm::vec4(255 / 255.f, 255 / 255.f, 255 / 255.f, 1.f);
 	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
-	glm::mat4 lightModel = glm::mat4(1.f);
-	lightModel = glm::translate(lightModel, lightPos);
-
-	glm::vec3 pyramidPos = glm::vec3(0.f, 0.f, 0.f);
-	glm::mat4 pyramidModel = glm::mat4(1.f);
-	pyramidModel = glm::translate(pyramidModel, pyramidPos);
 
 	lightShader.Activate();
-	lightShader.SetUniform("model", glm::value_ptr(lightModel), 1);
 	lightShader.SetUniform("lightColor", lightColor);
 
 	shader.Activate();
-	shader.SetUniform("model", glm::value_ptr(pyramidModel), 1);
 	shader.SetUniform("lightColor", lightColor);
 	shader.SetUniform("lightPos", lightPos);
 
-	float rotation = 0.f;
+	float rotationX = 0.f;
+	float rotationY = 0.f;
+	float rotationZ = 0.f;
 	double prevTime = glfwGetTime();
 
 	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(1920, 1080.f));
@@ -164,7 +139,21 @@ int main()
 		double crntTime = glfwGetTime();
 		if (crntTime - prevTime >= 1 / 60.f)
 		{
-			rotation += 0.5f;
+			rotationX += 1.8f;
+			rotationY += 1.4f;
+			rotationZ += 1.6f;
+
+			float posX = 0.5f * sin(glfwGetTime());
+			float posZ = 0.5f * cos(glfwGetTime());
+			float posY = 1.5f * abs(0.5f + 0.5f * sin(glfwGetTime() * 0.5f));
+
+			lightTransform->position = glm::vec3(posX, posY, posZ);
+			lightPos = lightTransform->position;
+			lightTransform->rotation = glm::vec3(rotationX, rotationY, rotationZ);
+
+			shader.Activate();
+			shader.SetUniform("lightPos", lightPos);
+
 			prevTime = crntTime;
 		}
 
@@ -175,20 +164,9 @@ int main()
 		camera.Input(window);
 		camera.UpdateMatrix();
 
-		shader.Activate();
-		shader.SetUniform("camPos", camera.GetPosition());
-		camera.Matrix(&shader);
+		plane.Draw(shader, camera);
 
-		texture.Bind();
-		specular.Bind();
-		vao.Bind();
-		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
-
-		lightShader.Activate();
-		camera.Matrix(&lightShader);
-
-		lightVAO.Bind();
-		glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		light.Draw(lightShader, camera);
 
 		glfwSwapBuffers(window);
 	}

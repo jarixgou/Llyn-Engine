@@ -1,19 +1,20 @@
 #include "Shader.h"
 
 #include "../Vector/Vector.h"
+#include "../Utils/Utils.h"
 
-#include <fstream>
 #include <ios>
 #include <cerrno>
 #include <iostream>
+#include <glm/gtc/type_ptr.inl>
 
 namespace ENGINE_NAME
 {
 	Shader::Shader(const char* _vertexShader, const char* _fragmentShader)
 	{
 		m_id = glCreateProgram();
-		CompileShader(ReadFile(_vertexShader).c_str(), GL_VERTEX_SHADER);
-		CompileShader(ReadFile(_fragmentShader).c_str(), GL_FRAGMENT_SHADER);
+		CompileShader(Utils::GetFileContents(_vertexShader).c_str(), GL_VERTEX_SHADER);
+		CompileShader(Utils::GetFileContents(_fragmentShader).c_str(), GL_FRAGMENT_SHADER);
 	}
 
 	Shader::Shader(const void* _vertexShader, const void* _fragmentShader)
@@ -27,7 +28,7 @@ namespace ENGINE_NAME
 	{
 		glDeleteProgram(m_id);
 	}
-
+		
 	void Shader::Activate() const
 	{
 		glUseProgram(m_id);
@@ -103,21 +104,9 @@ namespace ENGINE_NAME
 		glUniformMatrix4fv(GetUniformLocation(_name), _size, GL_FALSE, _matrix4fv);
 	}
 
-
-	const std::string& Shader::ReadFile(const char* _filePath)
+	void Shader::SetUniform(const char* _name, const glm::mat3& _value)
 	{
-		std::ifstream in(_filePath, std::ios::binary);
-		if (in)
-		{
-			std::string contents;
-			in.seekg(0, std::ios::end);
-			contents.resize(in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(&contents[0], contents.size());
-			in.close();
-			return(contents);
-		}
-		throw(errno);
+		glUniformMatrix3fv(GetUniformLocation(_name), 1, GL_FALSE, glm::value_ptr(_value));
 	}
 
 	void Shader::CompileShader(const char* _source, GLenum _type) const

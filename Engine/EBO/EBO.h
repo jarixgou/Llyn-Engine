@@ -1,5 +1,6 @@
 #ifndef EBO__H
 #define EBO__H
+#include <vector>
 #include <glad/glad.h>
 #include "../Macro.h"
 
@@ -10,7 +11,7 @@ namespace ENGINE_NAME
 	private:
 		GLuint m_id;
 	public:
-		EBO(const GLuint* _indices, GLsizeiptr _size);
+		EBO(std::vector<GLuint>& _indices);
 		~EBO();
 
 		void Bind();

@@ -1,13 +1,15 @@
 #include "VBO.h"
 
+#include "../Vertex/Vertex.h"
+
 namespace ENGINE_NAME
 {
-	VBO::VBO(const GLfloat* _vertices, GLsizeiptr _size)
+	VBO::VBO(std::vector<Vertex>& _vertices)
 	{
 		glGenBuffers(1, &m_id);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_id);
-		glBufferData(GL_ARRAY_BUFFER, _size, _vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(Vertex), _vertices.data(), GL_STATIC_DRAW);
 	}
 
 	VBO::~VBO()
