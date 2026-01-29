@@ -15,7 +15,7 @@ namespace ENGINE_NAME
 	class Texture
 	{
 	private:
-		std::shared_ptr<GLuint> m_id;
+		GLuint m_id;
 		const char* m_type;
 		GLuint m_slot;
 		Vector2u m_size;

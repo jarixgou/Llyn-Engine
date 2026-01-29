@@ -145,10 +145,13 @@
   <ItemGroup>
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="EBO\EBO.cpp" />
+    <ClCompile Include="FBO\FBO.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh\Mesh.cpp" />
     <ClCompile Include="Model\Model.cpp" />
+    <ClCompile Include="RBO\RBO.cpp" />
+    <ClCompile Include="RenderTexture\RenderTexture.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Texture\Texture.cpp" />
@@ -161,9 +164,12 @@
   <ItemGroup>
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="EBO\EBO.h" />
+    <ClInclude Include="FBO\FBO.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Mesh\Mesh.h" />
     <ClInclude Include="Model\Model.h" />
+    <ClInclude Include="RBO\RBO.h" />
+    <ClInclude Include="RenderTexture\RenderTexture.h" />
     <ClInclude Include="Shader\FragmentShaderDefault.h" />
     <ClInclude Include="Shader\lightFragmentShader.h" />
     <ClInclude Include="Shader\lightVertexShader.h" />

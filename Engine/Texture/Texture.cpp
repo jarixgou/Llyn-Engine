@@ -49,15 +49,7 @@ namespace ENGINE_NAME
 		m_name = std::string(_filePath);
 		m_name = m_name.substr(m_name.find_last_of("/\\") + 1);
 
-		GLuint* idPtr = new GLuint(0);
-		glGenTextures(1, idPtr);
-		m_id = std::shared_ptr<GLuint>(idPtr, [](GLuint* p) {
-			if (p && *p != 0)
-			{
-				glDeleteTextures(1, p);
-			}
-			delete p;
-			});
+		glGenTextures(1, &m_id);
 
 		glActiveTexture(GL_TEXTURE0 + m_slot);
 		Bind();
@@ -77,13 +69,13 @@ namespace ENGINE_NAME
 
 	Texture::~Texture()
 	{
-
+		glDeleteTextures(1, &m_id);
 	}
 
 	void Texture::Bind() const
 	{
 		glActiveTexture(GL_TEXTURE0 + m_slot);
-		glBindTexture(GL_TEXTURE_2D, *m_id);
+		glBindTexture(GL_TEXTURE_2D, m_id);
 	}
 
 	void Texture::Unbind() const

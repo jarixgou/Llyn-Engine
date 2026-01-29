@@ -23,14 +23,24 @@ namespace ENGINE_NAME
 
 	Model::~Model()
 	{
+		for (auto& mesh : m_meshes)
+		{
+			delete mesh;
+		}
 
+		m_meshes.clear();
+		m_loadedTextures.clear();
+		m_translationsMeshes.clear();
+		m_rotationsMeshes.clear();
+		m_scalesMeshes.clear();
+		m_matricesMeshes.clear();
 	}
 
 	void Model::Draw(Shader& _shader, Camera& _camera)
 	{
 		for (size_t i = 0; i < m_meshes.size(); ++i)
 		{
-			m_meshes[i].Draw(_shader, _camera, m_matricesMeshes[i]);
+			m_meshes[i]->Draw(_shader, _camera, m_matricesMeshes[i]);
 		}
 	}
 
@@ -53,10 +63,11 @@ namespace ENGINE_NAME
 		// Combine all the vertex components and also get the indices and textures
 		std::vector<Vertex> vertices = AssembleVertices(positions, normals, texUVs);
 		std::vector<GLuint> indices = GetIndices(m_json["accessors"][indAccInd]);
-		std::vector<Texture> textures = GetTextures();
+		std::vector<Texture*> textures = GetTextures();
 
 		// Combine the vertices, indices, and textures into a mesh
-		m_meshes.push_back(Mesh(vertices, indices, textures));
+		Mesh* newMesh = new Mesh(vertices, indices, textures);
+		m_meshes.push_back(newMesh);
 	}
 
 	void Model::TraverseNode(unsigned int _nextNode, glm::mat4 _matrix)
@@ -188,9 +199,9 @@ namespace ENGINE_NAME
 
 		unsigned int beginningOfData = byteOffset + accByteOffset;
 		unsigned int lengthOfData = count * 4 * numPerVert;
-		for (unsigned int i = beginningOfData; i < beginningOfData + lengthOfData; i)
+		for (unsigned int i = beginningOfData; i < beginningOfData + lengthOfData; i += 4)
 		{
-			unsigned char byteArray[4] = { m_data[i++], m_data[i++], m_data[i++], m_data[i++] };
+			unsigned char byteArray[4] = { m_data[i], m_data[i + 1], m_data[i + 2], m_data[i + 3] };
 			float value = 0;
 			std::memcpy(&value, byteArray, sizeof(float));
 			floatVec.push_back(value);
@@ -215,9 +226,9 @@ namespace ENGINE_NAME
 
 		if (componentType == 5125) // UNSIGNED_INT
 		{
-			for (unsigned int i = beginningOfData; i < beginningOfData + count * 4; i)
+			for (unsigned int i = beginningOfData; i < beginningOfData + count * 4; i += 4)
 			{
-				unsigned char bytes[4] = { m_data[i++], m_data[i++], m_data[i++], m_data[i++] };
+				unsigned char bytes[4] = { m_data[i], m_data[i + 1], m_data[i + 2], m_data[i + 3] };
 				unsigned int value = 0;
 				std::memcpy(&value, bytes, sizeof(unsigned int));
 				indices.push_back(static_cast<GLuint>(value));
@@ -225,9 +236,9 @@ namespace ENGINE_NAME
 		}
 		else if (componentType == 5123) // UNSIGNED_SHORT
 		{
-			for (unsigned int i = beginningOfData; i < beginningOfData + count * 2; i)
+			for (unsigned int i = beginningOfData; i < beginningOfData + count * 2; i += 2)
 			{
-				unsigned char bytes[2] = { m_data[i++], m_data[i++] };
+				unsigned char bytes[2] = { m_data[i], m_data[i + 1] };
 				unsigned short value = 0;
 				std::memcpy(&value, bytes, sizeof(unsigned short));
 				indices.push_back(static_cast<GLuint>(value));
@@ -235,9 +246,9 @@ namespace ENGINE_NAME
 		}
 		else if (componentType == 5122) // SHORT
 		{
-			for (unsigned int i = beginningOfData; i < beginningOfData + count * 2; i)
+			for (unsigned int i = beginningOfData; i < beginningOfData + count * 2; i += 2)
 			{
-				unsigned char bytes[2] = { m_data[i++], m_data[i++] };
+				unsigned char bytes[2] = { m_data[i], m_data[i + 1] };
 				short value = 0;
 				std::memcpy(&value, bytes, sizeof(short));
 				indices.push_back(static_cast<GLuint>(value));
@@ -247,9 +258,9 @@ namespace ENGINE_NAME
 		return indices;
 	}
 
-	std::vector<Texture> Model::GetTextures()
+	std::vector<Texture*> Model::GetTextures()
 	{
-		std::vector<Texture> textures;
+		std::vector<Texture*> textures;
 
 		std::string fileStr = std::string(m_filePath);
 		std::string fileDirectory = fileStr.substr(0, fileStr.find_last_of('/') + 1);
@@ -261,7 +272,7 @@ namespace ENGINE_NAME
 			bool skip = false;
 			for (unsigned int j = 0; j < m_loadedTextures.size(); ++j)
 			{
-				if (m_loadedTextures[j].GetName() == texPath)
+				if (m_loadedTextures[j]->GetName() == texPath)
 				{
 					textures.push_back(m_loadedTextures[j]);
 					skip = true;
@@ -273,15 +284,15 @@ namespace ENGINE_NAME
 			{
 				if (texPath.find("baseColor") != std::string::npos)
 				{
-					Texture diffuse = Texture((fileDirectory + texPath).c_str(), "diffuse", m_loadedTextures.size());
-					textures.push_back(diffuse);
-					m_loadedTextures.push_back(diffuse);
+					Texture* newTexture = new Texture((fileDirectory + texPath).c_str(), "diffuse", m_loadedTextures.size());
+					m_loadedTextures.push_back(newTexture);
+					textures.push_back(m_loadedTextures.back());
 				}
 				else if (texPath.find("metallicRoughness") != std::string::npos)
 				{
-					Texture specular = Texture((fileDirectory + texPath).c_str(), "specular", m_loadedTextures.size());
-					textures.push_back(specular);
-					m_loadedTextures.push_back(specular);
+					Texture* newTexture = new Texture((fileDirectory + texPath).c_str(), "specular", m_loadedTextures.size());
+					m_loadedTextures.push_back(newTexture);
+					textures.push_back(m_loadedTextures.back());
 				}
 			}
 		}

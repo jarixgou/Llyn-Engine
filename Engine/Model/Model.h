@@ -27,13 +27,13 @@ namespace ENGINE_NAME
 		std::vector<unsigned char> m_data;
 		json m_json;
 
-		std::vector<Mesh> m_meshes;
+		std::vector<Mesh*> m_meshes;
 		std::vector<glm::vec3> m_translationsMeshes;
 		std::vector<glm::quat> m_rotationsMeshes;
 		std::vector<glm::vec3> m_scalesMeshes;
 		std::vector<glm::mat4> m_matricesMeshes;
 
-		std::vector<Texture> m_loadedTextures;
+		std::vector<Texture*> m_loadedTextures;
 	public:
 		Model(const char* _filePath);
 		~Model();
@@ -47,7 +47,7 @@ namespace ENGINE_NAME
 		std::vector<unsigned char> LoadBinaryFile();
 		std::vector<float> GetFloats(json& _accessor);
 		std::vector<GLuint> GetIndices(json& _accessor);
-		std::vector<Texture> GetTextures();
+		std::vector<Texture*> GetTextures();
 
 		std::vector<Vertex> AssembleVertices(std::vector<glm::vec3>& _positions, std::vector<glm::vec3>& _normals, std::vector<glm::vec2>& _texUVs);
 

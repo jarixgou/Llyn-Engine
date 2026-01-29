@@ -16,10 +16,8 @@ namespace ENGINE_NAME
 	Mesh::Mesh(Mesh&&) noexcept = default;
 	Mesh& Mesh::operator=(Mesh&&) noexcept = default;
 
-	Mesh::Mesh(std::vector<Vertex>& _vertices, std::vector<GLuint>& _indices, std::vector<Texture>& _textures)
+	Mesh::Mesh(const std::vector<Vertex>& _vertices, const std::vector<GLuint>& _indices, const std::vector<Texture*>& _textures)
 	{
-		m_transform = std::make_unique<Transform>();
-
 		m_model = glm::mat4(1.0f);
 
 		m_vertices = _vertices;
@@ -46,14 +44,14 @@ namespace ENGINE_NAME
 
 	Mesh::~Mesh()
 	{
+		for (auto& texture : m_textures)
+		{
+			delete texture;
+		}
+
 		m_vertices.clear();
 		m_indices.clear();
 		m_textures.clear();
-	}
-
-	Transform* Mesh::GetTransform() const
-	{
-		return m_transform.get();
 	}
 
 	void Mesh::Draw
@@ -77,7 +75,7 @@ namespace ENGINE_NAME
 		for (unsigned int i = 0; i < m_textures.size(); ++i)
 		{
 			std::string num = "";
-			std::string type = m_textures[i].GetType();
+			std::string type = m_textures[i]->GetType();
 
 			if (type == "diffuse")
 			{
@@ -88,8 +86,8 @@ namespace ENGINE_NAME
 				num = std::to_string(numSpecular++);
 			}
 
-			m_textures[i].Bind();
-			m_textures[i].TexUnit(_shader, (type + num).c_str(), i);
+			m_textures[i]->Bind();
+			m_textures[i]->TexUnit(_shader, (type + num).c_str(), i);
 		}
 
 		_shader.SetUniform("camPos", _camera.GetPosition());

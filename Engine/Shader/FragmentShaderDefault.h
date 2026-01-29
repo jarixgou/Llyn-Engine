@@ -102,6 +102,10 @@ vec4 SpotLight()
 
 void main()
 {	
+	if (texture(diffuse0, texCoord).a < 0.1)
+	{
+		discard;
+	}
     FragColor = DirectLight();
 }
 )";

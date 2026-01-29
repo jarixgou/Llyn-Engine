@@ -53,7 +53,7 @@ int main()
 
 	Llyn::Shader shader(static_cast<const void*>(Llyn::vertexShaderSource), static_cast<const void*>(Llyn::fragmentShaderSource));
 
-	Llyn::Model model("Models/Sword/scene.gltf");
+	Llyn::Model model("Models/Map/scene.gltf");
 
 	shader.Activate();
 	shader.SetUniform("lightColor", glm::vec4(1.f, 1.f, 1.f, 1.f));
@@ -62,6 +62,7 @@ int main()
 	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(1920, 1080.f));
 
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);

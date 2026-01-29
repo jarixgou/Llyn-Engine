@@ -26,19 +26,17 @@ namespace ENGINE_NAME
 	class Mesh
 	{
 	private:
-		std::unique_ptr<Transform> m_transform;
-
 		glm::mat4 m_model;
 
 		std::vector<Vertex> m_vertices;
 		std::vector<GLuint> m_indices;
-		std::vector<Texture> m_textures;
+		std::vector<Texture*> m_textures;
 
 		std::unique_ptr<VAO> m_vao;
 		std::unique_ptr<VBO> m_vbo;
 		std::unique_ptr<EBO> m_ebo;
 	public:
-		Mesh(std::vector<Vertex>& _vertices, std::vector<GLuint>& _indices, std::vector<Texture>& _textures);
+		Mesh(const std::vector<Vertex>& _vertices, const std::vector<GLuint>& _indices, const std::vector<Texture*>& _textures);
 		~Mesh();
 
 		Mesh(const Mesh&) = delete;
@@ -46,8 +44,6 @@ namespace ENGINE_NAME
 
 		Mesh(Mesh&&) noexcept;
 		Mesh& operator=(Mesh&&) noexcept;
-
-		Transform* GetTransform() const;
 
 		void Draw
 		(
