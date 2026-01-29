@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
@@ -20,6 +21,7 @@
 #include "Vertex/Vertex.h"
 
 #include "Mesh/Mesh.h"
+#include "Model/Model.h"
 #include "Transform/Transform.h"
 
 int main()
@@ -32,49 +34,6 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Vertices coordinates
-	Llyn::Vertex vertices[] =
-	{ //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
-		Llyn::Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-		Llyn::Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
-		Llyn::Vertex{glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
-		Llyn::Vertex{glm::vec3(1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
-	};
-
-	// Indices for vertices order
-	GLuint indices[] =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	Llyn::Vertex lightVertices[]
-	{ //     COORDINATES     //
-		Llyn::Vertex{glm::vec3(-0.1f, -0.1f,  0.1f)},
-		Llyn::Vertex{glm::vec3(-0.1f, -0.1f, -0.1f)},
-		Llyn::Vertex{glm::vec3(0.1f, -0.1f, -0.1f)},
-		Llyn::Vertex{glm::vec3(0.1f, -0.1f,  0.1f)},
-		Llyn::Vertex{glm::vec3(-0.1f,  0.1f,  0.1f)},
-		Llyn::Vertex{glm::vec3(-0.1f,  0.1f, -0.1f)},
-		Llyn::Vertex{glm::vec3(0.1f,  0.1f, -0.1f)},
-		Llyn::Vertex{glm::vec3(0.1f,  0.1f,  0.1f)}
-	};
-
-	GLuint lightIndices[] =
-	{
-		0, 1, 2,
-		0, 2, 3,
-		0, 4, 7,
-		0, 7, 3,
-		3, 7, 6,
-		3, 6, 2,
-		2, 6, 5,
-		2, 5, 1,
-		1, 5, 4,
-		1, 4, 0,
-		4, 5, 6,
-		4, 6, 7
-	};
 
 	// Create a GLFW window
 	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Llyn Engine", NULL, NULL);
@@ -92,43 +51,27 @@ int main()
 	// Set the viewport
 	glViewport(0, 0, 1920, 1080);
 
-	Llyn::Texture texture[] =
-	{
-		Llyn::Texture("planks.png", "diffuse", 0),
-		Llyn::Texture("planksSpec.png", "specular", 1),
-	};
-
 	Llyn::Shader shader(static_cast<const void*>(Llyn::vertexShaderSource), static_cast<const void*>(Llyn::fragmentShaderSource));
-	std::vector<Llyn::Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Llyn::Vertex));
-	std::vector<GLuint> inds(indices, indices + sizeof(indices) / sizeof(GLuint));
-	std::vector<Llyn::Texture> texs(texture, texture + sizeof(texture) / sizeof(Llyn::Texture));
-	Llyn::Mesh plane(verts, inds, texs);
 
-	Llyn::Shader lightShader(static_cast<const void*>(Llyn::lightVertexShader), static_cast<const void*>(Llyn::lightFragmentShader));
-	std::vector<Llyn::Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Llyn::Vertex));
-	std::vector<GLuint> lightInds(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
-	Llyn::Mesh light(lightVerts, lightInds, texs);
-	auto lightTransform = light.GetTransform();
-	lightTransform->position = glm::vec3(0.5f, 0.5f, 0.5f);
-
-	glm::vec4 lightColor = glm::vec4(255 / 255.f, 255 / 255.f, 255 / 255.f, 1.f);
-	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
-
-	lightShader.Activate();
-	lightShader.SetUniform("lightColor", lightColor);
+	Llyn::Model model("Models/Sword/scene.gltf");
 
 	shader.Activate();
-	shader.SetUniform("lightColor", lightColor);
-	shader.SetUniform("lightPos", lightPos);
-
-	float rotationX = 0.f;
-	float rotationY = 0.f;
-	float rotationZ = 0.f;
-	double prevTime = glfwGetTime();
+	shader.SetUniform("lightColor", glm::vec4(1.f, 1.f, 1.f, 1.f));
+	shader.SetUniform("lightPos", glm::vec3(0.f, 0.f, 0.f));
 
 	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(1920, 1080.f));
 
 	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CW);
+	
+	glfwSwapInterval(0);
+
+	int frameCount = 0;
+	double fpsTimerStart = glfwGetTime();
+	double currentFPS = 0.0;
 
 	// Main render loop
 	while (!glfwWindowShouldClose(window))
@@ -136,25 +79,22 @@ int main()
 		// Poll events
 		glfwPollEvents();
 
-		double crntTime = glfwGetTime();
-		if (crntTime - prevTime >= 1 / 60.f)
+		// FPS counting
+		frameCount++;
+		double now = glfwGetTime();
+		double elapsed = now - fpsTimerStart;
+		if (elapsed >= 1.0f / 30.f)
 		{
-			rotationX += 1.8f;
-			rotationY += 1.4f;
-			rotationZ += 1.6f;
+			std::string fps = std::to_string((1.0 / elapsed) * frameCount);
+			std::string ms = std::to_string((elapsed / frameCount) * 1000);
 
-			float posX = 0.5f * sin(glfwGetTime());
-			float posZ = 0.5f * cos(glfwGetTime());
-			float posY = 1.5f * abs(0.5f + 0.5f * sin(glfwGetTime() * 0.5f));
+			std::string final = "Llyn Engine - FPS: " + fps + " / ms: " + ms;
 
-			lightTransform->position = glm::vec3(posX, posY, posZ);
-			lightPos = lightTransform->position;
-			lightTransform->rotation = glm::vec3(rotationX, rotationY, rotationZ);
+			glfwSetWindowTitle(window, final.c_str());
 
-			shader.Activate();
-			shader.SetUniform("lightPos", lightPos);
-
-			prevTime = crntTime;
+			// Reset
+			frameCount = 0;
+			fpsTimerStart = now;
 		}
 
 		// Clear the screen with a dark color
@@ -164,9 +104,7 @@ int main()
 		camera.Input(window);
 		camera.UpdateMatrix();
 
-		plane.Draw(shader, camera);
-
-		light.Draw(lightShader, camera);
+		model.Draw(shader, camera);
 
 		glfwSwapBuffers(window);
 	}

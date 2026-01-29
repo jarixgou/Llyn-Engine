@@ -19,14 +19,17 @@ out vec2 texCoord;
 
 uniform mat4 uCamMatrix;
 uniform mat4 model;
+uniform mat4 translation;
+uniform mat4 rotation;
+uniform mat4 scale;
 uniform mat3 modelInverse;
 
 void main()
 {
-	crntPos = vec3(model * vec4(aPos, 1.f));
-	Normal = modelInverse * aNormal;
+	crntPos = vec3(model * translation * rotation * scale * vec4(aPos, 1.f));
+	Normal = modelInverse * mat3(rotation) * aNormal;
 	color = aColor;
-	texCoord = aTexCoord;
+	texCoord = mat2(1.0, 0.0, 0.0, -1.0) *aTexCoord;
 
 	gl_Position = uCamMatrix * vec4(crntPos, 1.f);
 }

@@ -2,9 +2,11 @@
 #define MODEL__H
 
 #include <glad/glad.h>
+#include <glm/fwd.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
 #include <json/json.h>
 #include "../Macro.h"
 
@@ -26,6 +28,11 @@ namespace ENGINE_NAME
 		json m_json;
 
 		std::vector<Mesh> m_meshes;
+		std::vector<glm::vec3> m_translationsMeshes;
+		std::vector<glm::quat> m_rotationsMeshes;
+		std::vector<glm::vec3> m_scalesMeshes;
+		std::vector<glm::mat4> m_matricesMeshes;
+
 		std::vector<Texture> m_loadedTextures;
 	public:
 		Model(const char* _filePath);
@@ -33,10 +40,14 @@ namespace ENGINE_NAME
 
 		void Draw(Shader& _shader, Camera& _camera);
 	private:
+		void LoadMesh(unsigned int _indMesh);
+
+		void TraverseNode(unsigned int _nextNode, glm::mat4 _matrix = glm::mat4(1.f));
+
 		std::vector<unsigned char> LoadBinaryFile();
-		std::vector<float> GetFloatsData(json& _accessor);
+		std::vector<float> GetFloats(json& _accessor);
 		std::vector<GLuint> GetIndices(json& _accessor);
-		std::vector<Texture> GetTextures(json& _accessor);
+		std::vector<Texture> GetTextures();
 
 		std::vector<Vertex> AssembleVertices(std::vector<glm::vec3>& _positions, std::vector<glm::vec3>& _normals, std::vector<glm::vec2>& _texUVs);
 

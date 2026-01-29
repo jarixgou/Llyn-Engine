@@ -1,6 +1,7 @@
 #include "Texture.h"
 
 #include <iostream>
+#include <memory>
 #include <stb/stb_image.h>
 
 #include "../Shader/Shader.h"
@@ -48,15 +49,27 @@ namespace ENGINE_NAME
 		m_name = std::string(_filePath);
 		m_name = m_name.substr(m_name.find_last_of("/\\") + 1);
 
-		glGenTextures(1, &m_id);
+		GLuint* idPtr = new GLuint(0);
+		glGenTextures(1, idPtr);
+		m_id = std::shared_ptr<GLuint>(idPtr, [](GLuint* p) {
+			if (p && *p != 0)
+			{
+				glDeleteTextures(1, p);
+			}
+			delete p;
+			});
+
 		glActiveTexture(GL_TEXTURE0 + m_slot);
 		Bind();
 
-		SetFilter(GL_TEXTURE_MIN_FILTER, GL_TEXTURE_MAG_FILTER);
+		// Définit les paramètres avant l'image
+		SetFilter(GL_NEAREST, GL_NEAREST);
 		SetRepeated(true);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, format, widthImage, heightImage, 0, format, GL_UNSIGNED_BYTE, bytes);
+
 		GenerateMipmap();
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImage, heightImage, 0, format, GL_UNSIGNED_BYTE, bytes);
 
 		stbi_image_free(bytes);
 		Unbind();
@@ -64,13 +77,13 @@ namespace ENGINE_NAME
 
 	Texture::~Texture()
 	{
-		glDeleteTextures(1, &m_id);
+
 	}
 
 	void Texture::Bind() const
 	{
 		glActiveTexture(GL_TEXTURE0 + m_slot);
-		glBindTexture(GL_TEXTURE_2D, m_id);
+		glBindTexture(GL_TEXTURE_2D, *m_id);
 	}
 
 	void Texture::Unbind() const
@@ -81,7 +94,7 @@ namespace ENGINE_NAME
 	void Texture::TexUnit(Shader& _shader, const char* _uniform, GLuint& _unit)
 	{
 		_shader.Activate();
-		_shader.SetUniform(_uniform, _unit);
+		_shader.SetUniform(_uniform, m_slot);
 	}
 
 	void Texture::SetRepeated(bool _repeated) const
@@ -93,8 +106,8 @@ namespace ENGINE_NAME
 
 	void Texture::SetFilter(GLenum _minFilter, GLenum _magFilter) const
 	{
-		glTexParameteri(GL_TEXTURE_2D, _minFilter, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, _magFilter, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _minFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _magFilter);
 	}
 
 	void Texture::SetType(const char* _type)

@@ -7,6 +7,7 @@ namespace ENGINE_NAME
 {
 	const char* fragmentShaderSource = R"(
 #version 460 core
+
 out vec4 FragColor;
 
 in vec3 crntPos;
@@ -100,9 +101,8 @@ vec4 SpotLight()
 
 
 void main()
-{
-	// outputs final color
-	FragColor = PointLight() * vec4(color, 1.0);
+{	
+    FragColor = DirectLight();
 }
 )";
 }
