@@ -4,25 +4,40 @@
 #include <memory>
 #include <stb/stb_image.h>
 
-#include "../Shader/Shader.h"
+#include "../Render/OpenGL/Shader/Shader.h"
 
-namespace ENGINE_NAME
+namespace Llyn
 {
-	Texture::Texture(const char* _filePath, const char* _type, GLuint _slot)
+	Texture::Texture(const char* _filePath, GLuint _slot)
 	{
-		m_type = _type;
-		m_slot = _slot;
+		Texture::Load(_filePath);
+	}
+
+	Texture::~Texture()
+	{
+		glDeleteTextures(1, &m_id);
+	}
+
+	bool Texture::Load(const char* _path)
+	{
+		m_slot = 0;
+		m_id = 0;
+		m_size = { 0, 0 };
 
 		int widthImage;
 		int heightImage;
 		int numColChannels;
 
 		stbi_set_flip_vertically_on_load(true);
-		unsigned char* bytes = stbi_load(_filePath, &widthImage, &heightImage, &numColChannels, 0);
+		unsigned char* bytes = stbi_load(_path, &widthImage, &heightImage, &numColChannels, 0);
 		if (!bytes)
 		{
-			std::cerr << "Failed to load texture: " << _filePath << std::endl;
-			return;
+			std::cerr << "Failed to load texture: " << _path << std::endl;
+			return false;
+		}
+		else
+		{
+			std::cout << "Texture loaded successfully: " << _path << std::endl;
 		}
 
 		m_size = { static_cast<GLuint>(widthImage), static_cast<GLuint>(heightImage) };
@@ -46,15 +61,13 @@ namespace ENGINE_NAME
 			throw std::invalid_argument("Automatic Texture type recognition failed !");
 		}
 
-		m_name = std::string(_filePath);
+		m_name = std::string(_path);
 		m_name = m_name.substr(m_name.find_last_of("/\\") + 1);
 
 		glGenTextures(1, &m_id);
 
-		glActiveTexture(GL_TEXTURE0 + m_slot);
 		Bind();
 
-		// Définit les paramètres avant l'image
 		SetFilter(GL_NEAREST, GL_NEAREST);
 		SetRepeated(true);
 
@@ -62,14 +75,14 @@ namespace ENGINE_NAME
 
 		GenerateMipmap();
 
-
 		stbi_image_free(bytes);
 		Unbind();
+		return true;
 	}
 
-	Texture::~Texture()
+	void* Texture::Get()
 	{
-		glDeleteTextures(1, &m_id);
+		return this;
 	}
 
 	void Texture::Bind() const
@@ -83,7 +96,7 @@ namespace ENGINE_NAME
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void Texture::TexUnit(Shader& _shader, const char* _uniform, GLuint& _unit)
+	void Texture::TexUnit(Shader& _shader, const char* _uniform, GLuint _unit)
 	{
 		_shader.Activate();
 		_shader.SetUniform(_uniform, m_slot);
@@ -102,14 +115,9 @@ namespace ENGINE_NAME
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _magFilter);
 	}
 
-	void Texture::SetType(const char* _type)
+	void Texture::SetSlot(GLuint _slot)
 	{
-		m_type = _type;
-	}
-
-	const char* Texture::GetType() const
-	{
-		return m_type;
+		m_slot = _slot;
 	}
 
 	void Texture::GenerateMipmap() const

@@ -96,7 +96,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;unit.lib;assimp-vc143-mtd.lib;zsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -107,11 +107,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;unit.lib;assimp-vc143-mtd.lib;zs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -124,7 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;unit.lib;assimp-vc143-mtd.lib;zsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,53 +136,103 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;unit.lib;assimp-vc143-mtd.lib;zs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Asset\AssetManager.cpp" />
+    <ClCompile Include="Asset\IAsset.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
-    <ClCompile Include="EBO\EBO.cpp" />
+    <ClCompile Include="External\glad.c" />
+    <ClCompile Include="External\stb.cpp" />
+    <ClCompile Include="Material\Material.cpp" />
+    <ClCompile Include="Mesh\MeshHelper.cpp" />
+    <ClCompile Include="Model\Model.cpp" />
+    <ClCompile Include="Render\OpenGL\EBO\EBO.cpp" />
     <ClCompile Include="FBO\FBO.cpp" />
-    <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh\Mesh.cpp" />
-    <ClCompile Include="Model\Model.cpp" />
     <ClCompile Include="RBO\RBO.cpp" />
     <ClCompile Include="RenderTexture\RenderTexture.cpp" />
-    <ClCompile Include="Shader\Shader.cpp" />
-    <ClCompile Include="stb.cpp" />
+    <ClCompile Include="Render\Render.cpp" />
+    <ClCompile Include="Render\OpenGL\Shader\Shader.cpp" />
     <ClCompile Include="Texture\Texture.cpp" />
     <ClCompile Include="Transform\Transform.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />
-    <ClCompile Include="VAO\VAO.cpp" />
-    <ClCompile Include="VBO\VBO.cpp" />
+    <ClCompile Include="Render\OpenGL\VAO\VAO.cpp" />
+    <ClCompile Include="Render\OpenGL\VBO\VBO.cpp" />
     <ClCompile Include="Vector\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assert\Assert.h" />
+    <ClInclude Include="Asset\AssetManager.h" />
+    <ClInclude Include="Asset\IAsset.h" />
     <ClInclude Include="Camera\Camera.h" />
-    <ClInclude Include="EBO\EBO.h" />
-    <ClInclude Include="FBO\FBO.h" />
-    <ClInclude Include="Macro.h" />
-    <ClInclude Include="Mesh\Mesh.h" />
+    <ClInclude Include="Material\Material.h" />
+    <ClInclude Include="Memory\MemoryHelper.h" />
+    <ClInclude Include="Mesh\MeshHelper.h" />
     <ClInclude Include="Model\Model.h" />
+    <ClInclude Include="Render\OpenGL\EBO\EBO.h" />
+    <ClInclude Include="FBO\FBO.h" />
+    <ClInclude Include="Mesh\Mesh.h" />
     <ClInclude Include="RBO\RBO.h" />
     <ClInclude Include="RenderTexture\RenderTexture.h" />
-    <ClInclude Include="Shader\FragmentShaderDefault.h" />
-    <ClInclude Include="Shader\lightFragmentShader.h" />
-    <ClInclude Include="Shader\lightVertexShader.h" />
-    <ClInclude Include="Shader\Shader.h" />
-    <ClInclude Include="Shader\VertexShaderDefault.h" />
+    <ClInclude Include="Render\Render.h" />
+    <ClInclude Include="Render\OpenGL\Shader\FragmentShaderDefault.h" />
+    <ClInclude Include="Render\OpenGL\Shader\lightFragmentShader.h" />
+    <ClInclude Include="Render\OpenGL\Shader\lightVertexShader.h" />
+    <ClInclude Include="Render\OpenGL\Shader\Shader.h" />
+    <ClInclude Include="Render\OpenGL\Shader\VertexShaderDefault.h" />
     <ClInclude Include="Texture\Texture.h" />
     <ClInclude Include="Transform\Transform.h" />
     <ClInclude Include="Utils\Utils.h" />
-    <ClInclude Include="VAO\VAO.h" />
-    <ClInclude Include="VBO\VBO.h" />
+    <ClInclude Include="Render\OpenGL\VAO\VAO.h" />
+    <ClInclude Include="Render\OpenGL\VBO\VBO.h" />
     <ClInclude Include="Vector\Vector.h" />
     <ClInclude Include="Vertex\Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="bin\Core\Shader\default.vert">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DeploymentContent>
+      <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DeploymentContent>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="bin\Core\Shader\default.frag">
+      <FileType>Document</FileType>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="bin\Core\Texture\default.png">
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Core/Texture/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Core/Texture/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Texture/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Texture/%(Filename)%(Extension)</DestinationFileName>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="bin\Core\Texture\defaultSpecular.png">
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Core/Texture/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Core/Texture/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Texture/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Texture/%(Filename)%(Extension)</DestinationFileName>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

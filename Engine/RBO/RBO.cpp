@@ -1,6 +1,6 @@
 #include "RBO.h"
 
-namespace ENGINE_NAME
+namespace Llyn
 {
 	RBO::RBO(unsigned int& _width, unsigned int& _height)
 	{

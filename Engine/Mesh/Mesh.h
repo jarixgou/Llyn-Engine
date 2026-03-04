@@ -9,14 +9,15 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-#include "../Macro.h"
 
-namespace ENGINE_NAME
+
+namespace Llyn
 {
 	class VAO;
 	class VBO;
 	class EBO;
 	struct Vertex;
+	struct Material;
 	class Texture;
 	class Shader;
 	class Camera;
@@ -26,33 +27,28 @@ namespace ENGINE_NAME
 	class Mesh
 	{
 	private:
-		glm::mat4 m_model;
-
 		std::vector<Vertex> m_vertices;
 		std::vector<GLuint> m_indices;
-		std::vector<Texture*> m_textures;
+		Material* m_material;
 
-		std::unique_ptr<VAO> m_vao;
-		std::unique_ptr<VBO> m_vbo;
-		std::unique_ptr<EBO> m_ebo;
+		VAO* m_vao;
+		VBO* m_vbo;
+		EBO* m_ebo;
 	public:
-		Mesh(const std::vector<Vertex>& _vertices, const std::vector<GLuint>& _indices, const std::vector<Texture*>& _textures);
+		Mesh(const std::vector<Vertex>& _vertices, const std::vector<GLuint>& _indices, Material* _material);
 		~Mesh();
 
 		Mesh(const Mesh&) = delete;
 		Mesh& operator=(const Mesh&) = delete;
 
-		Mesh(Mesh&&) noexcept;
-		Mesh& operator=(Mesh&&) noexcept;
+		Mesh(Mesh&& _other) noexcept;
+		Mesh& operator=(Mesh&& _other) noexcept;
 
 		void Draw
 		(
 			Shader& _shader,
 			Camera& _camera,
-			glm::mat4 _matrix = glm::mat4(1.f),
-			glm::vec3 _translation = glm::vec3(0.f, 0.f, 0.f),
-			glm::quat _rotation = glm::quat(1.f, 0.f, 0.f, 0.f),
-			glm::vec3 _scale = glm::vec3(1.f, 1.f, 1.f)
+			glm::mat4 _model = glm::mat4(1.f)
 		);
 	};
 }

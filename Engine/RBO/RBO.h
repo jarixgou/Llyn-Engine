@@ -3,9 +3,9 @@
 
 #include <glad/glad.h>
 
-#include "../Macro.h"
 
-namespace ENGINE_NAME
+
+namespace Llyn
 {
 	class RBO
 	{

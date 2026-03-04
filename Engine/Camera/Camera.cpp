@@ -1,10 +1,9 @@
 #include "Camera.h"
 
+#include "../Render/OpenGL/Shader/Shader.h"
 
 
-#include "../Shader/Shader.h"
-
-namespace ENGINE_NAME
+namespace Llyn
 {
 	Camera::Camera(const glm::vec3& _position, const glm::vec2& _size)
 	{
@@ -28,31 +27,31 @@ namespace ENGINE_NAME
 	{
 	}
 
-	void Camera::Input(GLFWwindow* _window)
+	void Camera::Input(GLFWwindow* _window, float _dt)
 	{
 		if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
 		{
-			m_position += m_speed * m_orientation;
+			m_position += m_speed * m_orientation * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
 		{
-			m_position += m_speed * -glm::normalize(glm::cross(m_orientation, m_up));
+			m_position += m_speed * -glm::normalize(glm::cross(m_orientation, m_up)) * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
 		{
-			m_position += m_speed * -m_orientation;
+			m_position += m_speed * -m_orientation * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
 		{
-			m_position += m_speed * glm::normalize(glm::cross(m_orientation, m_up));
+			m_position += m_speed * glm::normalize(glm::cross(m_orientation, m_up)) * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		{
-			m_position += m_speed * m_up;
+			m_position += m_speed * m_up * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 		{
-			m_position += m_speed * -m_up;
+			m_position += m_speed * -m_up * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{

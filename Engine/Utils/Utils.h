@@ -3,9 +3,9 @@
 
 #include <string>
 
-#include "../Macro.h"
 
-namespace ENGINE_NAME
+
+namespace Llyn
 {
 	namespace Utils
 	{

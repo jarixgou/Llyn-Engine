@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <sstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -8,20 +8,12 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Camera/Camera.h"
-#include "Shader/Shader.h"
-#include "Shader/FragmentShaderDefault.h"
-#include "Shader/VertexShaderDefault.h"
-
-#include "VBO/VBO.h"
-#include "VAO/VAO.h"
-#include "EBO/EBO.h"
-#include "Shader/lightFragmentShader.h"
-#include "Shader/lightVertexShader.h"
-#include "Texture/Texture.h"
-#include "Vertex/Vertex.h"
+#include "Render/OpenGL/Shader/Shader.h"
 
 #include "Mesh/Mesh.h"
+#include "Mesh/MeshHelper.h"
 #include "Model/Model.h"
+#include "Render/Render.h"
 #include "Transform/Transform.h"
 
 int main()
@@ -33,7 +25,6 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 
 	// Create a GLFW window
 	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Llyn Engine", NULL, NULL);
@@ -51,22 +42,31 @@ int main()
 	// Set the viewport
 	glViewport(0, 0, 1920, 1080);
 
-	Llyn::Shader shader(static_cast<const void*>(Llyn::vertexShaderSource), static_cast<const void*>(Llyn::fragmentShaderSource));
-
-	Llyn::Model model("Models/Map/scene.gltf");
+	Llyn::Shader shader("Core/Shader/default.vert", "Core/Shader/default.frag");
 
 	shader.Activate();
-	shader.SetUniform("lightColor", glm::vec4(1.f, 1.f, 1.f, 1.f));
-	shader.SetUniform("lightPos", glm::vec3(0.f, 0.f, 0.f));
+	shader.SetUniform("light.type", 1);
+	shader.SetUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+	shader.SetUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+	shader.SetUniform("light.specular", glm::vec3(1.f, 1.f, 1.f));
+	shader.SetUniform("light.position", glm::vec3(0.f, 5.f, 0.f));
+
+	shader.SetUniform("light.direction", glm::vec3(0.f, -1.f, 0.f));
+
+	shader.SetUniform("light.constant", 1.f);
+	shader.SetUniform("light.linear", 0.09f);
+	shader.SetUniform("light.quadratic", 0.032f);
 
 	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(1920, 1080.f));
+
+	Llyn::Model model("Models/Backpack/scene.gltf");
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
-	glFrontFace(GL_CW);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 	
 	glfwSwapInterval(0);
 
@@ -98,12 +98,16 @@ int main()
 			fpsTimerStart = now;
 		}
 
+		float dt = now - fpsTimerStart;
+
 		// Clear the screen with a dark color
 		glClearColor(0.07f, 0.13f, 0.17f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		camera.Input(window);
+		camera.Input(window, dt);
 		camera.UpdateMatrix();
+
+		//cube.Draw(shader, camera);
 
 		model.Draw(shader, camera);
 

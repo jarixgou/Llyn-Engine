@@ -2,7 +2,6 @@
 #define CAMERA__H
 
 #include <glad/glad.h>      
-#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/fwd.hpp>
@@ -13,9 +12,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include "../Macro.h"
-
-namespace ENGINE_NAME
+namespace Llyn
 {
 	class Shader;
 
@@ -42,7 +39,7 @@ namespace ENGINE_NAME
 		Camera(const glm::vec3& _position, const glm::vec2& _size);
 		~Camera();
 
-		void Input(GLFWwindow* _window);
+		void Input(GLFWwindow* _window, float _dt);
 		void UpdateMatrix();
 		void Matrix(Shader& _shader);
 

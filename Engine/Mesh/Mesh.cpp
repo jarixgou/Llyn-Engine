@@ -1,41 +1,48 @@
-#include "Mesh.h"
+﻿#include "Mesh.h"
 
 #include <iostream>
 
-#include "../VAO/VAO.h"
-#include "../VBO/VBO.h"
-#include "../EBO/EBO.h"
+#include "../Render/OpenGL/VAO/VAO.h"
+#include "../Render/OpenGL/VBO/VBO.h"
+#include "../Render/OpenGL/EBO/EBO.h"
 #include "../Vertex/Vertex.h"
 #include "../Texture/Texture.h"
-#include "../Shader/Shader.h"
+#include "../Render/OpenGL/Shader/Shader.h"
 #include "../Camera/Camera.h"
-#include "../Transform/Transform.h"
+#include "../Render/Render.h"
+#include "../Material/Material.h"
 
-namespace ENGINE_NAME
+#include "../Memory/MemoryHelper.h"
+
+namespace Llyn
 {
-	Mesh::Mesh(Mesh&&) noexcept = default;
-	Mesh& Mesh::operator=(Mesh&&) noexcept = default;
-
-	Mesh::Mesh(const std::vector<Vertex>& _vertices, const std::vector<GLuint>& _indices, const std::vector<Texture*>& _textures)
+	Mesh::Mesh(const std::vector<Vertex>& _vertices, const std::vector<GLuint>& _indices, Material* _material)
 	{
-		m_model = glm::mat4(1.0f);
-
 		m_vertices = _vertices;
 		m_indices = _indices;
-		m_textures = _textures;
 
-		m_vao = std::make_unique<VAO>();
+		if (_material == nullptr)
+		{
+			AllocateMemory(&m_material);
+			AllocateMemory(&m_material->baseMap, "Core/Texture/default.png", 0);
+		}
+		else
+		{
+			m_material = _material;
+		}
+
+		AllocateMemory(&m_vao);
 		m_vao->Bind();
 
-		m_vbo = std::make_unique<VBO>(m_vertices);
-		m_ebo = std::make_unique<EBO>(m_indices);
+		AllocateMemory(&m_vbo, m_vertices);
+		AllocateMemory(&m_ebo, m_indices);
 		m_vbo->Bind();
 		m_ebo->Bind();
 
-		m_vao->LinkAttrib(m_vbo.get(), 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-		m_vao->LinkAttrib(m_vbo.get(), 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
-		m_vao->LinkAttrib(m_vbo.get(), 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
-		m_vao->LinkAttrib(m_vbo.get(), 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+		m_vao->LinkAttrib(m_vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+		m_vao->LinkAttrib(m_vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+		m_vao->LinkAttrib(m_vbo, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+		m_vao->LinkAttrib(m_vbo, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
 
 		m_vao->Unbind();
 		m_vbo->Unbind();
@@ -44,69 +51,80 @@ namespace ENGINE_NAME
 
 	Mesh::~Mesh()
 	{
-		for (auto& texture : m_textures)
-		{
-			delete texture;
-		}
+		DeleteMemory(&m_vao);
+		DeleteMemory(&m_vbo);
+		DeleteMemory(&m_ebo);
+
+		DeleteMemory(&m_material);
 
 		m_vertices.clear();
 		m_indices.clear();
-		m_textures.clear();
+	}
+
+	Mesh::Mesh(Mesh&& _other) noexcept
+	{
+		m_vertices = std::move(_other.m_vertices);
+		m_indices = std::move(_other.m_indices);
+
+		m_vao = _other.m_vao;
+		m_vbo = _other.m_vbo;
+		m_ebo = _other.m_ebo;
+
+		m_material = _other.m_material;
+
+		_other.m_vao = nullptr;
+		_other.m_vbo = nullptr;
+		_other.m_ebo = nullptr;
+		_other.m_material = nullptr;
+	}
+
+	Mesh& Mesh::operator=(Mesh&& _other) noexcept
+	{
+		if (this != &_other)
+		{
+			DeleteMemory(&m_vao);
+			DeleteMemory(&m_vbo);
+			DeleteMemory(&m_ebo);
+
+			DeleteMemory(&m_material);
+
+			m_vertices = std::move(_other.m_vertices);
+			m_indices = std::move(_other.m_indices);
+
+			m_vao = _other.m_vao;
+			m_vbo = _other.m_vbo;
+			m_ebo = _other.m_ebo;
+
+			m_material = _other.m_material;
+
+			_other.m_vao = nullptr;
+			_other.m_vbo = nullptr;
+			_other.m_ebo = nullptr;
+			_other.m_material = nullptr;
+		}
+		return *this;
 	}
 
 	void Mesh::Draw
 	(
 		Shader& _shader,
 		Camera& _camera,
-		glm::mat4 _matrix,
-		glm::vec3 _translation,
-		glm::quat _rotation,
-		glm::vec3 _scale
+		glm::mat4 _model
 	)
 	{
 		_shader.Activate();
 		m_vao->Bind();
 
-		glm::mat3 modelInverse = glm::transpose(glm::inverse(_matrix));
+		glm::mat3 modelInverse = glm::transpose(glm::inverse(_model));
 
-		unsigned int numDiffuse = 0;
-		unsigned int numSpecular = 0;
-
-		for (unsigned int i = 0; i < m_textures.size(); ++i)
-		{
-			std::string num = "";
-			std::string type = m_textures[i]->GetType();
-
-			if (type == "diffuse")
-			{
-				num = std::to_string(numDiffuse++);
-			}
-			else if (type == "specular")
-			{
-				num = std::to_string(numSpecular++);
-			}
-
-			m_textures[i]->Bind();
-			m_textures[i]->TexUnit(_shader, (type + num).c_str(), i);
-		}
+		m_material->Bind(_shader);
 
 		_shader.SetUniform("camPos", _camera.GetPosition());
 		_camera.Matrix(_shader);
 
-		glm::mat4 trans = glm::mat4(1.f);
-		glm::mat4 rot = glm::mat4(1.f);
-		glm::mat4 scale = glm::mat4(1.f);
-
-		trans = glm::translate(trans, _translation);
-		rot = glm::mat4_cast(_rotation);
-		scale = glm::scale(scale, _scale);
-
-		_shader.SetUniform("translation", glm::value_ptr(trans), 1);
-		_shader.SetUniform("rotation", glm::value_ptr(rot), 1);
-		_shader.SetUniform("scale", glm::value_ptr(scale), 1);
-		_shader.SetUniform("model", glm::value_ptr(_matrix), 1);
+		_shader.SetUniform("model", glm::value_ptr(_model), 1);
 		_shader.SetUniform("modelInverse", modelInverse);
 
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0);
+		Render::Get()->Draw(m_vao, m_indices, _camera, _shader);
 	}
 }

@@ -31,3 +31,4 @@
 Engine/x64
 .vs/
 .idea/
+*.pdb

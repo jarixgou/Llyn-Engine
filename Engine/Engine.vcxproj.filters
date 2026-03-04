@@ -18,25 +18,19 @@
     <ClCompile Include="main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="glad.c">
+    <ClCompile Include="Render\OpenGL\Shader\Shader.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Shader\Shader.cpp">
+    <ClCompile Include="Render\OpenGL\VBO\VBO.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="VBO\VBO.cpp">
+    <ClCompile Include="Render\OpenGL\EBO\EBO.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="EBO\EBO.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VAO\VAO.cpp">
+    <ClCompile Include="Render\OpenGL\VAO\VAO.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Vector\Vector.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="stb.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Texture\Texture.cpp">
@@ -51,9 +45,6 @@
     <ClCompile Include="Transform\Transform.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Model\Model.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Utils\Utils.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -66,30 +57,51 @@
     <ClCompile Include="RenderTexture\RenderTexture.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Render\Render.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\MeshHelper.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="External\glad.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="External\stb.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\Material.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Model.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\AssetManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\IAsset.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shader\Shader.h">
+    <ClInclude Include="Render\OpenGL\Shader\Shader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Shader\VertexShaderDefault.h">
+    <ClInclude Include="Render\OpenGL\Shader\VertexShaderDefault.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Shader\FragmentShaderDefault.h">
+    <ClInclude Include="Render\OpenGL\Shader\FragmentShaderDefault.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="VBO\VBO.h">
+    <ClInclude Include="Render\OpenGL\VBO\VBO.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="VAO\VAO.h">
+    <ClInclude Include="Render\OpenGL\VAO\VAO.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="EBO\EBO.h">
+    <ClInclude Include="Render\OpenGL\EBO\EBO.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Vector\Vector.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Macro.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Texture\Texture.h">
@@ -98,10 +110,10 @@
     <ClInclude Include="Camera\Camera.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Shader\lightVertexShader.h">
+    <ClInclude Include="Render\OpenGL\Shader\lightVertexShader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Shader\lightFragmentShader.h">
+    <ClInclude Include="Render\OpenGL\Shader\lightFragmentShader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Mesh\Mesh.h">
@@ -111,9 +123,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Transform\Transform.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Model\Model.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Utils.h">
@@ -128,5 +137,39 @@
     <ClInclude Include="RenderTexture\RenderTexture.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Render.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Assert\Assert.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\MeshHelper.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Material\Material.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\MemoryHelper.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Model.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\IAsset.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\AssetManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="bin\Core\Shader\default.vert" />
+    <CopyFileToFolders Include="bin\Core\Shader\default.frag" />
+    <CopyFileToFolders Include="bin\Core\Texture\default.png">
+      <Filter>Fichiers de ressources</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="bin\Core\Texture\defaultSpecular.png">
+      <Filter>Fichiers de ressources</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

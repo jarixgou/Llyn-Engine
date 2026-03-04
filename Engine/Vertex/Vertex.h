@@ -4,9 +4,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include "../Macro.h"
-
-namespace ENGINE_NAME
+namespace Llyn
 {
 	struct Vertex
 	{

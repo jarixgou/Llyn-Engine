@@ -1,6 +1,6 @@
 #include "Vector.h"
 
-namespace ENGINE_NAME
+namespace Llyn
 {
 #pragma region Vector2
 	Vector2u Vector2u::operator+(const Vector2u& _other) const

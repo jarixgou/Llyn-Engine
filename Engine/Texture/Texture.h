@@ -5,36 +5,39 @@
 #include <memory>
 #include <glad/glad.h>
 
+#include "../Asset/IAsset.h"
 #include "../Vector/Vector.h"
-#include "../Macro.h"
 
-namespace ENGINE_NAME
+
+namespace Llyn
 {
 	class Shader;
 
-	class Texture
+	class Texture : public IAsset
 	{
 	private:
 		GLuint m_id;
-		const char* m_type;
 		GLuint m_slot;
 		Vector2u m_size;
 
 		std::string m_name;
 	public:
-		Texture(const char* _filePath, const char* _type, GLuint _slot);
-		~Texture();
+		Texture() = default;
+		Texture(const char* _filePath, GLuint _slot);
+		~Texture() override;
+
+		bool Load(const char* _path) override;
+		void* Get() override;
 
 		void Bind() const;
 		void Unbind() const;
 
-		void TexUnit(Shader& _shader, const char* _uniform, GLuint& _unit);
+		void TexUnit(Shader& _shader, const char* _uniform, GLuint _unit);
 
 		void SetRepeated(bool _repeated) const;
 		void SetFilter(GLenum _minFilter, GLenum _magFilter) const;
 
-		void SetType(const char* _type);
-		const char* GetType() const;
+		void SetSlot(GLuint _slot);
 
 		void GenerateMipmap() const;
 		const Vector2u& GetSize() const;

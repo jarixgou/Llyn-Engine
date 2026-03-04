@@ -1,6 +1,6 @@
 #include "FBO.h"
 
-namespace ENGINE_NAME
+namespace Llyn
 {
 	FBO::FBO()
 	{

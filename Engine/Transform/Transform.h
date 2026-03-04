@@ -1,19 +1,19 @@
 #ifndef TRANSFORM__H
 #define TRANSFORM__H
 
+#include <glm/fwd.hpp>
 #include <glm/vec3.hpp>
+#include <glm/detail/type_quat.hpp>
 
-#include "../Macro.h"
-
-namespace ENGINE_NAME
+namespace Llyn
 {
 	struct Transform
 	{
-		Transform();
-
 		glm::vec3 position;
-		glm::vec3 rotation;
+		glm::quat rotation;
 		glm::vec3 scale;
+
+		Transform();
 	};
 }
 

@@ -1,14 +1,12 @@
 #include "RenderTexture.h"
 
-#include "../VAO/VAO.h"
-#include "../VBO/VBO.h"
+#include "../Render/OpenGL/VAO/VAO.h"
+#include "../Render/OpenGL/VBO/VBO.h"
 
-namespace ENGINE_NAME
+namespace Llyn
 {
 	RenderTexture::RenderTexture(unsigned int& _width, unsigned int& _height)
 	{
-
-
 		VAO vao;
 		VBO vbo();
 
