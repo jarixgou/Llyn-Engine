@@ -18,35 +18,35 @@ namespace Llyn
 	{
 		Vertex vertices[] =
 		{//					Coords									Normal							Color							UV
-			Vertex{glm::vec3(-0.1f, -0.1f, 0.1f),		glm::vec3(0.f, 0.f, 1.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f)}, // 0
-			Vertex{glm::vec3(0.1f, -0.1f, 0.1f),		glm::vec3(0.f, 0.f, 1.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 0.f)}, // 1
-			Vertex{glm::vec3(0.1f, 0.1f, 0.1f),			glm::vec3(0.f, 0.f, 1.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f)}, // 2
-			Vertex{glm::vec3(-0.1f, 0.1f, 0.1f),		glm::vec3(0.f, 0.f, 1.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f)}, // 3
+			{{-0.1f, -0.1f, 0.1f},		{0.f, 0.f, 1.f},	{1.f, 1.f, 1.f},		{0.f, 0.f}}, // 0
+			{{0.1f, -0.1f, 0.1f},		{0.f, 0.f, 1.f},	{1.f, 1.f, 1.f},		{1.f, 0.f}}, // 1
+			{{0.1f, 0.1f, 0.1f},		{0.f, 0.f, 1.f},	{1.f, 1.f, 1.f},		{1.f, 1.f}}, // 2
+			{{-0.1f, 0.1f, 0.1f},		{0.f, 0.f, 1.f},	{1.f, 1.f, 1.f},		{0.f, 1.f}}, // 3
 
-			Vertex{glm::vec3(0.1f, -0.1f, -0.1f),		glm::vec3(0.f, 0.f, -1.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f)}, // 4
-			Vertex{glm::vec3(-0.1f, -0.1f, -0.1f),		glm::vec3(0.f, 0.f, -1.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 0.f)}, // 5
-			Vertex{glm::vec3(-0.1f, 0.1f, -0.1f),		glm::vec3(0.f, 0.f, -1.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f)}, // 6
-			Vertex{glm::vec3(0.1f, 0.1f, -0.1f),		glm::vec3(0.f, 0.f, -1.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f)}, // 7
+			{{0.1f, -0.1f, -0.1f},		{0.f, 0.f, -1.f},	{1.f, 1.f, 1.f},		{0.f, 0.f}}, // 4
+			{{-0.1f, -0.1f, -0.1f},		{0.f, 0.f, -1.f},	{1.f, 1.f, 1.f},		{1.f, 0.f}}, // 5
+			{{-0.1f, 0.1f, -0.1f},		{0.f, 0.f, -1.f},	{1.f, 1.f, 1.f},		{1.f, 1.f}}, // 6
+			{{0.1f, 0.1f, -0.1f},		{0.f, 0.f, -1.f},	{1.f, 1.f, 1.f},		{0.f, 1.f}}, // 7
 
-			Vertex{glm::vec3(0.1f, -0.1f, 0.1f),		glm::vec3(1.f, 0.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f)}, // 8
-			Vertex{glm::vec3(0.1f, -0.1f, -0.1f),		glm::vec3(1.f, 0.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 0.f)}, // 9
-			Vertex{glm::vec3(0.1f, 0.1f, -0.1f),		glm::vec3(1.f, 0.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f)}, // 10
-			Vertex{glm::vec3(0.1f, 0.1f, 0.1f),			glm::vec3(1.f, 0.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f)}, // 11
+			{{0.1f, -0.1f, 0.1f},		{1.f, 0.f, 0.f},	{1.f, 1.f, 1.f},		{0.f, 0.f}}, // 8
+			{{0.1f, -0.1f, -0.1f},		{1.f, 0.f, 0.f},	{1.f, 1.f, 1.f},		{1.f, 0.f}}, // 9
+			{{0.1f, 0.1f, -0.1f},		{1.f, 0.f, 0.f},	{1.f, 1.f, 1.f},		{1.f, 1.f}}, // 10
+			{{0.1f, 0.1f, 0.1f},		{1.f, 0.f, 0.f},	{1.f, 1.f, 1.f},		{0.f, 1.f}}, // 11
 
-			Vertex{glm::vec3(-0.1f, -0.1f, -0.1f),		glm::vec3(-1.f, 0.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f)}, // 12
-			Vertex{glm::vec3(-0.1f, -0.1f, 0.1f),		glm::vec3(-1.f, 0.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 0.f)}, // 13
-			Vertex{glm::vec3(-0.1f, 0.1f, 0.1f),		glm::vec3(-1.f, 0.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f)}, // 14
-			Vertex{glm::vec3(-0.1f, 0.1f, -0.1f),		glm::vec3(-1.f, 0.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f)}, // 15
+			{{-0.1f, -0.1f, -0.1f},		{-1.f, 0.f, 0.f},	{1.f, 1.f, 1.f},		{0.f, 0.f}}, // 12
+			{{-0.1f, -0.1f, 0.1f},		{-1.f, 0.f, 0.f},	{1.f, 1.f, 1.f},		{1.f, 0.f}}, // 13
+			{{-0.1f, 0.1f, 0.1f},		{-1.f, 0.f, 0.f},	{1.f, 1.f, 1.f},		{1.f, 1.f}}, // 14
+			{{-0.1f, 0.1f, -0.1f},		{-1.f, 0.f, 0.f},	{1.f, 1.f, 1.f},		{0.f, 1.f}}, // 15
 
-			Vertex{glm::vec3(-0.1f, 0.1f, 0.1f),		glm::vec3(0.f, 1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f)}, // 16
-			Vertex{glm::vec3(0.1f, 0.1f, 0.1f),			glm::vec3(0.f, 1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 0.f)}, // 17
-			Vertex{glm::vec3(0.1f, 0.1f, -0.1f),		glm::vec3(0.f, 1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f)}, // 18
-			Vertex{glm::vec3(-0.1f, 0.1f, -0.1f),		glm::vec3(0.f, 1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f)}, // 19
+			{{-0.1f, 0.1f, 0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},		{0.f, 0.f}}, // 16
+			{{0.1f, 0.1f, 0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},		{1.f, 0.f}}, // 17
+			{{0.1f, 0.1f, -0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},		{1.f, 1.f}}, // 18
+			{{-0.1f, 0.1f, -0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},		{0.f, 1.f}}, // 19
 
-			Vertex{glm::vec3(-0.1f, -0.1f, -0.1f),		glm::vec3(0.f, -1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f)}, // 20
-			Vertex{glm::vec3(0.1f, -0.1f, -0.1f),		glm::vec3(0.f, -1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 0.f)}, // 21
-			Vertex{glm::vec3(0.1f, -0.1f, 0.1f),		glm::vec3(0.f, -1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f)}, // 22
-			Vertex{glm::vec3(-0.1f, -0.1f, 0.1f),		glm::vec3(0.f, -1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f)}, // 23
+			{{-0.1f, -0.1f, -0.1f},		{0.f, -1.f, 0.f},	{1.f, 1.f, 1.f},		{0.f, 0.f}}, // 20
+			{{0.1f, -0.1f, -0.1f},		{0.f, -1.f, 0.f},	{1.f, 1.f, 1.f},		{1.f, 0.f}}, // 21
+			{{0.1f, -0.1f, 0.1f},		{0.f, -1.f, 0.f},	{1.f, 1.f, 1.f},		{1.f, 1.f}}, // 22
+			{{-0.1f, -0.1f, 0.1f},		{0.f, -1.f, 0.f},	{1.f, 1.f, 1.f},		{0.f, 1.f}}, // 23
 		};
 
 		GLuint indices[] =
@@ -155,10 +155,10 @@ namespace Llyn
 	{
 		Vertex vertices[] =
 		{//				Coords								Normal						Color						UV
-			Vertex{glm::vec3(-0.1f, 0.f, 0.1f),		glm::vec3(0.f, 1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),	glm::vec2(0.f, 0.f)}, // 0
-			Vertex{glm::vec3(0.1f, 0.f, 0.1f),		glm::vec3(0.f, 1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),	glm::vec2(1.f, 0.f)}, // 1
-			Vertex{glm::vec3(0.1f, 0.f, -0.1f),		glm::vec3(0.f, 1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),	glm::vec2(1.f, 0.f)}, // 2
-			Vertex{glm::vec3(-0.1f, 0.f, -0.1f),	glm::vec3(0.f, 1.f, 0.f),	glm::vec3(1.f, 1.f, 1.f),	glm::vec2(1.f, 0.f)}, // 3
+			{{-0.1f, 0.f, 0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{0.f, 0.f}}, // 0
+			{{0.1f, 0.f, 0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 0.f}}, // 1
+			{{0.1f, 0.f, -0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 0.f}}, // 2
+			{{-0.1f, 0.f, -0.1f},	{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 0.f}}, // 3
 		};
 
 		GLuint indices[] =

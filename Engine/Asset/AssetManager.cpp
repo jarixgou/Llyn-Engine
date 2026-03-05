@@ -4,11 +4,17 @@ namespace Llyn
 {
 	AssetManager* AssetManager::s_singleton = nullptr;
 
+	AssetManager::~AssetManager()
+	{
+		DELETE_MEMORY(s_singleton);
+		Clear();
+	}
+
 	AssetManager* AssetManager::Get()
 	{
 		if (s_singleton == nullptr)
 		{
-			AllocateMemory(&s_singleton);
+			ALLOCATE_MEMORY(s_singleton);
 		}
 		return s_singleton;
 	}
@@ -17,7 +23,7 @@ namespace Llyn
 	{
 		for (auto & asset : m_assets)
 		{
-			DeleteMemory(&asset.second);
+			DELETE_MEMORY(asset.second);
 		}
 		m_assets.clear();
 	}

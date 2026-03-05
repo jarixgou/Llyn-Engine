@@ -7,8 +7,9 @@ namespace Llyn
 	class Texture;
 	class Shader;
 
-	struct Material
+	class Material
 	{
+	public:
 		Texture* baseMap;
 		Texture* specularMap;
 		Texture* normalMap;

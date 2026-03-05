@@ -23,39 +23,45 @@ namespace Llyn
 
 		if (_material == nullptr)
 		{
-			AllocateMemory(&m_material);
-			AllocateMemory(&m_material->baseMap, "Core/Texture/default.png", 0);
+			ALLOCATE_MEMORY(m_material);
+			ALLOCATE_MEMORY(m_material->baseMap, "Core/Texture/default.png", 0);
 		}
 		else
 		{
 			m_material = _material;
 		}
 
-		AllocateMemory(&m_vao);
-		m_vao->Bind();
+		ALLOCATE_MEMORY(m_vao);
+		if (m_vao != nullptr)
+		{
+			m_vao->Bind();
+		}
 
-		AllocateMemory(&m_vbo, m_vertices);
-		AllocateMemory(&m_ebo, m_indices);
-		m_vbo->Bind();
-		m_ebo->Bind();
+		ALLOCATE_MEMORY(m_vbo, m_vertices);
+		ALLOCATE_MEMORY(m_ebo, m_indices);
+		if (m_vao != nullptr && m_vbo != nullptr && m_ebo != nullptr)
+		{
+			m_vbo->Bind();
+			m_ebo->Bind();
 
-		m_vao->LinkAttrib(m_vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-		m_vao->LinkAttrib(m_vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
-		m_vao->LinkAttrib(m_vbo, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
-		m_vao->LinkAttrib(m_vbo, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+			m_vao->LinkAttrib(m_vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+			m_vao->LinkAttrib(m_vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+			m_vao->LinkAttrib(m_vbo, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+			m_vao->LinkAttrib(m_vbo, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
 
-		m_vao->Unbind();
-		m_vbo->Unbind();
-		m_ebo->Unbind();
+			m_vao->Unbind();
+			m_vbo->Unbind();
+			m_ebo->Unbind();
+		}
 	}
 
 	Mesh::~Mesh()
 	{
-		DeleteMemory(&m_vao);
-		DeleteMemory(&m_vbo);
-		DeleteMemory(&m_ebo);
+		DELETE_MEMORY(m_vao);
+		DELETE_MEMORY(m_vbo);
+		DELETE_MEMORY(m_ebo);
 
-		DeleteMemory(&m_material);
+		DELETE_MEMORY(m_material);
 
 		m_vertices.clear();
 		m_indices.clear();
@@ -82,11 +88,11 @@ namespace Llyn
 	{
 		if (this != &_other)
 		{
-			DeleteMemory(&m_vao);
-			DeleteMemory(&m_vbo);
-			DeleteMemory(&m_ebo);
+			DELETE_MEMORY(m_vao);
+			DELETE_MEMORY(m_vbo);
+			DELETE_MEMORY(m_ebo);
 
-			DeleteMemory(&m_material);
+			DELETE_MEMORY(m_material);
 
 			m_vertices = std::move(_other.m_vertices);
 			m_indices = std::move(_other.m_indices);

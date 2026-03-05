@@ -19,12 +19,21 @@ namespace Llyn
 		LoadModel(_path);
 	}
 
+	Model::~Model()
+	{
+		for (auto& mesh : m_meshes)
+		{
+			DELETE_MEMORY(mesh);
+		}
+		m_models.clear();
+	}
+
 	void Model::Draw(Shader& _shader, Camera& _camera, glm::mat4 _model)
 	{
 		for (size_t i = 0; i < m_meshes.size(); ++i)
 		{
 			glm::mat4 finalMat = _model * m_models[i];
-			m_meshes[i].Draw(_shader, _camera, finalMat);
+			m_meshes[i]->Draw(_shader, _camera, finalMat);
 		}
 	}
 
@@ -32,10 +41,9 @@ namespace Llyn
 	{
 		Assimp::Importer import;
 
-		// Flags d'optimisation pour réduire la taille du modèle
 		unsigned int flags =
-			aiProcess_Triangulate |           // Convertir en triangles
-			aiProcess_FlipUVs;                // Inverser les UVs
+			aiProcess_Triangulate |           
+			aiProcess_FlipUVs;                
 
 		const aiScene* scene = import.ReadFile(_path, flags);
 
@@ -58,8 +66,6 @@ namespace Llyn
 		aiMatrix4x4 aiTransform = _node->mTransformation;
 		glm::mat4 nodeTransform;
 
-		// CORRECTION : Transposer lors de la copie (row-major -> column-major)
-		// Assimp utilise [ligne][colonne], glm utilise [colonne][ligne]
 		nodeTransform[0][0] = aiTransform.a1; nodeTransform[1][0] = aiTransform.a2;
 		nodeTransform[2][0] = aiTransform.a3; nodeTransform[3][0] = aiTransform.a4;
 
@@ -72,13 +78,17 @@ namespace Llyn
 		nodeTransform[0][3] = aiTransform.d1; nodeTransform[1][3] = aiTransform.d2;
 		nodeTransform[2][3] = aiTransform.d3; nodeTransform[3][3] = aiTransform.d4;
 
-		glm::mat4 globalTransform = _parentModel * nodeTransform;
+		glm::mat4 globalTransform = _parentModel * nodeTransform * 0.3f;
 
 		for (size_t i = 0; i < _node->mNumMeshes; ++i)
 		{
 			aiMesh* mesh = _scene->mMeshes[_node->mMeshes[i]];
-			m_meshes.push_back(PorcessMesh(mesh, _scene));
-			m_models.push_back(globalTransform);
+			Mesh* processMesh = ProcessMesh(mesh, _scene);
+			if (processMesh != nullptr)
+			{
+				m_meshes.push_back(ProcessMesh(mesh, _scene));
+				m_models.push_back(globalTransform);
+			}
 		}
 		for (size_t i = 0; i < _node->mNumChildren; ++i)
 		{
@@ -86,7 +96,7 @@ namespace Llyn
 		}
 	}
 
-	Mesh Model::PorcessMesh(aiMesh* _mesh, const aiScene* _scene) const
+	Mesh* Model::ProcessMesh(aiMesh* _mesh, const aiScene* _scene) const
 	{
 		std::vector<Vertex> vertices;
 		std::vector<GLuint> indices;
@@ -132,14 +142,15 @@ namespace Llyn
 			material = LoadMaterial(mat);
 		}
 
-		Mesh mesh(vertices, indices, material);
+		Mesh* mesh = nullptr;
+		ALLOCATE_MEMORY(mesh, vertices, indices, material);
 		return mesh;
 	}
 
 	Material* Model::LoadMaterial(aiMaterial* _mat) const
 	{
 		Material* material = nullptr;
-		AllocateMemory(&material);
+		ALLOCATE_MEMORY(material);
 
 		// Essayer DIFFUSE d'abord (format classique)
 		if (_mat->GetTextureCount(aiTextureType_DIFFUSE) > 0)
@@ -149,8 +160,11 @@ namespace Llyn
 			std::string fullPath = m_directory + '/' + texPath.C_Str();
 
 			Texture* texture = AssetManager::Get()->GetAsset<Texture>(fullPath.c_str());
-			texture->SetSlot(0);
-			material->baseMap = texture;
+			if (texture != nullptr)
+			{
+				texture->SetSlot(0);
+				material->baseMap = texture;
+			}
 		}
 		// Essayer BASE_COLOR (format PBR/FBX moderne)
 		else if (_mat->GetTextureCount(aiTextureType_BASE_COLOR) > 0)
@@ -160,8 +174,11 @@ namespace Llyn
 			std::string fullPath = m_directory + '/' + texPath.C_Str();
 
 			Texture* texture = AssetManager::Get()->GetAsset<Texture>(fullPath.c_str());
-			texture->SetSlot(0);
-			material->baseMap = texture;
+			if (texture != nullptr)
+			{
+				texture->SetSlot(0);
+				material->baseMap = texture;
+			}
 		}
 
 		// Charger la texture spéculaire si disponible
@@ -172,8 +189,11 @@ namespace Llyn
 			std::string fullPath = m_directory + '/' + texPath.C_Str();
 
 			Texture* texture = AssetManager::Get()->GetAsset<Texture>(fullPath.c_str());
-			texture->SetSlot(1);
-			material->specularMap = texture;
+			if (texture != nullptr)
+			{
+				texture->SetSlot(1);
+				material->specularMap = texture;
+			}
 		}
 
 		// Charger la normal map si disponible
@@ -184,8 +204,11 @@ namespace Llyn
 			std::string fullPath = m_directory + '/' + texPath.C_Str();
 			
 			Texture* texture = AssetManager::Get()->GetAsset<Texture>(fullPath.c_str());
-			texture->SetSlot(2);
-			material->normalMap = texture;
+			if (texture != nullptr)
+			{
+				texture->SetSlot(2);
+				material->normalMap = texture;
+			}
 		}
 		else if (_mat->GetTextureCount(aiTextureType_HEIGHT) > 0)
 		{
@@ -194,8 +217,16 @@ namespace Llyn
 			std::string fullPath = m_directory + '/' + texPath.C_Str();
 
 			Texture* texture = AssetManager::Get()->GetAsset<Texture>(fullPath.c_str());
-			texture->SetSlot(2);
-			material->normalMap = texture;
+			if (texture != nullptr)
+			{
+				texture->SetSlot(2);
+				material->normalMap = texture;
+			}
+		}
+
+		if (material->baseMap == nullptr && material->normalMap == nullptr && material->specularMap)
+		{
+			DELETE_MEMORY(material);
 		}
 
 		return material;

@@ -17,7 +17,7 @@ namespace Llyn
 	class VBO;
 	class EBO;
 	struct Vertex;
-	struct Material;
+	class Material;
 	class Texture;
 	class Shader;
 	class Camera;

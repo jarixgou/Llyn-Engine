@@ -20,9 +20,9 @@ namespace Llyn
 
 	Material::~Material()
 	{
-		DeleteMemory(&baseMap);
-		DeleteMemory(&specularMap);
-		DeleteMemory(&normalMap);
+		baseMap = nullptr;
+		specularMap = nullptr;
+		normalMap = nullptr;
 	}
 
 	void Material::Bind(Shader& _shader) const

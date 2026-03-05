@@ -18,6 +18,10 @@ namespace Llyn
 
 		static AssetManager* s_singleton;
 	public:
+
+		AssetManager() = default;
+		~AssetManager();
+
 		// Singleton
 		static AssetManager* Get();
 
@@ -28,19 +32,17 @@ namespace Llyn
 			{
 				std::string key(_path);
 
-				// Si l'asset existe déjà, le retourner
 				if (m_assets.find(key) != m_assets.end())
 				{
 					return static_cast<T*>(m_assets[key]);
 				}
 
-				// Créer un nouvel asset
 				T* newAsset = nullptr;
-				AllocateMemory(&newAsset);
+				ALLOCATE_MEMORY(newAsset);
 				if (!newAsset->Load(_path))
 				{
 					std::cerr << "Failed to load asset: " << _path << std::endl;
-					DeleteMemory(&newAsset);
+					DELETE_MEMORY(newAsset);
 					return nullptr;
 				}
 

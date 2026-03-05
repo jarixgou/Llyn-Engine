@@ -150,6 +150,7 @@
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="External\glad.c" />
     <ClCompile Include="External\stb.cpp" />
+    <ClCompile Include="Logger\Logger.cpp" />
     <ClCompile Include="Material\Material.cpp" />
     <ClCompile Include="Mesh\MeshHelper.cpp" />
     <ClCompile Include="Model\Model.cpp" />
@@ -167,12 +168,14 @@
     <ClCompile Include="Render\OpenGL\VAO\VAO.cpp" />
     <ClCompile Include="Render\OpenGL\VBO\VBO.cpp" />
     <ClCompile Include="Vector\Vector.cpp" />
+    <ClCompile Include="Vertex\Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Assert\Assert.h" />
     <ClInclude Include="Asset\AssetManager.h" />
     <ClInclude Include="Asset\IAsset.h" />
     <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Logger\Logger.h" />
     <ClInclude Include="Material\Material.h" />
     <ClInclude Include="Memory\MemoryHelper.h" />
     <ClInclude Include="Mesh\MeshHelper.h" />
@@ -183,11 +186,7 @@
     <ClInclude Include="RBO\RBO.h" />
     <ClInclude Include="RenderTexture\RenderTexture.h" />
     <ClInclude Include="Render\Render.h" />
-    <ClInclude Include="Render\OpenGL\Shader\FragmentShaderDefault.h" />
-    <ClInclude Include="Render\OpenGL\Shader\lightFragmentShader.h" />
-    <ClInclude Include="Render\OpenGL\Shader\lightVertexShader.h" />
     <ClInclude Include="Render\OpenGL\Shader\Shader.h" />
-    <ClInclude Include="Render\OpenGL\Shader\VertexShaderDefault.h" />
     <ClInclude Include="Texture\Texture.h" />
     <ClInclude Include="Transform\Transform.h" />
     <ClInclude Include="Utils\Utils.h" />

@@ -9,6 +9,11 @@ out vec3 Normal;
 out vec3 Color;
 out vec2 TexCoord;
 
+layout(std140) uniform Matrices
+{
+	mat4 cam;
+};
+
 uniform mat4 uCamMatrix;
 uniform mat4 model;
 uniform mat3 modelInverse;
