@@ -14,6 +14,8 @@
 
 #include "../Memory/MemoryHelper.h"
 
+#include "../Asset/AssetManager.h"
+
 namespace Llyn
 {
 	Mesh::Mesh(const std::vector<Vertex>& _vertices, const std::vector<GLuint>& _indices, Material* _material)
@@ -24,7 +26,12 @@ namespace Llyn
 		if (_material == nullptr)
 		{
 			ALLOCATE_MEMORY(m_material);
-			ALLOCATE_MEMORY(m_material->baseMap, "Core/Texture/default.png", 0);
+			Texture* texture = AssetManager::Get()->GetAsset<Texture>("Core/Texture/default.png");
+			if (texture != nullptr)
+			{
+				texture->SetSlot(0);
+				m_material->baseMap = texture;
+			}
 		}
 		else
 		{
@@ -118,15 +125,11 @@ namespace Llyn
 		glm::mat4 _model
 	)
 	{
-		_shader.Activate();
 		m_vao->Bind();
 
 		glm::mat3 modelInverse = glm::transpose(glm::inverse(_model));
 
 		m_material->Bind(_shader);
-
-		_shader.SetUniform("camPos", _camera.GetPosition());
-		_camera.Matrix(_shader);
 
 		_shader.SetUniform("model", glm::value_ptr(_model), 1);
 		_shader.SetUniform("modelInverse", modelInverse);

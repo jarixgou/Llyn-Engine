@@ -1,34 +1,46 @@
 #include "RenderTexture.h"
 
+#include <glm/vec2.hpp>
+
+#include "../Memory/MemoryHelper.h"
 #include "../Render/OpenGL/VAO/VAO.h"
 #include "../Render/OpenGL/VBO/VBO.h"
+#include "../Render/OpenGL/EBO/EBO.h"
+#include "../Render/OpenGL/FBO/FBO.h"
+#include "../Render/OpenGL/RBO/RBO.h"
+#include "../Texture/Texture.h"
 
 namespace Llyn
 {
-	RenderTexture::RenderTexture(unsigned int& _width, unsigned int& _height)
+	RenderTexture::RenderTexture()
 	{
-		VAO vao;
-		VBO vbo();
+		m_vao = nullptr;
+		m_vbo = nullptr;
+		m_ebo = nullptr;
 
-		glGenTextures(1, &m_id);
-		glBindTexture(GL_TEXTURE_2D, m_id);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0,GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_id, 0);
+		m_fbo = nullptr;
+		m_rbo = nullptr;
+
+		m_texture = nullptr;
+
+		ALLOCATE_MEMORY(m_texture, glm::vec2{1920, 1080});
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->GetId(), 0);
+
+
 	}
 
 	RenderTexture::~RenderTexture()
 	{
+
 	}
 
-	void RenderTexture::Bind(const glm::vec4& _clearColor)
+	void RenderTexture::Bind()
 	{
+
 	}
 
 	void RenderTexture::Unbind()
 	{
+
 	}
 }

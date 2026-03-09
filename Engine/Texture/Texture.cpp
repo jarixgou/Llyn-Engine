@@ -18,6 +18,18 @@ namespace Llyn
 		glDeleteTextures(1, &m_id);
 	}
 
+	Texture::Texture(glm::vec2 _size)
+	{
+		m_id = 0;
+		m_size = _size;
+
+		glGenTextures(1, &m_id);
+		glBindTexture(GL_TEXTURE_2D, m_id);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_size.x, m_size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		SetFilter(GL_LINEAR, GL_LINEAR);
+	}
+
 	bool Texture::Load(const char* _path)
 	{
 		m_slot = 0;
@@ -40,7 +52,7 @@ namespace Llyn
 			std::cout << "Texture loaded successfully: " << _path << std::endl;
 		}
 
-		m_size = { static_cast<GLuint>(widthImage), static_cast<GLuint>(heightImage) };
+		m_size = { widthImage, heightImage };
 
 		GLenum format = 0;
 		switch (numColChannels)
@@ -125,7 +137,7 @@ namespace Llyn
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
-	const Vector2u& Texture::GetSize() const
+	const glm::vec2& Texture::GetSize() const
 	{
 		return m_size;
 	}
@@ -133,5 +145,10 @@ namespace Llyn
 	const std::string& Texture::GetName()
 	{
 		return m_name;
+	}
+
+	const GLuint& Texture::GetId()
+	{
+		return m_id;
 	}
 }

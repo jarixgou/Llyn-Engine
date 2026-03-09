@@ -67,12 +67,11 @@ int main()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-	
+
 	glfwSwapInterval(0);
 
-	int frameCount = 0;
-	double fpsTimerStart = glfwGetTime();
-	double currentFPS = 0.0;
+	double lasteFrame = 0.0f;
+	float dt = 0.0f;
 
 	// Main render loop
 	while (!glfwWindowShouldClose(window))
@@ -81,24 +80,14 @@ int main()
 		glfwPollEvents();
 
 		// FPS counting
-		frameCount++;
-		double now = glfwGetTime();
-		double elapsed = now - fpsTimerStart;
-		if (elapsed >= 1.0f / 30.f)
-		{
-			std::string fps = std::to_string((1.0 / elapsed) * frameCount);
-			std::string ms = std::to_string((elapsed / frameCount) * 1000);
+		double currentFrame = glfwGetTime();
+		dt = currentFrame - lasteFrame;
+		lasteFrame = currentFrame;
 
-			std::string final = "Llyn Engine - FPS: " + fps + " / ms: " + ms;
+		std::string fps = "FPS : " + std::to_string(1.0f / dt);
+		std::string ms = std::to_string(dt * 1000) + "ms";
 
-			glfwSetWindowTitle(window, final.c_str());
-
-			// Reset
-			frameCount = 0;
-			fpsTimerStart = now;
-		}
-
-		float dt = now - fpsTimerStart;
+		glfwSetWindowTitle(window, std::string(fps + " / " + ms).c_str());
 
 		// Clear the screen with a dark color
 		glClearColor(0.07f, 0.13f, 0.17f, 1.f);

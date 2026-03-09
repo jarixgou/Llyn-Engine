@@ -2,6 +2,8 @@
 #define MEMORY_HELPER__H
 
 #include <utility>
+#include <string>
+#include <typeinfo>
 
 #include "../Logger/Logger.h"
 
@@ -83,7 +85,7 @@ namespace Llyn
 	template<typename T>
 	void AllocateArrayMemory(T** _ptr, size_t _size, const char* _file, int _line)
 	{
-		DeleteArrayMemory(_ptr);
+		DeleteArrayMemory(_ptr, _file, _line);
 
 		if (_ptr != nullptr)
 		{
@@ -91,7 +93,7 @@ namespace Llyn
 			{
 				*_ptr = new T[_size];
 
-				std::string content = "Allocate array " +  std::to_string(_size) + " " + std::string(typeid(**_ptr).name()) +
+				std::string content = "Allocate array " + std::to_string(_size) + " " + std::string(typeid(**_ptr).name()) +
 					" size(" + std::to_string(sizeof(**_ptr)) + ")";
 				LOG_MEMORY(content.c_str(), _file, _line);
 			}

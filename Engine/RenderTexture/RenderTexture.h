@@ -1,22 +1,33 @@
 #ifndef RENDER_TEXTURE__H
 #define RENDER_TEXTURE__H
 
-#include <glad/glad.h>
-#include <glm/vec4.hpp>
-
-
-
 namespace Llyn
 {
+	class VAO;
+	class VBO;
+	class EBO;
+
+	class FBO;
+	class RBO;
+
+	class Texture;
+
 	class RenderTexture
 	{
 	private:
-		GLuint m_id;
+		VAO* m_vao;
+		VBO* m_vbo;
+		EBO* m_ebo;
+
+		FBO* m_fbo;
+		RBO* m_rbo;
+
+		Texture* m_texture;
 	public:
-		RenderTexture(unsigned int& _width, unsigned int& _height);
+		RenderTexture();
 		~RenderTexture();
 
-		void Bind(const glm::vec4& _clearColor);
+		void Bind();
 		void Unbind();
 	};
 }
