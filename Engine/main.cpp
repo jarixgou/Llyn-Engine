@@ -43,6 +43,7 @@ int main()
 	glViewport(0, 0, 1920, 1080);
 
 	Llyn::Shader shader("Core/Shader/default.vert", "Core/Shader/default.frag");
+	Llyn::Shader shaderGrid("Core/Shader/EndlessGrid.vert", "Core/Shader/EndlessGrid.frag");
 
 	shader.Activate();
 	shader.SetUniform("light.type", 1);
@@ -59,7 +60,9 @@ int main()
 
 	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(1920, 1080.f));
 
-	Llyn::Model model("Models/Backpack/scene.gltf");
+	/*Llyn::Model model("Models/Backpack/scene.gltf");*/
+
+	Llyn::Mesh plane(Llyn::CreatePlane());
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -98,7 +101,11 @@ int main()
 
 		//cube.Draw(shader, camera);
 
-		model.Draw(shader, camera);
+		/*model.Draw(shader, camera);*/
+		
+		shaderGrid.Activate();
+		camera.Matrix(shaderGrid);
+		plane.Draw(shaderGrid, camera);
 
 		glfwSwapBuffers(window);
 	}

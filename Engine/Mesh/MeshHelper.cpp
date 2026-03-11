@@ -67,13 +67,12 @@ namespace Llyn
 
 		std::vector<Vertex> verticesList(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
 		std::vector<GLuint> indiceList(indices, indices + sizeof(indices) / sizeof(GLuint));
-		std::vector<Texture*> texturesList;
 
 		Mesh mesh(verticesList, indiceList, nullptr);
 		return mesh;
 	}
 
-	Mesh CreatSphere()
+	Mesh CreateSphere()
 	{
 		std::vector<Vertex> vertices;
 		std::vector<GLuint> indices;
@@ -117,7 +116,7 @@ namespace Llyn
 			}
 		}
 
-		// Generate indices in CW
+		// Generate indices in CCW
 		/*
 		 * k1--k1+1
 		 * |  / |
@@ -134,15 +133,15 @@ namespace Llyn
 				if (i != 0)
 				{
 					indices.push_back(k1);
-					indices.push_back(k1 + 1);
 					indices.push_back(k2);
+					indices.push_back(k1 + 1);
 				}
 
 				if (i != STACK_COUNT - 1)
 				{
 					indices.push_back(k1 + 1);
-					indices.push_back(k2 + 1);
 					indices.push_back(k2);
+					indices.push_back(k2 + 1);
 				}
 			}
 		}
@@ -154,21 +153,20 @@ namespace Llyn
 	Mesh CreatePlane()
 	{
 		Vertex vertices[] =
-		{//				Coords								Normal						Color						UV
-			{{-0.1f, 0.f, 0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{0.f, 0.f}}, // 0
-			{{0.1f, 0.f, 0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 0.f}}, // 1
-			{{0.1f, 0.f, -0.1f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 0.f}}, // 2
-			{{-0.1f, 0.f, -0.1f},	{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 0.f}}, // 3
+		{//		Coords						Normal				Color				UV
+			{{-0.5f, 0.f, -0.5f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{0.f, 0.f}}, // 0
+			{{0.5f, 0.f, -0.5f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 0.f}}, // 1
+			{{0.5f, 0.f, 0.5f},			{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 1.f}}, // 2
+			{{-0.5f, 0.f, 0.5f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{0.f, 1.f}}, // 3
 		};
 
 		GLuint indices[] =
 		{
-			3, 1, 0,	3, 2, 1
+			0, 1, 2,	0, 2, 3
 		};
 
 		std::vector<Vertex> verticesList(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
 		std::vector<GLuint> indicesList(indices, indices + sizeof(indices) / sizeof(GLuint));
-		std::vector<Texture*> textureList;
 
 		Mesh mesh(verticesList, indicesList, nullptr);
 		return mesh;
