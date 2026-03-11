@@ -47,8 +47,7 @@ namespace Llyn
 		Assimp::Importer import;
 
 		unsigned int flags =
-			aiProcess_Triangulate |           
-			aiProcess_FlipUVs;                
+			aiProcess_Triangulate;                
 
 		const aiScene* scene = import.ReadFile(_path, flags);
 

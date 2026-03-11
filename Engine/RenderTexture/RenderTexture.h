@@ -1,5 +1,7 @@
 #ifndef RENDER_TEXTURE__H
 #define RENDER_TEXTURE__H
+#include <vector>
+#include <glad/glad.h>
 
 namespace Llyn
 {
@@ -12,6 +14,8 @@ namespace Llyn
 
 	class Texture;
 
+	struct Vertex;
+
 	class RenderTexture
 	{
 	private:
@@ -23,6 +27,10 @@ namespace Llyn
 		RBO* m_rbo;
 
 		Texture* m_texture;
+
+		std::vector<Vertex> m_vertices;
+		std::vector<GLuint> m_indices;
+
 	public:
 		RenderTexture();
 		~RenderTexture();

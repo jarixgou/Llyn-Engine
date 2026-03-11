@@ -168,5 +168,11 @@
     <CopyFileToFolders Include="bin\Core\Texture\defaultSpecular.png">
       <Filter>Fichiers de ressources</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="bin\Core\Shader\EndlessGrid.frag" />
+    <CopyFileToFolders Include="bin\Core\Shader\EndlessGrid.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Core\Shader\RenderTexture.vert" />
+    <None Include="bin\Core\Shader\RenderTexture.frag" />
   </ItemGroup>
 </Project>

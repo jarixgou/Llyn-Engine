@@ -5,9 +5,9 @@ out vec4 FragColor;
 in VS_OUT 
 {
 	vec3 FragPos;
-	vec2 TexCoord;
 	vec3 Normal;
 	vec3 Color;
+	vec2 TexCoord;
 } fsIn;
 
 struct Material

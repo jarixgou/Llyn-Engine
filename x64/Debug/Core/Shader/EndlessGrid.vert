@@ -12,6 +12,7 @@ layout(std140) uniform Matrix
 uniform mat4 uCamMatrix;
 uniform mat4 model;
 uniform mat3 modelInverse;
+uniform vec3 uCamPos;
 
 out VS_OUT
 {
@@ -25,6 +26,8 @@ void main()
 {
 	vsOut.FragPos = vec3(model * vec4(aPos, 1.f));
 	vsOut.FragPos *= 100.f;
+	vsOut.FragPos.xz += uCamPos.xz;
+
 	vsOut.Normal = modelInverse * aNormal;
 	vsOut.Color = aColor;
 	vsOut.TexCoord = aTexCoord;

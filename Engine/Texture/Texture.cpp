@@ -24,10 +24,11 @@ namespace Llyn
 		m_size = _size;
 
 		glGenTextures(1, &m_id);
-		glBindTexture(GL_TEXTURE_2D, m_id);
+		Bind();
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_size.x, m_size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 		SetFilter(GL_LINEAR, GL_LINEAR);
+		Unbind();
 	}
 
 	bool Texture::Load(const char* _path)

@@ -60,14 +60,13 @@ int main()
 
 	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(1920, 1080.f));
 
-	/*Llyn::Model model("Models/Backpack/scene.gltf");*/
+	Llyn::Model model("Models/Backpack/scene.gltf");
 
 	Llyn::Mesh plane(Llyn::CreatePlane());
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 
@@ -101,11 +100,16 @@ int main()
 
 		//cube.Draw(shader, camera);
 
-		/*model.Draw(shader, camera);*/
-		
+		glDisable(GL_CULL_FACE);
+
 		shaderGrid.Activate();
 		camera.Matrix(shaderGrid);
+		shaderGrid.SetUniform("uCamPos", camera.GetPosition());
 		plane.Draw(shaderGrid, camera);
+
+		glEnable(GL_CULL_FACE);
+
+		model.Draw(shader, camera);
 
 		glfwSwapBuffers(window);
 	}
