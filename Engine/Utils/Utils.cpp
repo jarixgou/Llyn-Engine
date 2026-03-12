@@ -22,9 +22,27 @@ namespace Llyn
 			throw(errno);
 		}
 
-		std::vector<unsigned char> ExtractTexturePart(const unsigned char* _data, int channels, int _faceSize,
-			int _startX, int startY)
+		std::vector<unsigned char> ExtractTexturePart(const unsigned char* _data, int _channels, glm::vec2 _imageSize,
+		                                              glm::vec2 _faceSize, glm::vec2 _startPos)
 		{
+			std::vector<unsigned char> data(_faceSize.x * _faceSize.y * _channels);
+
+			for (int y = 0; y < static_cast<int>(_faceSize.y); ++y)
+			{
+				for (int x = 0; x < static_cast<int>(_faceSize.x); ++x)
+				{
+					int pX = x + static_cast<int>(_startPos.x);
+					int pY = y + static_cast<int>(_startPos.y);
+					for (int c = 0; c < _channels; ++c)
+					{
+						int idxImage = (pY * static_cast<int>(_imageSize.x) + pX) * _channels + c;
+						int idxArray = (y * static_cast<int>(_faceSize.y) + x) * _channels + c;
+
+						data[idxArray] = _data[idxImage];
+					}
+				}
+			}
+			return data;
 		}
 	}
 }
