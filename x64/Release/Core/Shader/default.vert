@@ -4,24 +4,29 @@ layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec3 aColor;
 layout(location = 3) in vec2 aTexCoord;
 
-out vec3 FragPos;
-out vec3 Normal;
-out vec3 Color;
-out vec2 TexCoord;
+layout(std140) uniform Matrix
+{
+	mat4 cam;
+};
 
 uniform mat4 uCamMatrix;
 uniform mat4 model;
-uniform mat4 translation;
-uniform mat4 rotation;
-uniform mat4 scale;
 uniform mat3 modelInverse;
+
+out VS_OUT
+{
+	vec3 FragPos;
+	vec3 Normal;
+	vec3 Color;
+	vec2 TexCoord;
+} vsOut;
 
 void main()
 {
-	FragPos = vec3(model * translation * rotation * scale * vec4(aPos, 1.f));
-	Normal = modelInverse * mat3(rotation) * aNormal;
-	Color = aColor;
-	TexCoord = mat2(1.0, 0.0, 0.0, -1.0) * aTexCoord;
+	vsOut.FragPos = vec3(model * vec4(aPos, 1.f));
+	vsOut.Normal = modelInverse * aNormal;
+	vsOut.Color = aColor;
+	vsOut.TexCoord = aTexCoord;
 
-	gl_Position = uCamMatrix * vec4(FragPos, 1.f);
+	gl_Position = uCamMatrix * vec4(vsOut.FragPos, 1.f);
 }

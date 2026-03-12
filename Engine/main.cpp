@@ -14,7 +14,9 @@
 #include "Mesh/MeshHelper.h"
 #include "Model/Model.h"
 #include "Render/Render.h"
+#include "RenderTexture/RenderTexture.h"
 #include "Transform/Transform.h"
+#include "Vertex/Vertex.h"
 
 int main()
 {
@@ -44,6 +46,7 @@ int main()
 
 	Llyn::Shader shader("Core/Shader/default.vert", "Core/Shader/default.frag");
 	Llyn::Shader shaderGrid("Core/Shader/EndlessGrid.vert", "Core/Shader/EndlessGrid.frag");
+	Llyn::Shader renderTextureShader("Core/Shader/RenderTexture.vert", "Core/Shader/RenderTexture.frag");
 
 	shader.Activate();
 	shader.SetUniform("light.type", 1);
@@ -63,6 +66,7 @@ int main()
 	Llyn::Model model("Models/Backpack/scene.gltf");
 
 	Llyn::Mesh plane(Llyn::CreatePlane());
+	Llyn::RenderTexture renderTexture = Llyn::RenderTexture();
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -91,14 +95,13 @@ int main()
 
 		glfwSetWindowTitle(window, std::string(fps + " / " + ms).c_str());
 
-		// Clear the screen with a dark color
-		glClearColor(0.07f, 0.13f, 0.17f, 1.f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		camera.Input(window, dt);
 		camera.UpdateMatrix();
 
 		//cube.Draw(shader, camera);
+
+		glClearColor(0.f, 0.f, 0.f, 1.f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glDisable(GL_CULL_FACE);
 

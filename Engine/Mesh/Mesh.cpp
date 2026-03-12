@@ -134,6 +134,6 @@ namespace Llyn
 		_shader.SetUniform("model", glm::value_ptr(_model), 1);
 		_shader.SetUniform("modelInverse", modelInverse);
 
-		Render::Get()->Draw(m_vao, m_indices, _camera, _shader);
+		Render::Get()->Draw(m_vao, m_indices, _shader);
 	}
 }

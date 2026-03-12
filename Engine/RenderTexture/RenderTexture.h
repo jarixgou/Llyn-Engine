@@ -2,6 +2,7 @@
 #define RENDER_TEXTURE__H
 #include <vector>
 #include <glad/glad.h>
+#include <glm/vec3.hpp>
 
 namespace Llyn
 {
@@ -13,6 +14,7 @@ namespace Llyn
 	class RBO;
 
 	class Texture;
+	class Shader;
 
 	struct Vertex;
 
@@ -34,6 +36,11 @@ namespace Llyn
 	public:
 		RenderTexture();
 		~RenderTexture();
+
+		void Clear(glm::vec3 _color);
+		void Display();
+
+		void Draw(Shader& _shader);
 
 		void Bind();
 		void Unbind();

@@ -87,6 +87,9 @@
     <ClCompile Include="Render\OpenGL\RBO\RBO.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Skybox\Skybox.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Render\OpenGL\Shader\Shader.h">
@@ -158,6 +161,9 @@
     <ClInclude Include="Render\OpenGL\RBO\RBO.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Skybox\Skybox.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="bin\Core\Shader\default.vert" />
@@ -170,9 +176,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="bin\Core\Shader\EndlessGrid.frag" />
     <CopyFileToFolders Include="bin\Core\Shader\EndlessGrid.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Core\Shader\RenderTexture.vert" />
-    <None Include="bin\Core\Shader\RenderTexture.frag" />
+    <CopyFileToFolders Include="bin\Core\Shader\RenderTexture.vert" />
+    <CopyFileToFolders Include="bin\Core\Shader\RenderTexture.frag" />
+    <CopyFileToFolders Include="bin\Core\Shader\Skybox.frag" />
+    <CopyFileToFolders Include="bin\Core\Shader\Skybox.vert" />
   </ItemGroup>
 </Project>

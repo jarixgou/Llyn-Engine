@@ -21,5 +21,10 @@ namespace Llyn
 			}
 			throw(errno);
 		}
+
+		std::vector<unsigned char> ExtractTexturePart(const unsigned char* _data, int channels, int _faceSize,
+			int _startX, int startY)
+		{
+		}
 	}
 }

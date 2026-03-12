@@ -51,7 +51,6 @@ namespace Llyn
 
 		GLuint indices[] =
 		{
-
 			0, 2, 1,	0, 3, 2,
 
 			4, 6, 5,	4, 7, 6,

@@ -59,9 +59,8 @@ namespace Llyn
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void Render::Draw(VAO* _vao, std::vector<GLuint>& _indices, Camera& _camera, Shader& _shader) const
+	void Render::Draw(VAO* _vao, std::vector<GLuint>& _indices, Shader& _shader) const
 	{
-		_shader.Activate();
 		_vao->Bind();
 
 		if (m_renderMode == RenderMode::TRIANGLES)
@@ -76,5 +75,7 @@ namespace Llyn
 		{
 			glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_indices.size()), GL_UNSIGNED_INT, nullptr);
 		}
+
+		_vao->Unbind();
 	}
 }

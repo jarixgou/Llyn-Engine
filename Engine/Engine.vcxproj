@@ -141,7 +141,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;unit.lib;assimp-vc143-mtd.lib;zs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;unit.lib;assimp-vc143-mt.lib;zs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -162,6 +162,7 @@
     <ClCompile Include="Render\OpenGL\FBO\FBO.cpp" />
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Render\OpenGL\Shader\Shader.cpp" />
+    <ClCompile Include="Skybox\Skybox.cpp" />
     <ClCompile Include="Texture\Texture.cpp" />
     <ClCompile Include="Transform\Transform.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="Render\OpenGL\RBO\RBO.h" />
     <ClInclude Include="Render\Render.h" />
     <ClInclude Include="Render\OpenGL\Shader\Shader.h" />
+    <ClInclude Include="Skybox\Skybox.h" />
     <ClInclude Include="Texture\Texture.h" />
     <ClInclude Include="Transform\Transform.h" />
     <ClInclude Include="Utils\Utils.h" />
@@ -238,16 +240,38 @@
       <FileType>Document</FileType>
       <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
       <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
     </CopyFileToFolders>
     <CopyFileToFolders Include="bin\Core\Shader\EndlessGrid.vert">
       <FileType>Document</FileType>
       <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
       <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Core\Shader\RenderTexture.frag" />
-    <None Include="bin\Core\Shader\RenderTexture.vert" />
+    <CopyFileToFolders Include="bin\Core\Shader\RenderTexture.frag">
+      <FileType>Document</FileType>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="bin\Core\Shader\RenderTexture.vert">
+      <FileType>Document</FileType>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="bin\Core\Shader\Skybox.frag">
+      <FileType>Document</FileType>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="bin\Core\Shader\Skybox.vert">
+      <FileType>Document</FileType>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

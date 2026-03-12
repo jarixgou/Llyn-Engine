@@ -14,6 +14,7 @@ namespace Llyn
 		glm::vec2 texUV;
 
 		Vertex();
+		Vertex(glm::vec3 _pos);
 		Vertex(glm::vec3 _pos, glm::vec3 _normal, glm::vec3 _color, glm::vec2 _texUV);
 		~Vertex() = default;
 	};
