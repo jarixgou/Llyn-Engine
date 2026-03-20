@@ -1,5 +1,6 @@
 #ifndef MATERIAL__H
 #define MATERIAL__H
+#include <glm/fwd.hpp>
 #include <glm/vec3.hpp>
 
 namespace Llyn
@@ -7,9 +8,13 @@ namespace Llyn
 	class Texture;
 	class Shader;
 
-	class Material
+	struct Transform;
+	class Camera;
+
+	struct Material
 	{
-	public:
+		Shader* shader;
+
 		Texture* baseMap;
 		Texture* specularMap;
 		Texture* normalMap;
@@ -22,7 +27,7 @@ namespace Llyn
 		Material();
 		~Material();
 
-		void Bind(Shader& _shader) const;
+		void Bind(Camera* _camera, glm::mat4 _model) const;
 	};
 }
 

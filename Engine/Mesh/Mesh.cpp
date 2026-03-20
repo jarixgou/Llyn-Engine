@@ -18,7 +18,8 @@
 
 namespace Llyn
 {
-	Mesh::Mesh(const std::vector<Vertex>& _vertices, const std::vector<GLuint>& _indices, Material* _material)
+	Mesh::Mesh(const std::vector<Vertex>& _vertices, const std::vector<uint32_t>& _indices, Material* _material)
+		: IComponent()
 	{
 		m_vertices = _vertices;
 		m_indices = _indices;
@@ -74,6 +75,106 @@ namespace Llyn
 		m_indices.clear();
 	}
 
+	Mesh::Mesh(const Mesh& _other)
+		: IComponent(_other)
+	{
+		m_vertices = _other.m_vertices;
+		m_indices = _other.m_indices;
+
+		if (_other.m_material != nullptr)
+		{
+			ALLOCATE_MEMORY(m_material);
+			m_material->shader = _other.m_material->shader;
+			m_material->baseMap = _other.m_material->baseMap;
+			m_material->specularMap = _other.m_material->specularMap;
+			m_material->normalMap = _other.m_material->normalMap;
+			m_material->baseColor = _other.m_material->baseColor;
+			m_material->specularColor = _other.m_material->specularColor;
+			m_material->shininess = _other.m_material->shininess;
+		}
+		else
+		{
+			m_material = nullptr;
+		}
+
+		ALLOCATE_MEMORY(m_vao);
+		if (m_vao != nullptr)
+		{
+			m_vao->Bind();
+		}
+
+		ALLOCATE_MEMORY(m_vbo, m_vertices);
+		ALLOCATE_MEMORY(m_ebo, m_indices);
+		if (m_vao != nullptr && m_vbo != nullptr && m_ebo != nullptr)
+		{
+			m_vbo->Bind();
+			m_ebo->Bind();
+
+			m_vao->LinkAttrib(m_vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+			m_vao->LinkAttrib(m_vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+			m_vao->LinkAttrib(m_vbo, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+			m_vao->LinkAttrib(m_vbo, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+
+			m_vao->Unbind();
+			m_vbo->Unbind();
+			m_ebo->Unbind();
+		}
+	}
+
+	Mesh& Mesh::operator=(const Mesh& _other)
+	{
+		if (this != &_other)
+		{
+			DELETE_MEMORY(m_vao);
+			DELETE_MEMORY(m_vbo);
+			DELETE_MEMORY(m_ebo);
+			DELETE_MEMORY(m_material);
+
+			m_vertices = _other.m_vertices;
+			m_indices = _other.m_indices;
+
+			if (_other.m_material != nullptr)
+			{
+				ALLOCATE_MEMORY(m_material);
+				m_material->shader = _other.m_material->shader;
+				m_material->baseMap = _other.m_material->baseMap;
+				m_material->specularMap = _other.m_material->specularMap;
+				m_material->normalMap = _other.m_material->normalMap;
+				m_material->baseColor = _other.m_material->baseColor;
+				m_material->specularColor = _other.m_material->specularColor;
+				m_material->shininess = _other.m_material->shininess;
+			}
+			else
+			{
+				m_material = nullptr;
+			}
+
+			ALLOCATE_MEMORY(m_vao);
+			if (m_vao != nullptr)
+			{
+				m_vao->Bind();
+			}
+
+			ALLOCATE_MEMORY(m_vbo, m_vertices);
+			ALLOCATE_MEMORY(m_ebo, m_indices);
+			if (m_vao != nullptr && m_vbo != nullptr && m_ebo != nullptr)
+			{
+				m_vbo->Bind();
+				m_ebo->Bind();
+
+				m_vao->LinkAttrib(m_vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+				m_vao->LinkAttrib(m_vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
+				m_vao->LinkAttrib(m_vbo, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+				m_vao->LinkAttrib(m_vbo, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(9 * sizeof(float)));
+
+				m_vao->Unbind();
+				m_vbo->Unbind();
+				m_ebo->Unbind();
+			}
+		}
+		return *this;
+	}
+
 	Mesh::Mesh(Mesh&& _other) noexcept
 	{
 		m_vertices = std::move(_other.m_vertices);
@@ -118,22 +219,23 @@ namespace Llyn
 		return *this;
 	}
 
-	void Mesh::Draw
-	(
-		Shader& _shader,
-		Camera& _camera,
-		glm::mat4 _model
-	)
+	void Mesh::Draw(Camera* _camera, glm::mat4 _model)
 	{
-		m_vao->Bind();
+		if (m_material != nullptr)
+		{
+			m_material->Bind(_camera, _model);
+		}
 
-		glm::mat3 modelInverse = glm::transpose(glm::inverse(_model));
+		Render::Get()->Draw(m_vao, m_indices);
+	}
 
-		m_material->Bind(_shader);
+	Material* Mesh::GetMaterial()
+	{
+		return m_material;
+	}
 
-		_shader.SetUniform("model", glm::value_ptr(_model), 1);
-		_shader.SetUniform("modelInverse", modelInverse);
-
-		Render::Get()->Draw(m_vao, m_indices, _shader);
+	void Mesh::SetMaterial(Material* _material)
+	{
+		m_material = _material;
 	}
 }

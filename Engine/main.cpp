@@ -7,7 +7,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "External/imgui/imgui_impl_glfw.h"
+#include "External/imgui/imgui_impl_opengl3.h"
+
 #include "Camera/Camera.h"
+#include "External/imgui/imgui_internal.h"
+#include "Frontend/Hierarchy.h"
+#include "Frontend/Inspector.h"
+#include "GameObject/GameObject.h"
 #include "Render/OpenGL/Shader/Shader.h"
 
 #include "Mesh/Mesh.h"
@@ -16,8 +23,12 @@
 #include "Render/Render.h"
 #include "RenderTexture/RenderTexture.h"
 #include "Skybox/Skybox.h"
-#include "Transform/Transform.h"
 #include "Vertex/Vertex.h"
+
+#define DRAW_IMGUI_DEMO false
+
+void DrawHierachy(std::vector<Llyn::GameObject*>& _goList);
+void DrawTreeHierachy(std::vector<Llyn::GameObject*>& _goList);
 
 int main()
 {
@@ -41,6 +52,16 @@ int main()
 
 	// Load OpenGL functions using GLAD
 	gladLoadGL();
+
+	// Load ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 460");
 
 	// Set the viewport
 	glViewport(0, 0, 1920, 1080);
@@ -67,7 +88,7 @@ int main()
 
 	Llyn::Model model("Models/Backpack/scene.gltf");
 
-	Llyn::Mesh plane(Llyn::CreatePlane());
+	Llyn::Mesh* plane = Llyn::CreatePlane();
 	Llyn::RenderTexture renderTexture = Llyn::RenderTexture();
 
 	Llyn::Skybox skybox("Skybox.png");
@@ -83,6 +104,14 @@ int main()
 	double lasteFrame = 0.0f;
 	float dt = 0.0f;
 
+	std::vector<Llyn::GameObject*> goList;
+	for (int i = 0; i < 2; ++i)
+	{
+		goList.emplace_back(new Llyn::GameObject());
+	}
+
+	Llyn::Hierarchy::Get()->SetGameObjectList(&goList);
+
 	// Main render loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -94,11 +123,6 @@ int main()
 		dt = currentFrame - lasteFrame;
 		lasteFrame = currentFrame;
 
-		std::string fps = "FPS : " + std::to_string(1.0f / dt);
-		std::string ms = std::to_string(dt * 1000) + "ms";
-
-		glfwSetWindowTitle(window, std::string(fps + " / " + ms).c_str());
-
 		camera.Input(window, dt);
 		camera.UpdateMatrix();
 
@@ -107,23 +131,55 @@ int main()
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
 		skyboxShader.Activate();
-		camera.Matrix(skyboxShader);
+		camera.Matrix(&skyboxShader);
 		skybox.Draw(skyboxShader, camera);
 
 		glDisable(GL_CULL_FACE);
 
-		shaderGrid.Activate();
-		camera.Matrix(shaderGrid);
+		/*shaderGrid.Activate();
+		camera.Matrix(&shaderGrid);
 		shaderGrid.SetUniform("uCamPos", camera.GetPosition());
-		plane.Draw(shaderGrid, camera);
+		plane.Draw(&shaderGrid);*/
 
 		glEnable(GL_CULL_FACE);
 
 		model.Draw(shader, camera);
 
+		bool demo = DRAW_IMGUI_DEMO;
+		ImGui::ShowDemoWindow(&demo);
+
+		ImGui::Begin("Info");
+		ImGui::Text("FPS : %f", 1 / dt);
+		ImGui::End();
+
+		Llyn::Hierarchy::Get()->Draw();
+		Llyn::Inspector::Get()->Draw();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		// Update and Render additional Platform Windows
+		// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+		//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backUpCurrentContext = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backUpCurrentContext);
+		}
+
 		glfwSwapBuffers(window);
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	// Clean up and exit
 	glfwDestroyWindow(window);

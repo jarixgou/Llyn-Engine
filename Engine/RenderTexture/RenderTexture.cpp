@@ -121,7 +121,7 @@ namespace Llyn
 		m_texture->Bind();
 		m_texture->TexUnit(_shader, "screenTexture", 0);
 
-		Render::Get()->Draw(m_vao, m_indices, _shader);
+		Render::Get()->Draw(m_vao, m_indices);
 
 		if (cullFaceEnable)
 		{

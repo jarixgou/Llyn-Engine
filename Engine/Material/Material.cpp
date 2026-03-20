@@ -1,8 +1,11 @@
 #include "Material.h"
 
+#include "../Camera/Camera.h"
 #include "../Texture/Texture.h"
 #include "../Memory/MemoryHelper.h"
+#include "../Component/Transform.h"
 #include "../Render/OpenGL/Shader/Shader.h"
+#include <glm/mat4x4.hpp>
 
 namespace Llyn
 {
@@ -25,28 +28,37 @@ namespace Llyn
 		normalMap = nullptr;
 	}
 
-	void Material::Bind(Shader& _shader) const
+	void Material::Bind(Camera* _camera, glm::mat4 _model) const
 	{
-		if (baseMap != nullptr)
+		if (_camera != nullptr && shader != nullptr)
 		{
-			baseMap->Bind();
-			baseMap->TexUnit(_shader, "material.baseMap", 0);
-		}
-		_shader.SetUniform("material.baseColor", baseColor);
+			shader->Activate();
 
-		if (specularMap != nullptr)
-		{
-			specularMap->Bind();
-			specularMap->TexUnit(_shader, "material.specularMap", 1);
-		}
-		_shader.SetUniform("material.specularColor", specularColor);
+			_camera->Matrix(shader);
+			shader->SetUniform("uCamPos", _camera->GetPosition());
+			shader->SetUniform("model", glm::value_ptr(_model), 1);
 
-		if (normalMap != nullptr)
-		{
-			normalMap->Bind();
-			normalMap->TexUnit(_shader, "material.normalMap", 2);
-		}
+			if (baseMap != nullptr)
+			{
+				baseMap->Bind();
+				baseMap->TexUnit(*shader, "material.baseMap", 0);
+			}
+			shader->SetUniform("material.baseColor", baseColor);
 
-		_shader.SetUniform("material.shininess", shininess);
+			if (specularMap != nullptr)
+			{
+				specularMap->Bind();
+				specularMap->TexUnit(*shader, "material.specularMap", 1);
+			}
+			shader->SetUniform("material.specularColor", specularColor);
+
+			if (normalMap != nullptr)
+			{
+				normalMap->Bind();
+				normalMap->TexUnit(*shader, "material.normalMap", 2);
+			}
+
+			shader->SetUniform("material.shininess", shininess);
+		}
 	}
 }

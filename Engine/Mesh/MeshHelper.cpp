@@ -3,8 +3,11 @@
 #include <vector>
 #include <glad/glad.h>
 #include <glm/geometric.hpp>
+#include <glm/ext/scalar_constants.hpp>
+#include <glm/trigonometric.hpp>
 
 #include "Mesh.h"
+#include "../Memory/MemoryHelper.h"
 #include "../Texture/Texture.h"
 #include "../Vertex/Vertex.h"
 
@@ -14,10 +17,11 @@
 
 namespace Llyn
 {
-	Mesh CreateCube()
+	Mesh* CreateCube()
 	{
-		Vertex vertices[] =
-		{//					Coords									Normal							Color							UV
+		std::vector<Vertex> vertices =
+		{
+			//					Coords									Normal							Color							UV
 			{{-0.1f, -0.1f, 0.1f},		{0.f, 0.f, 1.f},	{1.f, 1.f, 1.f},		{0.f, 0.f}}, // 0
 			{{0.1f, -0.1f, 0.1f},		{0.f, 0.f, 1.f},	{1.f, 1.f, 1.f},		{1.f, 0.f}}, // 1
 			{{0.1f, 0.1f, 0.1f},		{0.f, 0.f, 1.f},	{1.f, 1.f, 1.f},		{1.f, 1.f}}, // 2
@@ -48,8 +52,7 @@ namespace Llyn
 			{{0.1f, -0.1f, 0.1f},		{0.f, -1.f, 0.f},	{1.f, 1.f, 1.f},		{1.f, 1.f}}, // 22
 			{{-0.1f, -0.1f, 0.1f},		{0.f, -1.f, 0.f},	{1.f, 1.f, 1.f},		{0.f, 1.f}}, // 23
 		};
-
-		GLuint indices[] =
+		std::vector<uint32_t> indices =
 		{
 			0, 2, 1,	0, 3, 2,
 
@@ -64,17 +67,14 @@ namespace Llyn
 			20, 22, 21,	20, 23, 22
 		};
 
-		std::vector<Vertex> verticesList(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
-		std::vector<GLuint> indiceList(indices, indices + sizeof(indices) / sizeof(GLuint));
-
-		Mesh mesh(verticesList, indiceList, nullptr);
+		Mesh* mesh = new Mesh(vertices, indices, nullptr);
 		return mesh;
 	}
 
-	Mesh CreateSphere()
+	Mesh* CreateSphere()
 	{
 		std::vector<Vertex> vertices;
-		std::vector<GLuint> indices;
+		std::vector<uint32_t> indices;
 		std::vector<Texture*> textures;
 
 		Vertex vertex;
@@ -124,8 +124,8 @@ namespace Llyn
 		 */
 		for (int i = 0; i < STACK_COUNT; ++i)
 		{
-			GLuint k1 = i * (SECTOR_COUNT + 1);
-			GLuint k2 = k1 + SECTOR_COUNT + 1;
+			uint32_t k1 = i * (SECTOR_COUNT + 1);
+			uint32_t k2 = k1 + SECTOR_COUNT + 1;
 
 			for (int j = 0; j < SECTOR_COUNT; ++j, ++k1, ++k2)
 			{
@@ -145,29 +145,26 @@ namespace Llyn
 			}
 		}
 
-		Mesh mesh(vertices, indices, nullptr);
+		Mesh* mesh = new Mesh(vertices, indices, nullptr);
 		return mesh;
 	}
 
-	Mesh CreatePlane()
+	Mesh* CreatePlane()
 	{
-		Vertex vertices[] =
-		{//		Coords						Normal				Color				UV
-			{{-0.5f, 0.f, -0.5f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{0.f, 0.f}}, // 0
-			{{0.5f, 0.f, -0.5f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 0.f}}, // 1
-			{{0.5f, 0.f, 0.5f},			{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 1.f}}, // 2
-			{{-0.5f, 0.f, 0.5f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{0.f, 1.f}}, // 3
+		std::vector<Vertex> vertices =
+		{
+			//		Coords						Normal				Color				UV
+			{{-0.5f, 0.f, -0.5f},	{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{0.f, 0.f}}, // 0
+			{{0.5f, 0.f, -0.5f},	{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 0.f}}, // 1
+			{{0.5f, 0.f, 0.5f},		{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{1.f, 1.f}}, // 2
+			{{-0.5f, 0.f, 0.5f},	{0.f, 1.f, 0.f},	{1.f, 1.f, 1.f},	{0.f, 1.f}}, // 3
 		};
-
-		GLuint indices[] =
+		std::vector<uint32_t> indices
 		{
 			0, 1, 2,	0, 2, 3
 		};
 
-		std::vector<Vertex> verticesList(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
-		std::vector<GLuint> indicesList(indices, indices + sizeof(indices) / sizeof(GLuint));
-
-		Mesh mesh(verticesList, indicesList, nullptr);
+		Mesh* mesh = new Mesh(vertices, indices, nullptr);
 		return mesh;
 	}
 }

@@ -92,6 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,8 +120,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IMGUI_IMPL_OPENGL_LOADER_GLAD;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,7 +136,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IMGUI_IMPL_OPENGL_LOADER_GLAD;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -148,23 +150,35 @@
     <ClCompile Include="Asset\AssetManager.cpp" />
     <ClCompile Include="Asset\IAsset.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="Component\IComponent.cpp" />
     <ClCompile Include="External\glad.c" />
+    <ClCompile Include="External\imgui\imgui.cpp" />
+    <ClCompile Include="External\imgui\imgui_demo.cpp" />
+    <ClCompile Include="External\imgui\imgui_draw.cpp" />
+    <ClCompile Include="External\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="External\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="External\imgui\imgui_tables.cpp" />
+    <ClCompile Include="External\imgui\imgui_widgets.cpp" />
     <ClCompile Include="External\stb.cpp" />
+    <ClCompile Include="Frontend\Hierarchy.cpp" />
+    <ClCompile Include="Frontend\Inspector.cpp" />
+    <ClCompile Include="GameObject\GameObject.cpp" />
+    <ClCompile Include="IDHelper\IDHelper.cpp" />
     <ClCompile Include="Logger\Logger.cpp" />
     <ClCompile Include="Material\Material.cpp" />
+    <ClCompile Include="Mesh\Mesh.cpp" />
     <ClCompile Include="Mesh\MeshHelper.cpp" />
     <ClCompile Include="Model\Model.cpp" />
     <ClCompile Include="Render\OpenGL\RBO\RBO.cpp" />
     <ClCompile Include="RenderTexture\RenderTexture.cpp" />
     <ClCompile Include="Render\OpenGL\EBO\EBO.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mesh\Mesh.cpp" />
     <ClCompile Include="Render\OpenGL\FBO\FBO.cpp" />
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Render\OpenGL\Shader\Shader.cpp" />
     <ClCompile Include="Skybox\Skybox.cpp" />
     <ClCompile Include="Texture\Texture.cpp" />
-    <ClCompile Include="Transform\Transform.cpp" />
+    <ClCompile Include="Component\Transform.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />
     <ClCompile Include="Render\OpenGL\VAO\VAO.cpp" />
     <ClCompile Include="Render\OpenGL\VBO\VBO.cpp" />
@@ -176,21 +190,35 @@
     <ClInclude Include="Asset\AssetManager.h" />
     <ClInclude Include="Asset\IAsset.h" />
     <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Component\IComponent.h" />
+    <ClInclude Include="External\imgui\imconfig.h" />
+    <ClInclude Include="External\imgui\imgui.h" />
+    <ClInclude Include="External\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="External\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="External\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="External\imgui\imgui_internal.h" />
+    <ClInclude Include="External\imgui\imstb_rectpack.h" />
+    <ClInclude Include="External\imgui\imstb_textedit.h" />
+    <ClInclude Include="External\imgui\imstb_truetype.h" />
+    <ClInclude Include="Frontend\Hierarchy.h" />
+    <ClInclude Include="Frontend\Inspector.h" />
+    <ClInclude Include="GameObject\GameObject.h" />
+    <ClInclude Include="IDHelper\IDHelper.h" />
     <ClInclude Include="Logger\Logger.h" />
     <ClInclude Include="Material\Material.h" />
     <ClInclude Include="Memory\MemoryHelper.h" />
+    <ClInclude Include="Mesh\Mesh.h" />
     <ClInclude Include="Mesh\MeshHelper.h" />
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="RenderTexture\RenderTexture.h" />
     <ClInclude Include="Render\OpenGL\EBO\EBO.h" />
-    <ClInclude Include="Mesh\Mesh.h" />
     <ClInclude Include="Render\OpenGL\FBO\FBO.h" />
     <ClInclude Include="Render\OpenGL\RBO\RBO.h" />
     <ClInclude Include="Render\Render.h" />
     <ClInclude Include="Render\OpenGL\Shader\Shader.h" />
     <ClInclude Include="Skybox\Skybox.h" />
     <ClInclude Include="Texture\Texture.h" />
-    <ClInclude Include="Transform\Transform.h" />
+    <ClInclude Include="Component\Transform.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Render\OpenGL\VAO\VAO.h" />
     <ClInclude Include="Render\OpenGL\VBO\VBO.h" />

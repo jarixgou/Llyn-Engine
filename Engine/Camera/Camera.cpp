@@ -62,7 +62,7 @@ namespace Llyn
 			m_speed = 0.1f;
 		}
 
-		if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
 		{
 			glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
@@ -91,7 +91,7 @@ namespace Llyn
 
 			glfwSetCursorPos(_window, m_size.x / 2.f, m_size.y / 2.f);
 		}
-		else if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+		else if (glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_RELEASE)
 		{
 			glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			m_firstClick = true;
@@ -108,10 +108,12 @@ namespace Llyn
 		m_camMatrix = proj * view;
 	}
 
-	void Camera::Matrix(Shader& _shader)
+	void Camera::Matrix(Shader* _shader)
 	{
-
-		_shader.SetUniform("uCamMatrix", glm::value_ptr(m_camMatrix), 1);
+		if (_shader != nullptr)
+		{
+			_shader->SetUniform("uCamMatrix", glm::value_ptr(m_camMatrix), 1);
+		}
 	}
 
 	void Camera::SetPositon(const glm::vec3& _position)

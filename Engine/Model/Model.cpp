@@ -34,11 +34,11 @@ namespace Llyn
 		_shader.Activate();
 
 		_shader.SetUniform("camPos", _camera.GetPosition());
-		_camera.Matrix(_shader);
+		_camera.Matrix(&_shader);
 		for (size_t i = 0; i < m_meshes.size(); ++i)
 		{
 			glm::mat4 finalMat = _model * m_models[i];
-			m_meshes[i]->Draw(_shader, _camera, finalMat);
+			/*m_meshes[i]->Draw(&_shader);*/
 		}
 	}
 

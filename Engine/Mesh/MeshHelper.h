@@ -5,9 +5,9 @@ namespace Llyn
 {
 	class Mesh;
 
-	Mesh CreateCube();
-	Mesh CreateSphere();
-	Mesh CreatePlane();
+	Mesh* CreateCube();
+	Mesh* CreateSphere();
+	Mesh* CreatePlane();
 }
 
 #endif

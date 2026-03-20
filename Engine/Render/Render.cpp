@@ -59,7 +59,7 @@ namespace Llyn
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void Render::Draw(VAO* _vao, std::vector<GLuint>& _indices, Shader& _shader) const
+	void Render::Draw(VAO* _vao, std::vector<GLuint>& _indices) const
 	{
 		_vao->Bind();
 

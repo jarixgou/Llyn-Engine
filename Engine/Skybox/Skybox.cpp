@@ -144,7 +144,7 @@ namespace Llyn
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
 
-		Render::Get()->Draw(m_vao, m_indices, _shader);
+		Render::Get()->Draw(m_vao, m_indices);
 
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);

@@ -41,7 +41,7 @@ namespace Llyn
 
 		void Input(GLFWwindow* _window, float _dt);
 		void UpdateMatrix();
-		void Matrix(Shader& _shader);
+		void Matrix(Shader* _shader);
 
 		void SetPositon(const glm::vec3& _position);
 		const glm::vec3& GetPosition() const;

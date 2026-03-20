@@ -44,7 +44,7 @@ namespace Llyn
 		RenderMode GetRenderMode();
 
 		void Clear(glm::vec4 _color);
-		void Draw(VAO* _vao, std::vector<GLuint>& _indices, Shader& _shader) const;
+		void Draw(VAO* _vao, std::vector<GLuint>& _indices) const;
 	};
 }
 
