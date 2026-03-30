@@ -54,16 +54,13 @@
     <ClCompile Include="External\stb.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Material\Material.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Model\Model.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Asset\AssetManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Asset\IAsset.cpp">
+    <ClCompile Include="Asset\Asset.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Vertex\Vertex.cpp">
@@ -117,13 +114,22 @@
     <ClCompile Include="Frontend\Inspector.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Component\IComponent.cpp">
+    <ClCompile Include="Component\Component.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Mesh\MeshHelper.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh\Mesh.cpp">
+    <ClCompile Include="Component\Mesh.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Material.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\MeshFilterPooler.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\MeshFilter.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -164,16 +170,13 @@
     <ClInclude Include="Assert\Assert.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Material\Material.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Memory\MemoryHelper.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Model\Model.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Asset\IAsset.h">
+    <ClInclude Include="Asset\Asset.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Asset\AssetManager.h">
@@ -224,7 +227,7 @@
     <ClInclude Include="GameObject\GameObject.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Component\IComponent.h">
+    <ClInclude Include="Component\Component.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Frontend\Hierarchy.h">
@@ -239,7 +242,16 @@
     <ClInclude Include="Mesh\MeshHelper.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh\Mesh.h">
+    <ClInclude Include="Component\Mesh.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Material.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\MeshFilterPooler.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\MeshFilter.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -258,5 +270,6 @@
     <CopyFileToFolders Include="bin\Core\Shader\RenderTexture.frag" />
     <CopyFileToFolders Include="bin\Core\Shader\Skybox.frag" />
     <CopyFileToFolders Include="bin\Core\Shader\Skybox.vert" />
+    <CopyFileToFolders Include="bin\Core\Material\Default.mat" />
   </ItemGroup>
 </Project>

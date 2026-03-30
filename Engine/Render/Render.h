@@ -19,7 +19,7 @@ namespace Llyn
 
 #define GL_CALL(x) GLClearError(); \
 	x; \
-	STATIC_ASSERT(GLLogCall(#x, __FILE__, __LINE__));
+	GLLogCall(#x, __FILE__, __LINE__);
 
 	enum class RenderMode
 	{

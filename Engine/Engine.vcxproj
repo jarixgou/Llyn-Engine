@@ -109,6 +109,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +140,7 @@
       <PreprocessorDefinitions>IMGUI_IMPL_OPENGL_LOADER_GLAD;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,9 +150,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Asset\AssetManager.cpp" />
-    <ClCompile Include="Asset\IAsset.cpp" />
+    <ClCompile Include="Asset\Asset.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
-    <ClCompile Include="Component\IComponent.cpp" />
+    <ClCompile Include="Component\Component.cpp" />
     <ClCompile Include="External\glad.c" />
     <ClCompile Include="External\imgui\imgui.cpp" />
     <ClCompile Include="External\imgui\imgui_demo.cpp" />
@@ -165,9 +167,11 @@
     <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="IDHelper\IDHelper.cpp" />
     <ClCompile Include="Logger\Logger.cpp" />
-    <ClCompile Include="Material\Material.cpp" />
-    <ClCompile Include="Mesh\Mesh.cpp" />
+    <ClCompile Include="Asset\Material.cpp" />
+    <ClCompile Include="Component\Mesh.cpp" />
+    <ClCompile Include="Mesh\MeshFilter.cpp" />
     <ClCompile Include="Mesh\MeshHelper.cpp" />
+    <ClCompile Include="Mesh\MeshFilterPooler.cpp" />
     <ClCompile Include="Model\Model.cpp" />
     <ClCompile Include="Render\OpenGL\RBO\RBO.cpp" />
     <ClCompile Include="RenderTexture\RenderTexture.cpp" />
@@ -188,9 +192,9 @@
   <ItemGroup>
     <ClInclude Include="Assert\Assert.h" />
     <ClInclude Include="Asset\AssetManager.h" />
-    <ClInclude Include="Asset\IAsset.h" />
+    <ClInclude Include="Asset\Asset.h" />
     <ClInclude Include="Camera\Camera.h" />
-    <ClInclude Include="Component\IComponent.h" />
+    <ClInclude Include="Component\Component.h" />
     <ClInclude Include="External\imgui\imconfig.h" />
     <ClInclude Include="External\imgui\imgui.h" />
     <ClInclude Include="External\imgui\imgui_impl_glfw.h" />
@@ -205,10 +209,12 @@
     <ClInclude Include="GameObject\GameObject.h" />
     <ClInclude Include="IDHelper\IDHelper.h" />
     <ClInclude Include="Logger\Logger.h" />
-    <ClInclude Include="Material\Material.h" />
+    <ClInclude Include="Asset\Material.h" />
     <ClInclude Include="Memory\MemoryHelper.h" />
-    <ClInclude Include="Mesh\Mesh.h" />
+    <ClInclude Include="Component\Mesh.h" />
+    <ClInclude Include="Mesh\MeshFilter.h" />
     <ClInclude Include="Mesh\MeshHelper.h" />
+    <ClInclude Include="Mesh\MeshFilterPooler.h" />
     <ClInclude Include="Model\Model.h" />
     <ClInclude Include="RenderTexture\RenderTexture.h" />
     <ClInclude Include="Render\OpenGL\EBO\EBO.h" />
@@ -299,6 +305,13 @@
       <FileType>Document</FileType>
       <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
       <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Shader/%(Filename)%(Extension)</DestinationFileName>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="bin\Core\Material\Default.mat">
+      <FileType>Document</FileType>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Core/Material/%(Filename)%(Extension)</DestinationFileName>
+      <DestinationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Core/Material/%(Filename)%(Extension)</DestinationFileName>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -83,12 +83,12 @@ namespace Llyn
 		return m_transform;
 	}
 
-	void GameObject::AddComponent(IComponent* _component)
+	void GameObject::AddComponent(Component* _component)
 	{
 		m_components.emplace_back(_component);
 	}
 
-	std::vector<IComponent*>* GameObject::GetComponents()
+	std::vector<Component*>* GameObject::GetComponents()
 	{
 		return &m_components;
 	}

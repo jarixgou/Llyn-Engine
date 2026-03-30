@@ -3,11 +3,11 @@
 
 namespace Llyn
 {
-	class Mesh;
+	struct MeshFilter;
 
-	Mesh* CreateCube();
-	Mesh* CreateSphere();
-	Mesh* CreatePlane();
+	MeshFilter* CreateCube();
+	MeshFilter* CreateSphere();
+	MeshFilter* CreatePlane();
 }
 
 #endif

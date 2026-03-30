@@ -33,4 +33,15 @@ namespace Llyn
 	{
 		glBindVertexArray(0);
 	}
+
+	VAO& VAO::operator=(const VAO& _other)
+	{
+		if (this == &_other)
+		{
+			return *this;
+		}
+
+		m_id = _other.m_id;
+		return *this;
+	}
 }

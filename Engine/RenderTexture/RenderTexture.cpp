@@ -119,7 +119,7 @@ namespace Llyn
 
 		_shader.Activate();
 		m_texture->Bind();
-		m_texture->TexUnit(_shader, "screenTexture", 0);
+		m_texture->TexUnit(_shader, "screenTexture");
 
 		Render::Get()->Draw(m_vao, m_indices);
 

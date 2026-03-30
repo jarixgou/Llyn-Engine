@@ -5,11 +5,11 @@
 #include <glm/vec3.hpp>
 #include <glm/detail/type_quat.hpp>
 
-#include "IComponent.h"
+#include "Component.h"
 
 namespace Llyn
 {
-	struct Transform : public IComponent
+	struct Transform : public Component
 	{
 		glm::quat rotation;
 		glm::vec3 position;

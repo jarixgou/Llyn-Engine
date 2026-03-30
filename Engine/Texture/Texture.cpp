@@ -95,9 +95,9 @@ namespace Llyn
 		return true;
 	}
 
-	void* Texture::Get()
+	bool Texture::Save()
 	{
-		return this;
+		return true;
 	}
 
 	void Texture::Bind() const
@@ -111,7 +111,7 @@ namespace Llyn
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void Texture::TexUnit(Shader& _shader, const char* _uniform, GLuint _unit)
+	void Texture::TexUnit(Shader& _shader, const char* _uniform)
 	{
 		_shader.Activate();
 		_shader.SetUniform(_uniform, m_slot);

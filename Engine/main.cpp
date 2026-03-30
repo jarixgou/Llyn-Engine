@@ -17,7 +17,7 @@
 #include "GameObject/GameObject.h"
 #include "Render/OpenGL/Shader/Shader.h"
 
-#include "Mesh/Mesh.h"
+#include "Component//Mesh.h"
 #include "Mesh/MeshHelper.h"
 #include "Model/Model.h"
 #include "Render/Render.h"
@@ -88,7 +88,7 @@ int main()
 
 	Llyn::Model model("Models/Backpack/scene.gltf");
 
-	Llyn::Mesh* plane = Llyn::CreatePlane();
+	Llyn::Mesh* plane = new Llyn::Mesh(Llyn::CreatePlane(), nullptr);
 	Llyn::RenderTexture renderTexture = Llyn::RenderTexture();
 
 	Llyn::Skybox skybox("Skybox.png");
@@ -105,6 +105,7 @@ int main()
 	float dt = 0.0f;
 
 	std::vector<Llyn::GameObject*> goList;
+	goList.reserve(2);
 	for (int i = 0; i < 2; ++i)
 	{
 		goList.emplace_back(new Llyn::GameObject());
@@ -144,11 +145,16 @@ int main()
 		/*shaderGrid.Activate();
 		camera.Matrix(&shaderGrid);
 		shaderGrid.SetUniform("uCamPos", camera.GetPosition());
-		plane.Draw(&shaderGrid);*/
+		plane->Draw(&camera, glm::mat4(1.f));*/
 
 		glEnable(GL_CULL_FACE);
 
-		model.Draw(shader, camera);
+		//model.Draw(shader, camera);
+
+		for (auto & go : goList)
+		{
+			go->Draw(&camera);
+		}
 
 		bool demo = DRAW_IMGUI_DEMO;
 		ImGui::ShowDemoWindow(&demo);

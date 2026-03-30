@@ -18,6 +18,8 @@ namespace Llyn
 		void LinkAttrib(VBO* _vbo, GLuint _layout, GLuint _numComponents, GLenum _type, GLsizeiptr _stride, void* _offset);
 		void Bind();
 		void Unbind();
+
+		VAO& operator=(const VAO& _other);
 	};
 }
 

@@ -5,7 +5,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "IAsset.h"
+#include "Asset.h"
 #include "../Assert/Assert.h"
 #include "../Memory/MemoryHelper.h"
 
@@ -14,7 +14,7 @@ namespace Llyn
 	class AssetManager
 	{
 	private:
-		std::unordered_map<std::string, IAsset*> m_assets;
+		std::unordered_map<std::string, Asset*> m_assets;
 
 		static AssetManager* s_singleton;
 	public:
@@ -28,11 +28,11 @@ namespace Llyn
 		template<class T>
 		T* GetAsset(const char* _path)
 		{
-			if (std::is_base_of_v<IAsset, T>)
+			if (std::is_base_of_v<Asset, T>)
 			{
 				std::string key(_path);
 
-				if (m_assets.find(key) != m_assets.end())
+				if (m_assets.contains(key))
 				{
 					return static_cast<T*>(m_assets[key]);
 				}

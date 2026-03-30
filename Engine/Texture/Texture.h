@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 #include <glm/vec2.hpp>
 
-#include "../Asset/IAsset.h"
+#include "../Asset/Asset.h"
 #include "../Vector/Vector.h"
 
 
@@ -14,11 +14,11 @@ namespace Llyn
 {
 	class Shader;
 
-	class Texture : public IAsset
+	class Texture : public Asset
 	{
 	private:
 		GLuint m_id;
-		GLuint m_slot;
+		GLint m_slot;
 		glm::vec2 m_size;
 
 		std::string m_name;
@@ -31,12 +31,12 @@ namespace Llyn
 		Texture(glm::vec2 _size);
 
 		bool Load(const char* _path) override;
-		void* Get() override;
+		bool Save() override;
 
 		void Bind() const;
 		void Unbind() const;
 
-		void TexUnit(Shader& _shader, const char* _uniform, GLuint _unit);
+		void TexUnit(Shader& _shader, const char* _uniform);
 
 		void SetRepeated(bool _repeated) const;
 		void SetFilter(GLenum _minFilter, GLenum _magFilter) const;

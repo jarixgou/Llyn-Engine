@@ -3,13 +3,22 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include "Hierarchy.h"
+
+// Component part
+#include "../Component/Component.h"
 #include "../Component/Transform.h"
-#include "../External/imgui/imgui.h"
+#include "../Component/Mesh.h"
+#include "../Asset/Material.h"
+
 #include "../GameObject/GameObject.h"
-#include "../Mesh/Mesh.h"
-#include "../Component/IComponent.h"
+
 #include "../Memory/MemoryHelper.h"
+
 #include "../Utils/Utils.h"
+
+#include "../External/imgui/imgui.h"
+#include "../Mesh/MeshFilter.h"
+#include "../Mesh/MeshFilterPooler.h"
 
 namespace Llyn
 {
@@ -53,7 +62,7 @@ namespace Llyn
 
 			DrawTransform();
 
-			for (IComponent* component : *(*m_selectedGo)->GetComponents())
+			for (Component* component : *(*m_selectedGo)->GetComponents())
 			{
 				Mesh* mesh = dynamic_cast<Mesh*>(component);
 				if (mesh != nullptr)
@@ -74,7 +83,7 @@ namespace Llyn
 			{
 				if (ImGui::MenuItem("Mesh"))
 				{
-					
+					(*m_selectedGo)->AddComponent(new Mesh(MeshFilterPooler::Get()->GetMesh("Cube"), nullptr));
 				}
 
 				ImGui::EndPopup();
@@ -114,7 +123,37 @@ namespace Llyn
 	{
 		if (ImGui::CollapsingHeader("Mesh"))
 		{
-			
+			std::vector<std::string> allMeshes = MeshFilterPooler::Get()->GetAllNameMeshes();
+			MeshFilter* meshFilter = _mesh->GetMeshFilter();
+
+			int indexMeshFilter = -1;
+			for (size_t i = 0; i < allMeshes.size(); ++i)
+			{
+				if (allMeshes[i] == meshFilter->name)
+				{
+					indexMeshFilter = i;
+					i = allMeshes.size();
+				}
+			}
+
+			std::vector<const char*> meshItems;
+			for (const auto& meshName : allMeshes)
+			{
+				meshItems.push_back(meshName.c_str());
+			}
+
+			if (ImGui::Combo("##MeshFilterCombo", &indexMeshFilter, meshItems.data(), meshItems.size()))
+			{
+				if (indexMeshFilter >= 0 && indexMeshFilter < allMeshes.size())
+				{
+					if (allMeshes[indexMeshFilter] != meshFilter->name)
+					{
+						_mesh->SetMeshFilter(MeshFilterPooler::Get()->GetMesh(meshItems[indexMeshFilter]));
+					}
+				}
+			}
+
+			Material* material = _mesh->GetMaterial();
 		}
 	}
 }

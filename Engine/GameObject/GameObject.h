@@ -8,7 +8,7 @@
 
 namespace Llyn
 {
-	class IComponent;
+	class Component;
 	struct Transform;
 	class Camera;
 
@@ -20,7 +20,7 @@ namespace Llyn
 		std::string m_name;
 		std::string m_tag;
 
-		std::vector<IComponent*> m_components;
+		std::vector<Component*> m_components;
 
 		std::vector<GameObject*> m_childs;
 
@@ -42,9 +42,9 @@ namespace Llyn
 
 		Transform* GetTransform();
 
-		void AddComponent(IComponent* _component);
+		void AddComponent(Component* _component);
 
-		std::vector<IComponent*>* GetComponents();
+		std::vector<Component*>* GetComponents();
 
 		std::vector<GameObject*> GetChild();
 		size_t GetChildCount();

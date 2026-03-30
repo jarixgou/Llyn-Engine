@@ -5,8 +5,8 @@
 
 #include "../Assert/Assert.h"
 #include "../Asset/AssetManager.h"
-#include "../Mesh/Mesh.h"
-#include "../Material/Material.h"
+#include "../Component/Mesh.h"
+#include "../Asset/Material.h"
 #include "../Memory/MemoryHelper.h"
 #include "../Render/OpenGL/Shader/Shader.h"
 #include "../Vertex/Vertex.h"
