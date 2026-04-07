@@ -22,8 +22,6 @@ namespace Llyn
 		glm::vec3 m_position;
 		glm::vec3 m_orientation;
 		glm::vec3 m_up;
-		
-		glm::mat4 m_camMatrix;
 
 		glm::vec2 m_size;
 
@@ -33,14 +31,17 @@ namespace Llyn
 
 		float m_speed;
 		float m_sensitivity;
-
+		
 		bool m_firstClick;
+
+		unsigned int m_ubo;
+
 	public:
 		Camera(const glm::vec3& _position, const glm::vec2& _size);
 		~Camera();
 
 		void Input(GLFWwindow* _window, float _dt);
-		void UpdateMatrix();
+		void Update();
 		void Matrix(Shader* _shader);
 
 		void SetPositon(const glm::vec3& _position);

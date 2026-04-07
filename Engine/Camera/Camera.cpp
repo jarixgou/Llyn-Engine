@@ -21,6 +21,11 @@ namespace Llyn
 		m_sensitivity = 100.f;
 
 		m_firstClick = true;
+
+		m_ubo = 0;
+
+		glGenBuffers(1, &m_ubo);
+		glBindBuffer(GL_UNIFORM_BUFFER, m_ubo);
 	}
 
 	Camera::~Camera()
@@ -98,22 +103,10 @@ namespace Llyn
 		}
 	}
 
-	void Camera::UpdateMatrix()
+	void Camera::Update()
 	{
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 proj = glm::mat4(1.0f);
-
-		view = glm::lookAt(m_position, m_position + m_orientation, m_up);
-		proj = glm::perspective(glm::radians(m_fov), m_size.x / m_size.y, m_nearPlane, m_farPlane);
-		m_camMatrix = proj * view;
-	}
-
-	void Camera::Matrix(Shader* _shader)
-	{
-		if (_shader != nullptr)
-		{
-			_shader->SetUniform("uCamMatrix", glm::value_ptr(m_camMatrix), 1);
-		}
+		glm::mat4 view = glm::lookAt(m_position, m_position + m_orientation, m_up);
+		glm::mat4 proj = glm::perspective(glm::radians(m_fov), m_size.x / m_size.y, m_nearPlane, m_farPlane);
 	}
 
 	void Camera::SetPositon(const glm::vec3& _position)
