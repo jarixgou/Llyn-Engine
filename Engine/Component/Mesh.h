@@ -14,7 +14,6 @@ namespace Llyn
 	struct MeshFilter;
 	struct Vertex;
 	struct Material;
-	class Texture;
 	class Shader;
 	class Camera;
 

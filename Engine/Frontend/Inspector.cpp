@@ -154,6 +154,7 @@ namespace Llyn
 			}
 
 			Material* material = _mesh->GetMaterial();
+
 		}
 	}
 }

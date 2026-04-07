@@ -28,28 +28,28 @@ namespace Llyn
 		template<class T>
 		T* GetAsset(const char* _path)
 		{
-			if (std::is_base_of_v<Asset, T>)
+			if (!std::is_base_of_v<Asset, T>)
 			{
-				std::string key(_path);
 
-				if (m_assets.contains(key))
-				{
-					return static_cast<T*>(m_assets[key]);
-				}
-
-				T* newAsset = nullptr;
-				ALLOCATE_MEMORY(newAsset);
-				if (!newAsset->Load(_path))
-				{
-					std::cerr << "Failed to load asset: " << _path << std::endl;
-					DELETE_MEMORY(newAsset);
-					return nullptr;
-				}
-
-				m_assets.insert({ key, newAsset });
-				return newAsset;
+				return nullptr;
 			}
-			return nullptr;
+			
+			if (m_assets.contains(_path))
+			{
+				return static_cast<T*>(m_assets[_path]);
+			}
+
+			T* newAsset = nullptr;
+			ALLOCATE_MEMORY(newAsset);
+			if (!newAsset->Load(_path))
+			{
+				std::cerr << "Failed to load asset: " << _path << std::endl;
+				DELETE_MEMORY(newAsset);
+				return nullptr;
+			}
+
+			m_assets.insert({ _path, newAsset });
+			return newAsset;
 		}
 
 		void Clear();

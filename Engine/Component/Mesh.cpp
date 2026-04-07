@@ -6,7 +6,6 @@
 #include "../Render/OpenGL/VBO/VBO.h"
 #include "../Render/OpenGL/EBO/EBO.h"
 #include "../Vertex/Vertex.h"
-#include "../Texture/Texture.h"
 #include "../Render/OpenGL/Shader/Shader.h"
 #include "../Camera/Camera.h"
 #include "../Render/Render.h"
@@ -27,7 +26,7 @@ namespace Llyn
 
 		if (_material == nullptr)
 		{
-			m_material = AssetManager::Get()->GetAsset<Material>("Core/Material/Default.mat");
+			m_material = AssetManager::Get()->GetAsset<Material>("Core/Materials/Default.mat");
 		}
 		else
 		{
@@ -64,7 +63,7 @@ namespace Llyn
 
 		if (_material == nullptr)
 		{
-			m_material = AssetManager::Get()->GetAsset<Material>("Core/Material/Default.mat");
+			m_material = AssetManager::Get()->GetAsset<Material>("Core/Materials/Default.mat");
 		}
 		else
 		{

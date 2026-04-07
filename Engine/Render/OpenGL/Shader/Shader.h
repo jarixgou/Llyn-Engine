@@ -9,6 +9,8 @@
 #include <glm/vec3.hpp>
 #include <glm/mat3x3.hpp>
 
+#include "../../../Asset/Asset.h"
+
 namespace Llyn
 {
 	struct Vector2u;
@@ -23,12 +25,14 @@ namespace Llyn
 	struct Vector4i;
 	struct Vector4f;
 
-	class Shader
+	class Shader : public Asset
 	{
 	private:
 		GLuint m_id;
 		std::unordered_map<std::string, GLint> m_uniformLocationCache;
 	public:
+		Shader() = default;
+
 		// Load with file path
 		Shader(const char* _vertexShader, const char* _fragmentShader);
 
@@ -36,6 +40,9 @@ namespace Llyn
 		Shader(const void* _vertexShader, const void* _fragmentShader);
 
 		~Shader();
+
+		bool Load(const char* _path) override;
+		bool Save() override;
 
 		void Activate() const;
 

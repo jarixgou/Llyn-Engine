@@ -19,6 +19,8 @@ namespace Llyn
 	private:
 		GLuint m_id;
 
+		Shader* m_shader;
+
 		VAO* m_vao;
 		VBO* m_vbo;
 		EBO* m_ebo;
@@ -29,7 +31,7 @@ namespace Llyn
 		Skybox(const char* _filePath);
 		~Skybox();
 
-		void Draw(Shader& _shader, Camera& _camera);
+		void Draw(Camera* _camera);
 	};
 }
 

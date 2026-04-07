@@ -7,6 +7,8 @@
 #include <cerrno>
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
+#include <fstream>
+#include <json/json.hpp>
 
 #include "../../Render.h"
 
@@ -30,10 +32,58 @@ namespace Llyn
 	{
 		glDeleteProgram(m_id);
 	}
+
+	bool Shader::Load(const char* _path)
+	{
+		m_id = 0;
+
+		if (!Utils::CheckFileExtension(_path, "shader"))
+		{
+			return false;
+		}
+
+		std::ifstream file(_path);
+
+		if (!file.is_open())
+		{
+			return false;
+		}
+
+		nlohmann::json data = nlohmann::json::parse(file);
+
+		file.close();
+
+		std::string vertexData;
+		std::string fragmentData;
+		if (data.contains("Vertex") && data["Vertex"].is_string())
+		{
+			vertexData = data["Vertex"].get<std::string>();
+		}
+		if (data.contains("Fragment") && data["Fragment"].is_string())
+		{
+			fragmentData = data["Fragment"].get<std::string>();
+		}
+
+		m_id = glCreateProgram();
+		CompileShader(Utils::GetFileContents(vertexData.c_str()).c_str(), GL_VERTEX_SHADER);
+		CompileShader(Utils::GetFileContents(fragmentData.c_str()).c_str(), GL_FRAGMENT_SHADER);
+
+		return true;
+	}
+
+	bool Shader::Save()
+	{
+		return false;
+	}
 		
 	void Shader::Activate() const
 	{
-		glUseProgram(m_id);
+		int currentProgram = 0;
+		glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+		if (currentProgram != m_id)
+		{
+			glUseProgram(m_id);
+		}
 	}
 
 	const GLuint& Shader::getID() const
@@ -114,7 +164,6 @@ namespace Llyn
 	void Shader::CompileShader(const char* _source, GLenum _type) const
 	{
 		GLuint shader = glCreateShader(_type);
-
 
 		glShaderSource(shader, 1, &_source, NULL);
 		glCompileShader(shader);

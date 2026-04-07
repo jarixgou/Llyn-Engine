@@ -1,6 +1,7 @@
 #include "Utils.h"
 
 #include <fstream>
+#include <iostream>
 
 #include "../External/imgui/imgui.h"
 
@@ -55,10 +56,7 @@ namespace Llyn
 
 					ImGui::SetNextItemWidth(60);
 
-					float min = _angle ? -360 : -FLT_MAX;
-					float max = _angle ? 360 : FLT_MAX;
-
-					ImGui::DragFloat(_label, &_value, 0.1f, min, max);
+					ImGui::DragFloat(_label, &_value, 0.1f, -359, 359);
 
 					ImGui::PopStyleColor();
 				};
@@ -68,6 +66,19 @@ namespace Llyn
 			drawAxis(_vec->y, ImVec4(0.0f, 1.0f, 0.0f, 0.4f), std::string("##DrawVec3Y" + _id).c_str());
 			ImGui::SameLine();											 
 			drawAxis(_vec->z, ImVec4(0.0f, 0.0f, 1.0f, 0.4f), std::string("##DrawVec3Z" + _id).c_str());
+		}
+
+		bool CheckFileExtension(const char* _file, const char* _extension)
+		{
+			std::string pathStr = _file;
+			size_t dotPos = pathStr.find_last_of('.');
+
+			if (dotPos == std::string::npos || pathStr.substr(dotPos + 1) != _extension)
+			{
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

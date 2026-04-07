@@ -33,7 +33,7 @@
     <ClCompile Include="Vector\Vector.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Texture\Texture.cpp">
+    <ClCompile Include="Asset\Texture.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Camera\Camera.cpp">
@@ -132,6 +132,12 @@
     <ClCompile Include="Mesh\MeshFilter.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Clock\Clock.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid\Grid.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Render\OpenGL\Shader\Shader.h">
@@ -149,7 +155,7 @@
     <ClInclude Include="Vector\Vector.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Texture\Texture.h">
+    <ClInclude Include="Asset\Texture.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Camera\Camera.h">
@@ -254,22 +260,11 @@
     <ClInclude Include="Mesh\MeshFilter.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="bin\Core\Shader\default.vert" />
-    <CopyFileToFolders Include="bin\Core\Shader\default.frag" />
-    <CopyFileToFolders Include="bin\Core\Texture\default.png">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="bin\Core\Texture\defaultSpecular.png">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="bin\Core\Shader\EndlessGrid.frag" />
-    <CopyFileToFolders Include="bin\Core\Shader\EndlessGrid.vert" />
-    <CopyFileToFolders Include="bin\Core\Shader\RenderTexture.vert" />
-    <CopyFileToFolders Include="bin\Core\Shader\RenderTexture.frag" />
-    <CopyFileToFolders Include="bin\Core\Shader\Skybox.frag" />
-    <CopyFileToFolders Include="bin\Core\Shader\Skybox.vert" />
-    <CopyFileToFolders Include="bin\Core\Material\Default.mat" />
+    <ClInclude Include="Clock\Clock.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid\Grid.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

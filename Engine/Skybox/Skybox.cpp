@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stb/stb_image.h>
 
+#include "../Asset/AssetManager.h"
 #include "../Memory/MemoryHelper.h"
 #include "../Render/Render.h"
 #include "../Render/OpenGL/VAO/VAO.h"
@@ -11,6 +12,7 @@
 #include "../Utils/Utils.h"
 #include "../Vertex/Vertex.h"
 #include "../Render/OpenGL/Shader/Shader.h"
+#include "../Camera/Camera.h"
 
 namespace Llyn
 {
@@ -65,6 +67,8 @@ namespace Llyn
 		};
 
 		m_id = 0;
+
+		m_shader = AssetManager::Get()->GetAsset<Shader>("Core/Shaders/Skybox.shader");
 
 		m_vao = nullptr;
 		m_vbo = nullptr;
@@ -135,12 +139,14 @@ namespace Llyn
 
 	}
 
-	void Skybox::Draw(Shader& _shader, Camera& _camera)
+	void Skybox::Draw(Camera* _camera)
 	{
 		glDepthMask(GL_FALSE);
 		glDepthFunc(GL_LEQUAL);
 
-		_shader.SetUniform("skybox", 0);
+		m_shader->Activate();
+		_camera->Matrix(m_shader);
+		m_shader->SetUniform("skybox", 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
 

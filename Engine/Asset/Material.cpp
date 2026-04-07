@@ -3,7 +3,7 @@
 #include <fstream>
 
 #include "../Camera/Camera.h"
-#include "../Texture/Texture.h"
+#include "Texture.h"
 #include "../Memory/MemoryHelper.h"
 #include "../Component/Transform.h"
 #include "../Render/OpenGL/Shader/Shader.h"
@@ -12,6 +12,7 @@
 #include <json/json.hpp>
 
 #include "AssetManager.h"
+#include "../Utils/Utils.h"
 
 namespace Llyn
 {
@@ -40,6 +41,7 @@ namespace Llyn
 
 	bool Material::Load(const char* _path)
 	{
+
 		shader = nullptr;
 
 		baseMap = nullptr;
@@ -50,6 +52,11 @@ namespace Llyn
 		specularColor = glm::vec3(1.f, 1.f, 1.f);
 
 		shininess = 32.f;
+
+		if (!Utils::CheckFileExtension(_path, "mat"))
+		{
+			return false;
+		}
 
 		std::ifstream file(_path);
 
@@ -62,22 +69,9 @@ namespace Llyn
 
 		file.close();
 
-		if (data.contains("Shader"))
+		if (data.contains("Shader") && data["Shader"].is_string())
 		{
-			auto& shad = data["Shader"];
-
-			std::string vertexPath;
-			std::string fragmentPath;
-			if (shad.contains("Vertex") && shad["Vertex"].is_string())
-			{
-				vertexPath = shad["Vertex"].get<std::string>();
-			}
-			if (shad.contains("Fragment") && shad["Fragment"].is_string())
-			{
-				fragmentPath = shad["Fragment"].get<std::string>();
-			}
-
-			ALLOCATE_MEMORY(shader, vertexPath.c_str(), fragmentPath.c_str());
+			shader = AssetManager::Get()->GetAsset<Shader>(data["Shader"].get<std::string>().c_str());
 		}
 
 		if (data.contains("Textures") && data["Textures"].is_object())
@@ -115,7 +109,7 @@ namespace Llyn
 
 		if (data.contains("baseColor") && data["baseColor"].is_array() && data["baseColor"].size() >= 3)
 		{
-			
+
 			baseColor.r = data["baseColor"][0].get<float>();
 			baseColor.g = data["baseColor"][1].get<float>();
 			baseColor.b = data["baseColor"][2].get<float>();
@@ -168,7 +162,7 @@ namespace Llyn
 		}
 
 		file << data.dump(4);
-		
+
 		file.close();
 
 		return true;
@@ -183,16 +177,6 @@ namespace Llyn
 			_camera->Matrix(shader);
 			shader->SetUniform("camPos", _camera->GetPosition());
 			shader->SetUniform("model", glm::value_ptr(_model), 1);
-
-			shader->SetUniform("light.type", 1);
-			shader->SetUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-			shader->SetUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-			shader->SetUniform("light.specular", glm::vec3(1.f, 1.f, 1.f));
-			shader->SetUniform("light.position", glm::vec3(0.f, 5.f, 0.f));
-			shader->SetUniform("light.direction", glm::vec3(0.f, -1.f, 0.f));
-			shader->SetUniform("light.constant", 1.f);
-			shader->SetUniform("light.linear", 0.09f);
-			shader->SetUniform("light.quadratic", 0.032f);
 
 			if (baseMap != nullptr)
 			{

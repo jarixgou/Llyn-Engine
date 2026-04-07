@@ -10,7 +10,7 @@
 #include "../Memory/MemoryHelper.h"
 #include "../Render/OpenGL/Shader/Shader.h"
 #include "../Vertex/Vertex.h"
-#include "../Texture/Texture.h"
+#include "../Asset/Texture.h"
 #include "../Camera/Camera.h"
 
 namespace Llyn

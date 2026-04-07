@@ -7,10 +7,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Asset/AssetManager.h"
 #include "External/imgui/imgui_impl_glfw.h"
 #include "External/imgui/imgui_impl_opengl3.h"
 
 #include "Camera/Camera.h"
+#include "Clock/Clock.h"
 #include "External/imgui/imgui_internal.h"
 #include "Frontend/Hierarchy.h"
 #include "Frontend/Inspector.h"
@@ -18,6 +20,7 @@
 #include "Render/OpenGL/Shader/Shader.h"
 
 #include "Component//Mesh.h"
+#include "Grid/Grid.h"
 #include "Mesh/MeshHelper.h"
 #include "Model/Model.h"
 #include "Render/Render.h"
@@ -66,43 +69,33 @@ int main()
 	// Set the viewport
 	glViewport(0, 0, 1920, 1080);
 
-	Llyn::Shader shader("Core/Shader/default.vert", "Core/Shader/default.frag");
-	Llyn::Shader shaderGrid("Core/Shader/EndlessGrid.vert", "Core/Shader/EndlessGrid.frag");
-	Llyn::Shader renderTextureShader("Core/Shader/RenderTexture.vert", "Core/Shader/RenderTexture.frag");
-	Llyn::Shader skyboxShader("Core/Shader/Skybox.vert", "Core/Shader/Skybox.frag");
+	Llyn::Shader* shader = Llyn::AssetManager::Get()->GetAsset<Llyn::Shader>("Core/Shaders/Default.shader");
+	Llyn::Shader* shaderGrid = Llyn::AssetManager::Get()->GetAsset<Llyn::Shader>("Core/Shaders/EndlessGrid.shader");
+	Llyn::Shader* renderTextureShader = Llyn::AssetManager::Get()->GetAsset<Llyn::Shader>("Core/Shaders/RenderTexture.shader");
+	Llyn::Shader* skyboxShader = Llyn::AssetManager::Get()->GetAsset<Llyn::Shader>("Core/Shaders/Skybox.shader");
 
-	shader.Activate();
-	shader.SetUniform("light.type", 1);
-	shader.SetUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-	shader.SetUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-	shader.SetUniform("light.specular", glm::vec3(1.f, 1.f, 1.f));
-	shader.SetUniform("light.position", glm::vec3(0.f, 5.f, 0.f));
+	shader->Activate();
+	shader->SetUniform("light.type", 1);
+	shader->SetUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+	shader->SetUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+	shader->SetUniform("light.specular", glm::vec3(1.f, 1.f, 1.f));
+	shader->SetUniform("light.position", glm::vec3(0.f, 5.f, 0.f));
 
-	shader.SetUniform("light.direction", glm::vec3(0.f, -1.f, 0.f));
+	shader->SetUniform("light.direction", glm::vec3(0.f, -1.f, 0.f));
 
-	shader.SetUniform("light.constant", 1.f);
-	shader.SetUniform("light.linear", 0.09f);
-	shader.SetUniform("light.quadratic", 0.032f);
+	shader->SetUniform("light.constant", 1.f);
+	shader->SetUniform("light.linear", 0.09f);
+	shader->SetUniform("light.quadratic", 0.032f);
 
 	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(1920, 1080.f));
 
 	Llyn::Model model("Models/Backpack/scene.gltf");
 
-	Llyn::Mesh* plane = new Llyn::Mesh(Llyn::CreatePlane(), nullptr);
+	Llyn::Grid grid;
 	Llyn::RenderTexture renderTexture = Llyn::RenderTexture();
-
 	Llyn::Skybox skybox("Skybox.png");
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
-
 	glfwSwapInterval(0);
-
-	double lasteFrame = 0.0f;
-	float dt = 0.0f;
 
 	std::vector<Llyn::GameObject*> goList;
 	goList.reserve(2);
@@ -113,21 +106,24 @@ int main()
 
 	Llyn::Hierarchy::Get()->SetGameObjectList(&goList);
 
+	Llyn::Clock clock;
+
 	// Main render loop
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		// Poll events
 		glfwPollEvents();
 
-		// FPS counting
-		double currentFrame = glfwGetTime();
-		dt = currentFrame - lasteFrame;
-		lasteFrame = currentFrame;
+		float dt = clock.Restart();
 
 		camera.Input(window, dt);
 		camera.UpdateMatrix();
-
-		//cube.Draw(shader, camera);
 
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -136,20 +132,13 @@ int main()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		skyboxShader.Activate();
-		camera.Matrix(&skyboxShader);
-		skybox.Draw(skyboxShader, camera);
+		skybox.Draw(&camera);
 
 		glDisable(GL_CULL_FACE);
 
-		/*shaderGrid.Activate();
-		camera.Matrix(&shaderGrid);
-		shaderGrid.SetUniform("uCamPos", camera.GetPosition());
-		plane->Draw(&camera, glm::mat4(1.f));*/
+		grid.Draw(&camera);
 
 		glEnable(GL_CULL_FACE);
-
-		//model.Draw(shader, camera);
 
 		for (auto & go : goList)
 		{
