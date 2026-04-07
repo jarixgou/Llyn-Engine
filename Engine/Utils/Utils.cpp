@@ -1,7 +1,12 @@
 #include "Utils.h"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
+
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
 
 #include "../External/imgui/imgui.h"
 
@@ -79,6 +84,26 @@ namespace Llyn
 			}
 
 			return true;
+		}
+
+		std::vector<std::string> GetFilePathsByExtension(const char* _ext)
+		{
+			std::vector<std::string> paths;
+
+			// Récupère le chemin complet de l'exécutable (.exe)
+			char buffer[MAX_PATH];
+			GetModuleFileNameA(NULL, buffer, MAX_PATH);
+			
+			std::filesystem::path exeDirectory = std::filesystem::path(buffer).parent_path();
+			for (auto& file : std::filesystem::recursive_directory_iterator(exeDirectory))
+			{
+				if (file.is_regular_file() && file.path().extension() == _ext)
+				{
+					paths.emplace_back(std::filesystem::relative(file.path(), exeDirectory).generic_string());
+				}
+			}
+
+			return paths;
 		}
 	}
 }

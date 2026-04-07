@@ -1,5 +1,7 @@
 #ifndef INSPECTOR__H
 #define INSPECTOR__H
+#include <string>
+#include <vector>
 
 namespace Llyn
 {
@@ -10,6 +12,8 @@ namespace Llyn
 	{
 	private:
 		GameObject** m_selectedGo;
+
+		std::vector<std::string> m_pathsMaterial;
 
 		static Inspector* s_instance;
 	public:

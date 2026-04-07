@@ -11,7 +11,7 @@
 #include "../Render/OpenGL/EBO/EBO.h"
 #include "../Render/OpenGL/FBO/FBO.h"
 #include "../Render/OpenGL/RBO/RBO.h"
-#include "../Texture/Texture.h"
+#include "../Asset/Texture.h"
 #include "../Render/Render.h"
 #include "../Render/OpenGL/Shader/Shader.h"
 

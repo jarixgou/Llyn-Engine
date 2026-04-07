@@ -30,7 +30,6 @@ namespace Llyn
 		{
 			if (!std::is_base_of_v<Asset, T>)
 			{
-
 				return nullptr;
 			}
 			
@@ -48,6 +47,7 @@ namespace Llyn
 				return nullptr;
 			}
 
+			newAsset->SetPath(_path);
 			m_assets.insert({ _path, newAsset });
 			return newAsset;
 		}

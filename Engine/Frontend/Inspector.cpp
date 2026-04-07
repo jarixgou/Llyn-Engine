@@ -5,6 +5,7 @@
 #include "Hierarchy.h"
 
 // Component part
+#include "../Asset/AssetManager.h"
 #include "../Component/Component.h"
 #include "../Component/Transform.h"
 #include "../Component/Mesh.h"
@@ -27,6 +28,7 @@ namespace Llyn
 	Inspector::Inspector()
 	{
 		m_selectedGo = Hierarchy::Get()->GetSelectedGameObjectPtr();
+		m_pathsMaterial = Utils::GetFilePathsByExtension(".mat");
 	}
 
 	Inspector::~Inspector()
@@ -137,11 +139,14 @@ namespace Llyn
 			}
 
 			std::vector<const char*> meshItems;
+			meshItems.reserve(allMeshes.size());
 			for (const auto& meshName : allMeshes)
 			{
 				meshItems.push_back(meshName.c_str());
 			}
 
+			ImGui::Text("Filter :");
+			ImGui::SameLine();
 			if (ImGui::Combo("##MeshFilterCombo", &indexMeshFilter, meshItems.data(), meshItems.size()))
 			{
 				if (indexMeshFilter >= 0 && indexMeshFilter < allMeshes.size())
@@ -154,7 +159,35 @@ namespace Llyn
 			}
 
 			Material* material = _mesh->GetMaterial();
+			ImGui::Text("Material :");
+			ImGui::SameLine();
+			int idxMaterial = -1;
+			for (size_t i = 0; i < m_pathsMaterial.size(); ++i)
+			{
+				if (m_pathsMaterial[i] == material->GetPath())
+				{
+					idxMaterial = static_cast<int>(i);
+					i = m_pathsMaterial.size();
+				}
+			}
 
+			std::vector<const char*> materialItems;
+			materialItems.reserve(m_pathsMaterial.size());
+			for (const auto& path : m_pathsMaterial)
+			{
+				materialItems.push_back(path.c_str());
+			}
+
+			if (ImGui::Combo("##MaterialCombo", &idxMaterial, materialItems.data(), materialItems.size()))
+			{
+				if (idxMaterial >= 0 && idxMaterial < m_pathsMaterial.size())
+				{
+					if (m_pathsMaterial[idxMaterial] != material->GetPath())
+					{
+						_mesh->SetMaterial(AssetManager::Get()->GetAsset<Material>(materialItems[idxMaterial]));
+					}
+				}
+			}
 		}
 	}
 }

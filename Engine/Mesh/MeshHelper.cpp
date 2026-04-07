@@ -9,7 +9,6 @@
 #include "MeshFilter.h"
 #include "MeshFilterPooler.h"
 #include "../Memory/MemoryHelper.h"
-#include "../Texture/Texture.h"
 #include "../Vertex/Vertex.h"
 
 #define RADIUS 0.1f
@@ -83,7 +82,6 @@ namespace Llyn
 	{
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
-		std::vector<Texture*> textures;
 
 		Vertex vertex;
 		vertex.color = glm::vec3(1.f, 1.f, 1.f);
