@@ -174,8 +174,6 @@ namespace Llyn
 		{
 			shader->Activate();
 
-			_camera->Matrix(shader);
-			shader->SetUniform("camPos", _camera->GetPosition());
 			shader->SetUniform("model", glm::value_ptr(_model), 1);
 
 			if (baseMap != nullptr)

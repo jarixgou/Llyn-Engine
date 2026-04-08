@@ -2,6 +2,14 @@
 
 out vec4 FragColor;
 
+layout(std140, binding = 0) uniform Camera
+{
+	mat4 view;
+	mat4 proj;
+
+	vec3 position;
+};
+
 in VS_OUT
 {
 	vec3 FragPos;
@@ -9,8 +17,6 @@ in VS_OUT
 	vec3 Color;
 	vec2 TexCoord;
 } fsIn;
-
-uniform vec3 uCamPos;
 
 const float cellLineThickness = 0.01f;
 const float subCellLineThickness = 0.001f;
@@ -32,7 +38,7 @@ float CalculateSubCellLOD(float _distanceToCamera);
 void main()
 {
 	vec2 worldPos = fsIn.FragPos.xz;
-	float distanceToCamera = length(fsIn.FragPos.xz - uCamPos.xz);
+	float distanceToCamera = length(fsIn.FragPos.xz - position.xz);
 
 	vec2 cellCoords = mod(worldPos + halfCellSize, cellSize);
 	vec2 subCellCoords = mod(worldPos + halfSubCellSize, subCellSize);
@@ -79,9 +85,9 @@ float CalculateSubCellLOD(float _distanceToCamera)
 
 float OpacityFallOff()
 {
-	float distanceToCamera = length(fsIn.FragPos.xz - uCamPos.xz);
+	float distanceToCamera = length(fsIn.FragPos.xz - position.xz);
 	float heightToFadeDistanceRatio = 25.f;
-	float fadeDistance = clamp(abs(uCamPos.y) * heightToFadeDistanceRatio, 5.f, 50.f);
+	float fadeDistance = clamp(abs(position.y) * heightToFadeDistanceRatio, 5.f, 50.f);
 
 	return smoothstep(1.0f, 0.0f, distanceToCamera / fadeDistance);
 }

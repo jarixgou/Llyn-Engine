@@ -16,10 +16,18 @@ namespace Llyn
 {
 	class Shader;
 
+	struct CameraData
+	{
+		glm::mat4 view = glm::mat4(1.f);
+		glm::mat4 proj = glm::mat4(1.f);
+
+		glm::vec3 position = { 0.f, 0.f, 0.f };
+	};
+
 	class Camera
 	{
 	private:
-		glm::vec3 m_position;
+		CameraData m_cameraData;
 		glm::vec3 m_orientation;
 		glm::vec3 m_up;
 
@@ -42,7 +50,6 @@ namespace Llyn
 
 		void Input(GLFWwindow* _window, float _dt);
 		void Update();
-		void Matrix(Shader* _shader);
 
 		void SetPositon(const glm::vec3& _position);
 		const glm::vec3& GetPosition() const;

@@ -2,6 +2,14 @@
 
 out vec4 FragColor;
 
+layout(std140, binding = 0) uniform Camera
+{
+	mat4 view;
+	mat4 proj;
+
+	vec3 position;
+};
+
 in VS_OUT 
 {
 	vec3 FragPos;
@@ -43,8 +51,6 @@ struct Light
 uniform Material material;
 uniform Light light;
 
-uniform vec3 camPos;
-
 
 vec4 PointLight()
 {	
@@ -66,7 +72,7 @@ vec4 PointLight()
 	vec3 diffuse = light.diffuse * diff * diffuseTex;
 
 	// specular 
-	vec3 viewDir = normalize(camPos - fsIn.FragPos);
+	vec3 viewDir = normalize(position - fsIn.FragPos);
 	vec3 reflectionDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
 
@@ -94,7 +100,7 @@ vec4 DirectLight()
 	vec3 diffuse = light.diffuse * diff * diffuseTex;
 
 	// specular 
-	vec3 viewDir = normalize(camPos - fsIn.FragPos);
+	vec3 viewDir = normalize(position - fsIn.FragPos);
 	vec3 reflectionDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
 
@@ -131,7 +137,7 @@ vec4 SpotLight()
 		vec3 diffuse = light.diffuse * diff * diffuseTex;
 
 		// specular 
-		vec3 viewDir = normalize(camPos - fsIn.FragPos);
+		vec3 viewDir = normalize(position - fsIn.FragPos);
 		vec3 reflectionDir = reflect(-lightDir, normal);
 		float spec = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
 

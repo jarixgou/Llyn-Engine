@@ -145,7 +145,7 @@ namespace Llyn
 		glDepthFunc(GL_LEQUAL);
 
 		m_shader->Activate();
-		_camera->Matrix(m_shader);
+
 		m_shader->SetUniform("skybox", 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);

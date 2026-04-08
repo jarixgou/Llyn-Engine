@@ -115,12 +115,21 @@ int main()
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 
+	float fpsDt = 0.f;
+	float timerFps = 0.f;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		// Poll events
 		glfwPollEvents();
 
 		float dt = clock.Restart();
+		timerFps += dt;
+		if (timerFps >= 0.2f)
+		{
+			fpsDt = dt;
+			timerFps = 0.f;
+		}
 
 		camera.Input(window, dt);
 		camera.Update();
@@ -149,7 +158,7 @@ int main()
 		ImGui::ShowDemoWindow(&demo);
 
 		ImGui::Begin("Info");
-		ImGui::Text("FPS : %f", 1 / dt);
+		ImGui::Text("FPS : %f", 1 / fpsDt);
 		ImGui::End();
 
 		Llyn::Hierarchy::Get()->Draw();

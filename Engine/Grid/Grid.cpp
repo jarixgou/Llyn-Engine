@@ -18,8 +18,6 @@ namespace Llyn
 	void Grid::Draw(Camera* _cam)
 	{
 		m_shader->Activate();
-		_cam->Matrix(m_shader);
-		m_shader->SetUniform("uCamPos", _cam->GetPosition());
 
 		Render::Get()->Draw(m_meshFilter->vao, m_meshFilter->indices);
 	}

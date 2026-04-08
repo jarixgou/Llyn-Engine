@@ -7,7 +7,7 @@ namespace Llyn
 {
 	Camera::Camera(const glm::vec3& _position, const glm::vec2& _size)
 	{
-		m_position = _position;
+		m_cameraData.position = _position;
 		m_orientation = glm::vec3(0.0f, 0.0f, -1.0f);
 		m_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -26,6 +26,8 @@ namespace Llyn
 
 		glGenBuffers(1, &m_ubo);
 		glBindBuffer(GL_UNIFORM_BUFFER, m_ubo);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraData), nullptr, GL_DYNAMIC_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_ubo);
 	}
 
 	Camera::~Camera()
@@ -36,27 +38,27 @@ namespace Llyn
 	{
 		if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
 		{
-			m_position += m_speed * m_orientation * _dt;
+			m_cameraData.position += m_speed * m_orientation * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
 		{
-			m_position += m_speed * -glm::normalize(glm::cross(m_orientation, m_up)) * _dt;
+			m_cameraData.position += m_speed * -glm::normalize(glm::cross(m_orientation, m_up)) * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
 		{
-			m_position += m_speed * -m_orientation * _dt;
+			m_cameraData.position += m_speed * -m_orientation * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
 		{
-			m_position += m_speed * glm::normalize(glm::cross(m_orientation, m_up)) * _dt;
+			m_cameraData.position += m_speed * glm::normalize(glm::cross(m_orientation, m_up)) * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		{
-			m_position += m_speed * m_up * _dt;
+			m_cameraData.position += m_speed * m_up * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 		{
-			m_position += m_speed * -m_up * _dt;
+			m_cameraData.position += m_speed * -m_up * _dt;
 		}
 		if (glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		{
@@ -105,18 +107,22 @@ namespace Llyn
 
 	void Camera::Update()
 	{
-		glm::mat4 view = glm::lookAt(m_position, m_position + m_orientation, m_up);
-		glm::mat4 proj = glm::perspective(glm::radians(m_fov), m_size.x / m_size.y, m_nearPlane, m_farPlane);
+		m_cameraData.view = glm::lookAt(m_cameraData.position, m_cameraData.position + m_orientation, m_up);
+		m_cameraData.proj = glm::perspective(glm::radians(m_fov), m_size.x / m_size.y, m_nearPlane, m_farPlane);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, m_ubo);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(CameraData), &m_cameraData);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
 	void Camera::SetPositon(const glm::vec3& _position)
 	{
-		m_position = _position;
+		m_cameraData.position = _position;
 	}
 
 	const glm::vec3& Camera::GetPosition() const
 	{
-		return m_position;
+		return m_cameraData.position;
 	}
 
 	void Camera::SetFov(const float& _fov)
