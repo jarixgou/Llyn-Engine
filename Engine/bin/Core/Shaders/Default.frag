@@ -2,14 +2,6 @@
 
 out vec4 FragColor;
 
-layout(std140, binding = 0) uniform Camera
-{
-	mat4 view;
-	mat4 proj;
-
-	vec3 position;
-};
-
 in VS_OUT 
 {
 	vec3 FragPos;
@@ -46,6 +38,85 @@ struct Light
 	float constant;
 	float linear;
 	float quadratic;
+};
+
+struct DirLight
+{
+	vec3 dir;
+	float padding1;
+
+	vec3 ambient;
+	float padding2;
+
+	vec3 diffuse;
+	float padding3;
+
+	vec3 specular;
+	float padding4;
+};
+
+struct PointLight
+{
+	vec3 pos;
+	float constant;
+
+	vec3 ambient;
+	float linear;
+
+	vec3 diffuse;
+	float quadratic;
+
+	vec3 specular;
+	float padding1;
+};
+
+struct SpotLight
+{
+	vec3 pos;
+	float cutOff;
+
+	vec3 dir;
+	float outerCutOff;
+
+	vec3 ambient;
+	float padding1;
+
+	vec3 diffuse;
+	float padding2;
+
+	vec3 specular;
+	float padding3;
+};
+
+layout(std140, binding = 0) uniform Camera
+{
+	mat4 view;
+	mat4 proj;
+
+	vec3 position;
+	float padding;
+};
+
+
+layout(std430, binding = 0) buffer DirectionalLights
+{
+	int nbDirectLights;
+	int padding1[3];
+	DirLight dirLights[];
+};
+
+layout(std430, binding = 1) buffer PointLights
+{
+	int nbPointLights;
+	int padding2[3];
+	PointLight pointLights[];
+};
+
+layout(std430, binding = 2) buffer SpotLights
+{
+	int nbSpotLights;
+	int padding3[3];
+	SpotLight spotLights[];
 };
 
 uniform Material material;

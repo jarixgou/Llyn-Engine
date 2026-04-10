@@ -206,6 +206,12 @@
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Clock\Clock.h" />
     <ClInclude Include="Component\Component.h" />
+    <ClInclude Include="Component\DirectLight.h" />
+    <ClInclude Include="Component\DirectLightData.h" />
+    <ClInclude Include="Component\PointLight.h" />
+    <ClInclude Include="Component\PointLightData.h" />
+    <ClInclude Include="Component\SpotLight.h" />
+    <ClInclude Include="Component\SpotLightData.h" />
     <ClInclude Include="External\imgui\imconfig.h" />
     <ClInclude Include="External\imgui\imgui.h" />
     <ClInclude Include="External\imgui\imgui_impl_glfw.h" />

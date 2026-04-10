@@ -118,9 +118,9 @@ namespace Llyn
 		if (data.contains("specularColor") && data["specularColor"].is_array() && data["specularColor"].size() >= 3)
 		{
 
-			baseColor.r = data["specularColor"][0].get<float>();
-			baseColor.g = data["specularColor"][1].get<float>();
-			baseColor.b = data["specularColor"][2].get<float>();
+			specularColor.r = data["specularColor"][0].get<float>();
+			specularColor.g = data["specularColor"][1].get<float>();
+			specularColor.b = data["specularColor"][2].get<float>();
 		}
 
 		if (data.contains("shininess") && data["shininess"].is_number())
