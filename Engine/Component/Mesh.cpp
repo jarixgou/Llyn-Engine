@@ -93,11 +93,11 @@ namespace Llyn
 		return *this;
 	}
 
-	void Mesh::Draw(Camera* _camera, glm::mat4 _model)
+	void Mesh::Draw(Camera* _camera, Transform* _transform)
 	{
 		if (m_material != nullptr)
 		{
-			m_material->Bind(_camera, _model);
+			m_material->Bind(_camera, _transform);
 		}
 
 		Render::Get()->Draw(m_meshFilter->vao, m_meshFilter->indices);

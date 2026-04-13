@@ -53,10 +53,10 @@ namespace Llyn
 	{
 	}
 
-	void GameObject::Draw(Camera* _camera, glm::mat4 _model)
+	void GameObject::Draw(Camera* _camera, Transform* _transform)
 	{
 
-		glm::mat4 model = _model * m_transform->GetMatrix();
+		glm::mat4 model = _transform * m_transform->GetMatrix();
 
 		for (auto& component : m_components)
 		{

@@ -35,7 +35,7 @@ namespace Llyn
 		~GameObject();
 
 		void Update();
-		void Draw(Camera* _camera, glm::mat4 _model = glm::mat4(1.f));
+		void Draw(Camera* _camera, Transform* _transform);
 
 		std::string GetName();
 		void SetName(const char* _name);

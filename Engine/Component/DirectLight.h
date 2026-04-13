@@ -9,9 +9,11 @@ namespace Llyn
 	class DirectLight : public Component
 	{
 	private:
+		uint16_t m_lightId;
 		DirectLightData* m_data;
-
 	public:
+
+		void Draw(Camera* _camera, Transform* _transform) override;
 	};
 }
 

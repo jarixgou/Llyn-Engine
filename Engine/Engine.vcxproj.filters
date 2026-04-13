@@ -138,6 +138,9 @@
     <ClCompile Include="Grid\Grid.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="LightManager\LightManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Render\OpenGL\Shader\Shader.h">
@@ -269,19 +272,22 @@
     <ClInclude Include="Component\PointLight.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Component\PointLightData.h">
+    <ClInclude Include="LightManager\PointLightData.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Component\DirectLight.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Component\DirectLightData.h">
+    <ClInclude Include="LightManager\DirectLightData.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Component\SpotLight.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Component\SpotLightData.h">
+    <ClInclude Include="LightManager\SpotLightData.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="LightManager\LightManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

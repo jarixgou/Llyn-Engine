@@ -4,7 +4,7 @@
 
 namespace Llyn
 {
-	struct SpotLightData
+	struct alignas(16) SpotLightData
 	{
 		glm::vec3 position;
 		float cutOff;
@@ -19,7 +19,7 @@ namespace Llyn
 		float padding1;
 
 		glm::vec3 specular;
-		float padding;
+		float padding2;
 	};
 }
 

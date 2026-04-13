@@ -22,8 +22,16 @@ namespace Llyn
 		return model;
 	}
 
-	void Transform::Draw(Camera* _camera, glm::mat4 _model)
+	void Transform::Draw(Camera* _camera, Transform* _transform)
 	{
 
+	}
+
+	Transform& Transform::operator+=(Transform& _other)
+	{
+	}
+
+	Transform& Transform::operator+(Transform& _other)
+	{
 	}
 }

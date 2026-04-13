@@ -20,7 +20,11 @@ namespace Llyn
 
 		glm::mat4 GetMatrix();
 
-		void Draw(Camera* _camera, glm::mat4 _model) override;
+		void Draw(Camera* _camera, Transform* _transform) override;
+
+		// Operator surcharge
+		Transform& operator+=(Transform& _other);
+		Transform& operator+(Transform& _other);
 	};
 }
 

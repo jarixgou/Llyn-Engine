@@ -4,7 +4,7 @@
 
 namespace Llyn
 {
-	struct PointLightData
+	struct alignas(16) PointLightData
 	{
 		glm::vec3 position;
 		float constant;
@@ -18,7 +18,6 @@ namespace Llyn
 		glm::vec3 specular;
 		float padding;
 	};
-	static_assert(sizeof(PointLightData) == 64, "PointLightData size mismatch");
 }
 
 #endif

@@ -4,7 +4,7 @@
 
 namespace Llyn
 {
-	struct DirectLightData
+	struct alignas(16) DirectLightData
 	{
 		glm::vec3 dir;
 		float padding;

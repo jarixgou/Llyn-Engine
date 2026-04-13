@@ -4,6 +4,7 @@
 
 namespace Llyn
 {
+	struct Transform;
 	class Camera;
 
 	class Component
@@ -14,7 +15,7 @@ namespace Llyn
 		Component();
 		virtual ~Component() = default;
 
-		virtual void Draw(Camera* _camera, glm::mat4 _model) = 0;
+		virtual void Draw(Camera* _camera, Transform* _transform) = 0;
 
 		size_t GetID();
 		void SetID(size_t _id);

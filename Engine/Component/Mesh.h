@@ -37,7 +37,7 @@ namespace Llyn
 		Mesh(Mesh&& _other) = delete;
 		Mesh& operator=(Mesh&& _other) = delete;
 
-		void Draw(Camera* _camera, glm::mat4 _model) override;
+		void Draw(Camera* _camera, Transform* _transform) override;
 
 		Material* GetMaterial();
 		void SetMaterial(Material* _material);
