@@ -162,6 +162,7 @@
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Clock\Clock.cpp" />
     <ClCompile Include="Component\Component.cpp" />
+    <ClCompile Include="Component\DirectLight.cpp" />
     <ClCompile Include="External\glad.c" />
     <ClCompile Include="External\imgui\imgui.cpp" />
     <ClCompile Include="External\imgui\imgui_demo.cpp" />

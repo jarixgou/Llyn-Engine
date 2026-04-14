@@ -25,6 +25,15 @@ namespace Llyn
 		// Operator surcharge
 		Transform& operator+=(Transform& _other);
 		Transform& operator+(Transform& _other);
+
+		Transform& operator-=(Transform& _other);
+		Transform& operator-(Transform& _other);
+
+		Transform& operator*=(Transform& _other);
+		Transform& operator*(Transform& _other);
+
+		Transform& operator/=(Transform& _other);
+		Transform& operator/(Transform& _other);
 	};
 }
 

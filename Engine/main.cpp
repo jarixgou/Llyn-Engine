@@ -151,7 +151,7 @@ int main()
 
 		for (auto & go : goList)
 		{
-			go->Draw(&camera);
+			go->Draw(&camera, nullptr);
 		}
 
 		bool demo = DRAW_IMGUI_DEMO;

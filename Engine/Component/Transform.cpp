@@ -29,9 +29,55 @@ namespace Llyn
 
 	Transform& Transform::operator+=(Transform& _other)
 	{
+		position += _other.position;
+		rotation = glm::normalize(rotation * _other.rotation);
+		scale += _other.scale;
+		return *this;
 	}
 
 	Transform& Transform::operator+(Transform& _other)
 	{
+		*this += _other;
+		return *this;
+	}
+
+	Transform& Transform::operator-=(Transform& _other)
+	{
+		position -= _other.position;
+		rotation = glm::normalize(rotation * glm::inverse(_other.rotation));
+		scale -= _other.scale;
+		return *this;
+	}
+
+	Transform& Transform::operator-(Transform& _other)
+	{
+		*this -= _other;
+		return *this;
+	}
+
+	Transform& Transform::operator*=(Transform& _other)
+	{
+		position *= _other.position;
+		rotation = glm::normalize(rotation * _other.rotation);
+		scale *= _other.scale;
+		return *this;
+	}
+
+	Transform& Transform::operator*(Transform& _other)
+	{
+		*this *= _other;
+		return *this;
+	}
+
+	Transform& Transform::operator/=(Transform& _other)
+	{
+		position /= _other.position;
+		rotation = glm::normalize(rotation * glm::inverse(_other.rotation));
+	}
+
+	Transform& Transform::operator/(Transform& _other)
+	{
+		*this /= _other;
+		return *this;
 	}
 }

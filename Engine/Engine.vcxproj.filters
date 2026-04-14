@@ -141,6 +141,9 @@
     <ClCompile Include="LightManager\LightManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Component\DirectLight.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Render\OpenGL\Shader\Shader.h">

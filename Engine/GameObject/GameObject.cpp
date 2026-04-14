@@ -55,16 +55,26 @@ namespace Llyn
 
 	void GameObject::Draw(Camera* _camera, Transform* _transform)
 	{
+		if (_camera == nullptr)
+		{
+			return;
+		}
 
-		glm::mat4 model = _transform * m_transform->GetMatrix();
+		Transform transform = Transform();
+		if (_transform != nullptr)
+		{
+			transform = *_transform;
+		}
+
+		Transform currentTransform = transform * *m_transform;
 
 		for (auto& component : m_components)
 		{
-			component->Draw(_camera, model);
+			component->Draw(_camera, &currentTransform);
 		}
 		for (auto& child : m_childs)
 		{
-			child->Draw(_camera, model);
+			child->Draw(_camera, &currentTransform);
 		}
 	}
 

@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "Transform.h"
 #include "../Render/OpenGL/VAO/VAO.h"
 #include "../Render/OpenGL/VBO/VBO.h"
 #include "../Render/OpenGL/EBO/EBO.h"
@@ -95,10 +96,15 @@ namespace Llyn
 
 	void Mesh::Draw(Camera* _camera, Transform* _transform)
 	{
-		if (m_material != nullptr)
+		if (_transform == nullptr || _camera == nullptr || m_material == nullptr)
 		{
-			m_material->Bind(_camera, _transform);
+			return;
 		}
+
+		glm::mat4 model = _transform->GetMatrix();
+
+		m_material->Bind(_camera, model);
+
 
 		Render::Get()->Draw(m_meshFilter->vao, m_meshFilter->indices);
 	}
