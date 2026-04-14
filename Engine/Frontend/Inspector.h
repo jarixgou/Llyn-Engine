@@ -7,6 +7,8 @@ namespace Llyn
 {
 	class GameObject;
 	class Mesh;
+	class DirectLight;
+	class PointLight;
 
 	class Inspector
 	{
@@ -26,6 +28,9 @@ namespace Llyn
 	private:
 		void DrawTransform() const;
 		void DrawMesh(Mesh* _mesh) const;
+		void DrawDirectLight(DirectLight* _light) const;
+		void DrawPointLight(PointLight* _light) const;
+		void AddComponent() const;
 	};
 }
 

@@ -67,7 +67,7 @@ namespace Llyn
 		void SetUniform(const char* _name, const GLfloat* _matrix4fv, int _size);
 		void SetUniform(const char* _name, const glm::mat3& _value);
 	private:
-
+		static void CheckLinkStatus(GLuint _program);
 		void CompileShader(const char* _source, GLenum _type) const;
 		int GetUniformLocation(const char* _name);
 	};

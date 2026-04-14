@@ -66,7 +66,7 @@ namespace Llyn
 			transform = *_transform;
 		}
 
-		Transform currentTransform = transform * *m_transform;
+		Transform currentTransform = transform + *m_transform;
 
 		for (auto& component : m_components)
 		{

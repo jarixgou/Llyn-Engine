@@ -21,6 +21,7 @@
 
 #include "Component//Mesh.h"
 #include "Grid/Grid.h"
+#include "LightManager/LightManager.h"
 #include "Mesh/MeshHelper.h"
 #include "Model/Model.h"
 #include "Render/Render.h"
@@ -75,17 +76,6 @@ int main()
 	Llyn::Shader* skyboxShader = Llyn::AssetManager::Get()->GetAsset<Llyn::Shader>("Core/Shaders/Skybox.shader");
 
 	shader->Activate();
-	shader->SetUniform("light.type", 1);
-	shader->SetUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-	shader->SetUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-	shader->SetUniform("light.specular", glm::vec3(1.f, 1.f, 1.f));
-	shader->SetUniform("light.position", glm::vec3(0.f, 5.f, 0.f));
-
-	shader->SetUniform("light.direction", glm::vec3(0.f, -1.f, 0.f));
-
-	shader->SetUniform("light.constant", 1.f);
-	shader->SetUniform("light.linear", 0.09f);
-	shader->SetUniform("light.quadratic", 0.032f);
 
 	Llyn::Camera camera(glm::vec3(0.f, 0.f, 2.f), glm::vec2(1920, 1080.f));
 
@@ -134,13 +124,15 @@ int main()
 		camera.Input(window, dt);
 		camera.Update();
 
+		Llyn::LightManager::Get()->Update();
+
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
+		
 		skybox.Draw(&camera);
 
 		glDisable(GL_CULL_FACE);

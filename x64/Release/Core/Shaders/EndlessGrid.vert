@@ -10,6 +10,7 @@ layout(std140, binding = 0) uniform Camera
 	mat4 proj;
 
 	vec3 position;
+	float padding;
 };
 
 uniform mat4 uCamMatrix;

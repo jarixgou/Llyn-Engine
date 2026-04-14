@@ -2,14 +2,6 @@
 
 out vec4 FragColor;
 
-layout(std140, binding = 0) uniform Camera
-{
-	mat4 view;
-	mat4 proj;
-
-	vec3 position;
-};
-
 in VS_OUT 
 {
 	vec3 FragPos;
@@ -30,53 +22,112 @@ struct Material
 	float shininess;
 };
 
-struct Light 
+struct DirLight
 {
-	int type;
+	vec3 dir;
+	float padding1;
 
-	vec3 position;
-	vec3 direction;
+	vec3 ambient;
+	float padding2;
+
+	vec3 diffuse;
+	float padding3;
+
+	vec3 specular;
+	float padding4;
+};
+
+struct PointLight
+{
+	vec3 pos;
+	float constant;
+
+	vec3 ambient;
+	float linear;
+
+	vec3 diffuse;
+	float quadratic;
+
+	vec3 specular;
+	float padding1;
+};
+
+struct SpotLight
+{
+	vec3 pos;
 	float cutOff;
+
+	vec3 dir;
 	float outerCutOff;
 
 	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
+	float padding1;
 
-	float constant;
-	float linear;
-	float quadratic;
+	vec3 diffuse;
+	float padding2;
+
+	vec3 specular;
+	float padding3;
+};
+
+layout(std140, binding = 0) uniform Camera
+{
+	mat4 view;
+	mat4 proj;
+
+	vec3 position;
+	float padding;
+};
+
+
+layout(std430, binding = 0) buffer DirectionalLights
+{
+	int nbDirectLights;
+	int padding1[3];
+	DirLight dirLights[];
+};
+
+layout(std430, binding = 1) buffer PointLights
+{
+	int nbPointLights;
+	int padding2[3];
+	PointLight pointLights[];
+};
+
+layout(std430, binding = 2) buffer SpotLights
+{
+	int nbSpotLights;
+	int padding3[3];
+	SpotLight spotLights[];
 };
 
 uniform Material material;
-uniform Light light;
 
-
-vec4 PointLight()
+vec4 CalcPointLight(PointLight _light)
 {	
-	vec3 lightVec = light.position - fsIn.FragPos;
+	vec3 lightVec = _light.pos - fsIn.FragPos;
 
 	float dist = length(lightVec);
-	float attenuation = 1.0 / (light.constant + light.linear * dist + light.quadratic * (dist * dist));
+	float attenuation = 1.0 / (_light.constant + _light.linear * dist + _light.quadratic * (dist * dist));
 
 	vec3 diffuseTex = texture(material.baseMap, fsIn.TexCoord).rgb * material.baseColor;
 	vec3 specularTex = texture(material.specularMap, fsIn.TexCoord).rgb * material.specularColor;
 
 	// ambient
-	vec3 ambient = light.ambient * diffuseTex;
+	vec3 ambient = _light.ambient * diffuseTex;
 
 	// diffuse
 	vec3 normal = normalize(fsIn.Normal);
 	vec3 lightDir = normalize(lightVec);
 	float diff = max(dot(normal, lightDir), 0.0);
-	vec3 diffuse = light.diffuse * diff * diffuseTex;
+	vec3 diffuse = _light.diffuse * diff * diffuseTex;
 
 	// specular 
 	vec3 viewDir = normalize(position - fsIn.FragPos);
 	vec3 reflectionDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
 
-	vec3 specular = light.specular * spec * specularTex;
+	vec3 specular = _light.specular * spec * specularTex;
 
 	ambient *= attenuation;
 	diffuse *= attenuation;
@@ -85,63 +136,63 @@ vec4 PointLight()
 	return vec4(ambient + diffuse + specular, 1.0);
 }
 
-vec4 DirectLight()
+vec4 CalcDirectLight(DirLight _light)
 {
 	vec3 diffuseTex = texture(material.baseMap, fsIn.TexCoord).rgb * material.baseColor;
 	vec3 specularTex = texture(material.specularMap, fsIn.TexCoord).rgb * material.specularColor;
 
 	// ambient
-	vec3 ambient = light.ambient * diffuseTex;
+	vec3 ambient = _light.ambient * diffuseTex;
 
 	// diffuse
 	vec3 normal = normalize(fsIn.Normal);
-	vec3 lightDir = normalize(-light.direction);
+	vec3 lightDir = normalize(-_light.dir);
 	float diff = max(dot(normal, lightDir), 0.0);
-	vec3 diffuse = light.diffuse * diff * diffuseTex;
+	vec3 diffuse = _light.diffuse * diff * diffuseTex;
 
 	// specular 
 	vec3 viewDir = normalize(position - fsIn.FragPos);
 	vec3 reflectionDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
 
-	vec3 specular = light.specular * spec * specularTex;
+	vec3 specular = _light.specular * spec * specularTex;
 
 	return vec4(ambient + diffuse + specular, 1.0);
 }
 
-vec4 SpotLight()
+vec4 CalcSpotLight(SpotLight _light)
 {
-	vec3 lightVec = light.position - fsIn.FragPos;
+	vec3 lightVec = _light.pos - fsIn.FragPos;
 
 	vec3 diffuseTex = texture(material.baseMap, fsIn.TexCoord).rgb * material.baseColor;
 
 	vec3 lightDir = normalize(lightVec);
 
-	float theta = dot(lightDir, normalize(-light.direction));
+	float theta = dot(lightDir, normalize(-_light.dir));
 
 	vec4 color = vec4(1.0);
 
-	if (theta > light.cutOff)
+	if (theta > _light.cutOff)
 	{
-		float epsilon = light.cutOff - light.outerCutOff;
-		float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+		float epsilon = _light.cutOff - _light.outerCutOff;
+		float intensity = clamp((theta - _light.outerCutOff) / epsilon, 0.0, 1.0);
 
 		vec3 specularTex = texture(material.specularMap, fsIn.TexCoord).rgb * material.specularColor;
 
 		// ambient
-		vec3 ambient = light.ambient * diffuseTex;
+		vec3 ambient = _light.ambient * diffuseTex;
 
 		// diffuse
 		vec3 normal = normalize(fsIn.Normal);
 		float diff = max(dot(normal, lightDir), 0.0);
-		vec3 diffuse = light.diffuse * diff * diffuseTex;
+		vec3 diffuse = _light.diffuse * diff * diffuseTex;
 
 		// specular 
 		vec3 viewDir = normalize(position - fsIn.FragPos);
 		vec3 reflectionDir = reflect(-lightDir, normal);
 		float spec = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
 
-		vec3 specular = light.specular * spec * specularTex;
+		vec3 specular = _light.specular * spec * specularTex;
 
 		diffuse *= intensity;
 		specular *= intensity;
@@ -150,7 +201,7 @@ vec4 SpotLight()
 	}	
 	else 
 	{
-		color = vec4(light.ambient * diffuseTex, 1.0);
+		color = vec4(_light.ambient * diffuseTex, 1.0);
 	}
 
 	return color;
@@ -164,19 +215,19 @@ void main()
 		discard;
 	}
 
-	vec4 finalColor = vec4(1.0);
+	vec4 finalColor = vec4(0.0f);
 
-	if (light.type == 0)
+	for (int i = 0; i < nbDirectLights; ++i)
 	{
-		finalColor = PointLight();
+		finalColor += CalcDirectLight(dirLights[i]);
 	}
-	else if (light.type == 1)
+	for (int i = 0; i < nbPointLights; ++i)
 	{
-		finalColor = DirectLight();
+		finalColor += CalcPointLight(pointLights[i]);
 	}
-	else 
+	for (int i = 0; i < nbSpotLights; ++i)
 	{
-		finalColor = SpotLight();
+		finalColor += CalcSpotLight(spotLights[i]);
 	}
 
     FragColor = vec4(finalColor);

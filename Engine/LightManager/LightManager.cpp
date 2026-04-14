@@ -1,5 +1,6 @@
 #include "LightManager.h"
 
+#include <iostream>
 #include <glad/glad.h>
 
 #include "DirectLightData.h"
@@ -46,7 +47,7 @@ namespace Llyn
 		glGenBuffers(1, &m_spotLightSSBO);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_spotLightSSBO);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, spotBufferSize, nullptr, GL_DYNAMIC_DRAW);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_spotLightSSBO);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_spotLightSSBO);
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 	}
@@ -202,7 +203,7 @@ namespace Llyn
 
 		m_spotLights.erase(m_spotLights.begin() + _id);
 		m_spotLightsId.erase(m_spotLightsId.begin() + _id);
-		for (int i = _id; i < m_pointLightsId.size(); ++i)
+		for (int i = _id; i < m_spotLightsId.size(); ++i)
 		{
 			if (*m_spotLightsId[i] > 0)
 			{
@@ -261,7 +262,7 @@ namespace Llyn
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(int), &count);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, sizeof(int), sizeof(m_padding), m_padding);
 
-		if (!m_directLights.empty())
+		if (!m_pointLights.empty())
 		{
 			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 16, count * sizeof(PointLightData), m_pointLights.data());
 		}

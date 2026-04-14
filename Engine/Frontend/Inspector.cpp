@@ -10,6 +10,8 @@
 #include "../Component/Transform.h"
 #include "../Component/Mesh.h"
 #include "../Asset/Material.h"
+#include "../Component/DirectLight.h"
+#include "../Component/PointLight.h"
 
 #include "../GameObject/GameObject.h"
 
@@ -67,29 +69,24 @@ namespace Llyn
 			for (Component* component : *(*m_selectedGo)->GetComponents())
 			{
 				Mesh* mesh = dynamic_cast<Mesh*>(component);
+				DirectLight* directLight = dynamic_cast<DirectLight*>(component);
+				PointLight* pointLight = dynamic_cast<PointLight*>(component);
 				if (mesh != nullptr)
 				{
 					DrawMesh(mesh);
 				}
+				if (directLight != nullptr)
+				{
+					DrawDirectLight(directLight);
+				}
+				if (pointLight != nullptr)
+				{
+					DrawPointLight(pointLight);
+				}
 			}
 
 			ImGui::Separator();
-			ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.5f - 50);
-
-			if (ImGui::Button("Add component"))
-			{
-				ImGui::OpenPopup("AddComponentPopup");
-			}
-
-			if (ImGui::BeginPopup("AddComponentPopup"))
-			{
-				if (ImGui::MenuItem("Mesh"))
-				{
-					(*m_selectedGo)->AddComponent(new Mesh(MeshFilterPooler::Get()->GetMesh("Cube"), nullptr));
-				}
-
-				ImGui::EndPopup();
-			}
+			AddComponent();
 		}
 		else
 		{
@@ -104,20 +101,21 @@ namespace Llyn
 		if (ImGui::CollapsingHeader("Transform"))
 		{
 			Transform* transform = (*m_selectedGo)->GetTransform();
+			size_t componentId = transform->GetID();
 
 			ImGui::Text("Position : ");
 			ImGui::SameLine();
-			Utils::DrawVec3(&transform->position, false, "P" + std::to_string(transform->GetID()));
+			Utils::DrawVec3(&transform->position, false, "P" + std::to_string(componentId));
 
 			ImGui::Text("Rotation : ");
 			ImGui::SameLine();
 			glm::vec3 angle = glm::degrees(glm::eulerAngles(transform->rotation));
-			Utils::DrawVec3(&angle, true, "R" + std::to_string(transform->GetID()));
+			Utils::DrawVec3(&angle, true, "R" + std::to_string(componentId));
 			transform->rotation = glm::quat(glm::radians(angle));
 
 			ImGui::Text("Scale : ");
 			ImGui::SameLine();
-			Utils::DrawVec3(&transform->scale, false, "S" + std::to_string(transform->GetID()));
+			Utils::DrawVec3(&transform->scale, false, "S" + std::to_string(componentId));
 		}
 	}
 
@@ -188,6 +186,147 @@ namespace Llyn
 					}
 				}
 			}
+		}
+	}
+
+	void Inspector::DrawDirectLight(DirectLight* _light) const
+	{
+		if (ImGui::CollapsingHeader("Direct Light"))
+		{
+			size_t componentId = _light->GetID();
+			glm::vec3 dir = _light->GetDir();
+			glm::vec3 ambient = _light->GetAmbient();
+			glm::vec3 diffuse = _light->GetDiffuse();
+			glm::vec3 specular = _light->GetSpecular();
+
+			ImGui::Text("Direction :  ");
+			ImGui::SameLine();
+			if (Utils::DrawVec3(&dir, false, "D" + std::to_string(componentId)))
+			{
+				_light->SetDir(dir);
+			}
+
+			ImGui::Text("Ambient :    ");
+			ImGui::SameLine();
+			float aCol[3] = { ambient.x, ambient.y, ambient.z };
+			if (ImGui::ColorEdit3(std::string("A" + std::to_string(componentId)).c_str(), aCol, ImGuiColorEditFlags_Float))
+			{
+				ambient = glm::vec3(aCol[0], aCol[1], aCol[2]);
+				_light->SetAmbient(ambient);
+			}
+
+			ImGui::Text("Diffuse :    ");
+			ImGui::SameLine();
+			float diCol[3] = { diffuse.x, diffuse.y, diffuse.z };
+			if (ImGui::ColorEdit3(std::string("Di" + std::to_string(componentId)).c_str(), diCol, ImGuiColorEditFlags_Float))
+			{
+				diffuse = glm::vec3(diCol[0], diCol[1], diCol[2]);
+				_light->SetDiffuse(diffuse);
+			}
+
+
+			ImGui::Text("Specular :   ");
+			ImGui::SameLine();
+			float sCol[3] = { specular.x, specular.y, specular.z };
+			if (ImGui::ColorEdit3(std::string("S" + std::to_string(componentId)).c_str(), sCol, ImGuiColorEditFlags_Float))
+			{
+				specular = glm::vec3(sCol[0], sCol[1], sCol[2]);
+				_light->SetSpecular(specular);
+			}
+		}
+	}
+
+	void Inspector::DrawPointLight(PointLight* _light) const
+	{
+		if (ImGui::CollapsingHeader("Point light"))
+		{
+			size_t componentId = _light->GetID();
+
+			float constant = _light->GetConstant();
+			float linear = _light->GetLinear();
+			float quadratic = _light->GetQuadratic();
+			glm::vec3 ambient = _light->GetAmbient();
+			glm::vec3 diffuse = _light->GetDiffuse();
+			glm::vec3 specular = _light->GetSpecular();
+
+			ImGui::Text("Constant : ");
+			ImGui::SameLine();
+			if (ImGui::DragFloat(std::string("##C" + std::to_string(componentId)).c_str(), &constant, 1.f, 0.f, 1.f))
+			{
+				_light->SetConstant(constant);
+			}
+
+			ImGui::Text("Linear : ");
+			ImGui::SameLine();
+			if (ImGui::DragFloat(std::string("##L" + std::to_string(componentId)).c_str(), &linear, 1.f, 0.f, 2.f))
+			{
+				_light->SetLinear(linear);
+			}
+
+			ImGui::Text("Quadratic : ");
+			ImGui::SameLine();
+			if (ImGui::DragFloat(std::string("##Q" + std::to_string(componentId)).c_str(), &quadratic, 1.f, 0.f, 2.f))
+			{
+				_light->SetQuadratic(quadratic);
+			}
+
+			ImGui::Text("Ambient :    ");
+			ImGui::SameLine();
+			float aCol[3] = { ambient.x, ambient.y, ambient.z };
+			if (ImGui::ColorEdit3(std::string("##A" + std::to_string(componentId)).c_str(), aCol, ImGuiColorEditFlags_Float))
+			{
+				ambient = glm::vec3(aCol[0], aCol[1], aCol[2]);
+				_light->SetAmbient(ambient);
+			}
+
+			ImGui::Text("Diffuse :    ");
+			ImGui::SameLine();
+			float diCol[3] = { diffuse.x, diffuse.y, diffuse.z };
+			if (ImGui::ColorEdit3(std::string("##Di" + std::to_string(componentId)).c_str(), diCol, ImGuiColorEditFlags_Float))
+			{
+				diffuse = glm::vec3(diCol[0], diCol[1], diCol[2]);
+				_light->SetDiffuse(diffuse);
+			}
+
+
+			ImGui::Text("Specular :   ");
+			ImGui::SameLine();
+			float sCol[3] = { specular.x, specular.y, specular.z };
+			if (ImGui::ColorEdit3(std::string("##S" + std::to_string(componentId)).c_str(), sCol, ImGuiColorEditFlags_Float))
+			{
+				specular = glm::vec3(sCol[0], sCol[1], sCol[2]);
+				_light->SetSpecular(specular);
+			}
+		}
+	}
+
+	void Inspector::AddComponent() const
+	{
+		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.5f - 50);
+
+		if (ImGui::Button("Add component"))
+		{
+			ImGui::OpenPopup("AddComponentPopup");
+		}
+
+		if (ImGui::BeginPopup("AddComponentPopup"))
+		{
+			if (ImGui::MenuItem("Mesh"))
+			{
+				(*m_selectedGo)->AddComponent(new Mesh(MeshFilterPooler::Get()->GetMesh("Cube"), nullptr));
+			}
+
+			if (ImGui::MenuItem("Direct light"))
+			{
+				(*m_selectedGo)->AddComponent(new DirectLight());
+			}
+
+			if (ImGui::MenuItem("Point light"))
+			{
+				(*m_selectedGo)->AddComponent(new PointLight());
+			}
+
+			ImGui::EndPopup();
 		}
 	}
 }

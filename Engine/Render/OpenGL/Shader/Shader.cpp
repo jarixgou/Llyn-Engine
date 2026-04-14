@@ -68,6 +68,9 @@ namespace Llyn
 		CompileShader(Utils::GetFileContents(vertexData.c_str()).c_str(), GL_VERTEX_SHADER);
 		CompileShader(Utils::GetFileContents(fragmentData.c_str()).c_str(), GL_FRAGMENT_SHADER);
 
+		glLinkProgram(m_id);
+		CheckLinkStatus(m_id);
+		
 		return true;
 	}
 
@@ -161,6 +164,18 @@ namespace Llyn
 		GL_CALL(glUniformMatrix3fv(GetUniformLocation(_name), 1, GL_FALSE, glm::value_ptr(_value)))
 	}
 
+	void Shader::CheckLinkStatus(GLuint _program)
+	{
+		GLint success = 0;
+		glGetProgramiv(_program, GL_LINK_STATUS, &success);
+		if (!success)
+		{
+			GLchar infoLog[1024];
+			glGetProgramInfoLog(_program, 1024, NULL, infoLog);
+			std::cerr << "Error linking program: " << infoLog << std::endl;
+		}
+	}
+
 	void Shader::CompileShader(const char* _source, GLenum _type) const
 	{
 		GLuint shader = glCreateShader(_type);
@@ -178,7 +193,6 @@ namespace Llyn
 		}
 
 		glAttachShader(m_id, shader);
-		glLinkProgram(m_id);
 		glDeleteShader(shader);
 
 	}

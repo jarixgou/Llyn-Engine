@@ -53,15 +53,29 @@ namespace Llyn
 			return data;
 		}
 
-		void DrawVec3(glm::vec3* _vec, bool _angle, const std::string& _id)
+		bool DrawVec3(glm::vec3* _vec, bool _angle, const std::string& _id)
 		{
+			bool used = false;
 			auto drawAxis = [&](float& _value, ImVec4 _color, const char* _label)
 				{
 					ImGui::PushStyleColor(ImGuiCol_FrameBg, _color);
 
 					ImGui::SetNextItemWidth(60);
 
-					ImGui::DragFloat(_label, &_value, 0.1f, -359, 359);
+					if (_angle)
+					{
+						if (ImGui::DragFloat(_label, &_value, 0.1f, -359, 359))
+						{
+							used = true;
+						}
+					}
+					else
+					{
+						if (ImGui::DragFloat(_label, &_value, 0.1f, -FLT_MAX, FLT_MAX))
+						{
+							used = true;
+						}
+					}
 
 					ImGui::PopStyleColor();
 				};
@@ -71,6 +85,8 @@ namespace Llyn
 			drawAxis(_vec->y, ImVec4(0.0f, 1.0f, 0.0f, 0.4f), std::string("##DrawVec3Y" + _id).c_str());
 			ImGui::SameLine();											 
 			drawAxis(_vec->z, ImVec4(0.0f, 0.0f, 1.0f, 0.4f), std::string("##DrawVec3Z" + _id).c_str());
+
+			return used;
 		}
 
 		bool CheckFileExtension(const char* _file, const char* _extension)
