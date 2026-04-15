@@ -285,7 +285,7 @@ namespace Llyn
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(int), &count);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, sizeof(int), sizeof(m_padding), m_padding);
 
-		if (!m_directLights.empty())
+		if (!m_spotLights.empty())
 		{
 			glBufferSubData(GL_SHADER_STORAGE_BUFFER, 16, count * sizeof(SpotLightData), m_spotLights.data());
 		}

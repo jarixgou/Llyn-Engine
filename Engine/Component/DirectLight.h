@@ -20,7 +20,7 @@ namespace Llyn
 
 		void Draw(Camera* _camera, Transform* _transform) override;
 
-		glm::vec3 GetDir();
+		glm::vec3 GetDirection();
 		void SetDir(glm::vec3 _newDir);
 
 		glm::vec3 GetAmbient();

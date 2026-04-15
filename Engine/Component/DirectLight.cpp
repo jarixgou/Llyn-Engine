@@ -22,7 +22,7 @@ namespace Llyn
 
 	}
 
-	glm::vec3 DirectLight::GetDir()
+	glm::vec3 DirectLight::GetDirection()
 	{
 		return m_data->dir;
 	}

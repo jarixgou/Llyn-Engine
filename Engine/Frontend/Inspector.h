@@ -9,6 +9,7 @@ namespace Llyn
 	class Mesh;
 	class DirectLight;
 	class PointLight;
+	class SpotLight;
 
 	class Inspector
 	{
@@ -30,6 +31,7 @@ namespace Llyn
 		void DrawMesh(Mesh* _mesh) const;
 		void DrawDirectLight(DirectLight* _light) const;
 		void DrawPointLight(PointLight* _light) const;
+		void DrawSpotLight(SpotLight* _light) const;
 		void AddComponent() const;
 	};
 }

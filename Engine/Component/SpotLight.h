@@ -9,7 +9,7 @@ namespace Llyn
 	class SpotLight : public Component
 	{
 	private:
-		size_t m_lightId;
+		uint16_t m_lightId;
 		SpotLightData* m_data;
 	public:
 		SpotLight();

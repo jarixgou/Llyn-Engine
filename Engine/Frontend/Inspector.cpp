@@ -12,6 +12,7 @@
 #include "../Asset/Material.h"
 #include "../Component/DirectLight.h"
 #include "../Component/PointLight.h"
+#include "../Component/SpotLight.h"
 
 #include "../GameObject/GameObject.h"
 
@@ -20,6 +21,7 @@
 #include "../Utils/Utils.h"
 
 #include "../External/imgui/imgui.h"
+#include "../LightManager/SpotLightData.h"
 #include "../Mesh/MeshFilter.h"
 #include "../Mesh/MeshFilterPooler.h"
 
@@ -71,6 +73,7 @@ namespace Llyn
 				Mesh* mesh = dynamic_cast<Mesh*>(component);
 				DirectLight* directLight = dynamic_cast<DirectLight*>(component);
 				PointLight* pointLight = dynamic_cast<PointLight*>(component);
+				SpotLight* spotLight = dynamic_cast<SpotLight*>(component);
 				if (mesh != nullptr)
 				{
 					DrawMesh(mesh);
@@ -82,6 +85,10 @@ namespace Llyn
 				if (pointLight != nullptr)
 				{
 					DrawPointLight(pointLight);
+				}
+				if (spotLight != nullptr)
+				{
+					DrawSpotLight(spotLight);
 				}
 			}
 
@@ -194,7 +201,7 @@ namespace Llyn
 		if (ImGui::CollapsingHeader("Direct Light"))
 		{
 			size_t componentId = _light->GetID();
-			glm::vec3 dir = _light->GetDir();
+			glm::vec3 dir = _light->GetDirection();
 			glm::vec3 ambient = _light->GetAmbient();
 			glm::vec3 diffuse = _light->GetDiffuse();
 			glm::vec3 specular = _light->GetSpecular();
@@ -300,6 +307,70 @@ namespace Llyn
 		}
 	}
 
+	void Inspector::DrawSpotLight(SpotLight* _light) const
+	{
+		if (ImGui::CollapsingHeader("Spot light"))
+		{
+			const size_t componentId = _light->GetID();
+
+			float cutOff = _light->GetCutOff();
+			float outerCutOff = _light->GetOuterCutOff();
+			glm::vec3 dir = _light->GetDirection();
+			glm::vec3 ambient = _light->GetAmbient();
+			glm::vec3 diffuse = _light->GetDiffuse();
+			glm::vec3 specular = _light->GetSpecular();
+
+			ImGui::Text("Cut off : ");
+			ImGui::SameLine();
+			if (ImGui::DragFloat(std::string("##C" + std::to_string(componentId)).c_str(), &cutOff, 1.f, 0.f, FLT_MAX))
+			{
+				_light->SetCutOff(cutOff);
+			}
+
+			ImGui::Text("Outer cut off : ");
+			ImGui::SameLine();
+			if (ImGui::DragFloat(std::string("##O" + std::to_string(componentId)).c_str(), &outerCutOff, 1.f, 0.f, FLT_MAX))
+			{
+				_light->SetOuterCutOff(outerCutOff);
+			}
+
+			ImGui::Text("Direction :  ");
+			ImGui::SameLine();
+			if (Utils::DrawVec3(&dir, false, "D" + std::to_string(componentId)))
+			{
+				_light->SetDirection(dir);
+			}
+
+			ImGui::Text("Ambient :    ");
+			ImGui::SameLine();
+			float aCol[3] = { ambient.x, ambient.y, ambient.z };
+			if (ImGui::ColorEdit3(std::string("##A" + std::to_string(componentId)).c_str(), aCol, ImGuiColorEditFlags_Float))
+			{
+				ambient = glm::vec3(aCol[0], aCol[1], aCol[2]);
+				_light->SetAmbient(ambient);
+			}
+
+			ImGui::Text("Diffuse :    ");
+			ImGui::SameLine();
+			float diCol[3] = { diffuse.x, diffuse.y, diffuse.z };
+			if (ImGui::ColorEdit3(std::string("##Di" + std::to_string(componentId)).c_str(), diCol, ImGuiColorEditFlags_Float))
+			{
+				diffuse = glm::vec3(diCol[0], diCol[1], diCol[2]);
+				_light->SetDiffuse(diffuse);
+			}
+
+
+			ImGui::Text("Specular :   ");
+			ImGui::SameLine();
+			float sCol[3] = { specular.x, specular.y, specular.z };
+			if (ImGui::ColorEdit3(std::string("##S" + std::to_string(componentId)).c_str(), sCol, ImGuiColorEditFlags_Float))
+			{
+				specular = glm::vec3(sCol[0], sCol[1], sCol[2]);
+				_light->SetSpecular(specular);
+			}
+		}
+	}
+
 	void Inspector::AddComponent() const
 	{
 		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.5f - 50);
@@ -324,6 +395,11 @@ namespace Llyn
 			if (ImGui::MenuItem("Point light"))
 			{
 				(*m_selectedGo)->AddComponent(new PointLight());
+			}
+
+			if (ImGui::MenuItem("Spot light"))
+			{
+				(*m_selectedGo)->AddComponent(new SpotLight());
 			}
 
 			ImGui::EndPopup();
