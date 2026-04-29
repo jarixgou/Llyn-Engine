@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Llyn Engine/Llyn Engine.vcxproj" Id="a9412150-c596-4399-88ed-0eb9f06b162f" />
+</Solution>
