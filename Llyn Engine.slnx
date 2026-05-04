@@ -3,5 +3,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Project Path="Core/Core.vcxproj" Id="444cb102-75d7-4ab2-908f-4a9ba33f6425" />
   <Project Path="Llyn Engine/Llyn Engine.vcxproj" Id="a9412150-c596-4399-88ed-0eb9f06b162f" />
 </Solution>

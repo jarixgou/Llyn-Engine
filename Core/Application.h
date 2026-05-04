@@ -47,6 +47,9 @@ private:
 
 	bool m_frameBufferResized = false;
 
+	vk::raii::Buffer m_vertexBuffer = nullptr;
+	vk::raii::DeviceMemory m_vertexBufferMemory = nullptr;
+
 	std::vector<const char*> m_requiredDeviceExtension = {
 		vk::KHRSwapchainExtensionName };
 public:
@@ -83,9 +86,13 @@ private:
 		vk::PipelineStageFlags2 _srcStageMask,
 		vk::PipelineStageFlags2 _dstStageMask);
 
+	void CreateVertexBuffer();
+
 	void DrawFrame();
 
 	[[nodiscard]] vk::raii::ShaderModule CreateShaderModule(const std::vector<char>& _code);
+
+	uint32_t FindMemoryType(uint32_t _typeFilter, vk::MemoryPropertyFlags _properties) const;
 
 	void InitWindow();
 };

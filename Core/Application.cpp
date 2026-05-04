@@ -4,7 +4,14 @@
 #include <limits>
 #include <map>
 
+#include "Vertex.h"
 #include "Utils/Utils.h"
+
+const std::vector<Vertex> vertices = {
+	{{0.0f, -0.5f, 0.f}, {0.f, 0.f, 0.f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+	{{0.5f, 0.5f, 0.f}, {0.f, 0.f, 0.f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+	{{-0.5f, 0.5f, 0.f}, {0.f, 0.f, 0.f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+};
 
 const std::vector<char const*> validationLayers =
 {
@@ -82,6 +89,7 @@ void Application::InitVulkan()
 	CreateImageViews();
 	CreateGraphicsPipeline();
 	CreateCommandPool();
+	CreateVertexBuffer();
 	CreateCommandBuffer();
 	CreateSyncObjects();
 }
@@ -370,6 +378,13 @@ void Application::CreateGraphicsPipeline()
 	vk::PipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
 	vk::PipelineVertexInputStateCreateInfo vertexInputInfo{};
+	auto bindingDescription = Vertex::GetBindingDescrition();
+	auto attributeDescriptions = Vertex::GetAttributeDescriptions();
+	vertexInputInfo.setVertexBindingDescriptionCount(1);
+	vertexInputInfo.setPVertexBindingDescriptions(&bindingDescription);
+	vertexInputInfo.setVertexAttributeDescriptionCount(static_cast<uint32_t>(attributeDescriptions.size()));
+	vertexInputInfo.setPVertexAttributeDescriptions(attributeDescriptions.data());
+
 	vk::PipelineInputAssemblyStateCreateInfo inputAssembly{};
 	inputAssembly.setTopology(vk::PrimitiveTopology::eTriangleList);
 
@@ -504,9 +519,10 @@ void Application::RecordCommandBuffer(uint32_t _imageIndex)
 
 	m_commandBuffers[m_frameIndex].beginRendering(renderingInfo);
 	m_commandBuffers[m_frameIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, *m_graphicsPipeline);
+	m_commandBuffers[m_frameIndex].bindVertexBuffers(0, *m_vertexBuffer, {0});
 	m_commandBuffers[m_frameIndex].setViewport(0, vk::Viewport(0.0f, 0.0f, static_cast<float>(m_swapChainExtent.width), static_cast<float>(m_swapChainExtent.height), 0.0f, 1.0f));
 	m_commandBuffers[m_frameIndex].setScissor(0, area);
-	m_commandBuffers[m_frameIndex].draw(3, 1, 0, 0);
+	m_commandBuffers[m_frameIndex].draw(static_cast<uint32_t>(vertices.size()), 1, 0, 0);
 	m_commandBuffers[m_frameIndex].endRendering();
 
 	// After rendering, transition the swapchain image to vk::ImageLayout::ePresentSrcKHR
@@ -554,6 +570,28 @@ void Application::TransitionImageLayout(uint32_t _imageIndex,
 	dependencyInfo.setPImageMemoryBarriers(&barrier);
 
 	m_commandBuffers[m_frameIndex].pipelineBarrier2(dependencyInfo);
+}
+
+void Application::CreateVertexBuffer()
+{
+	vk::BufferCreateInfo bufferInfo{};
+	bufferInfo.setSize(sizeof(vertices[0]) * vertices.size());
+	bufferInfo.setUsage(vk::BufferUsageFlagBits::eVertexBuffer);
+	bufferInfo.setSharingMode(vk::SharingMode::eExclusive);
+
+	m_vertexBuffer = vk::raii::Buffer(m_device, bufferInfo);
+
+	vk::MemoryRequirements memRequirements = m_vertexBuffer.getMemoryRequirements();
+	vk::MemoryAllocateInfo memoryAllocateInfo{};
+	memoryAllocateInfo.setAllocationSize(memRequirements.size);
+	memoryAllocateInfo.setMemoryTypeIndex(FindMemoryType(memRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent));
+
+	m_vertexBufferMemory = vk::raii::DeviceMemory(m_device, memoryAllocateInfo);
+	m_vertexBuffer.bindMemory(*m_vertexBufferMemory, 0);
+
+	void* data = m_vertexBufferMemory.mapMemory(0, bufferInfo.size);
+	memcpy(data, vertices.data(), bufferInfo.size);
+	m_vertexBufferMemory.unmapMemory();
 }
 
 void Application::DrawFrame()
@@ -627,6 +665,21 @@ vk::raii::ShaderModule Application::CreateShaderModule(const std::vector<char>& 
 	vk::raii::ShaderModule shaderModule{ m_device, createInfo };
 
 	return shaderModule;
+}
+
+uint32_t Application::FindMemoryType(uint32_t _typeFilter, vk::MemoryPropertyFlags _properties) const
+{
+	vk::PhysicalDeviceMemoryProperties memProperties = m_physicalDevice.getMemoryProperties();
+
+	for (uint32_t i = 0; i < memProperties.memoryTypeCount; ++i)
+	{
+		if (_typeFilter & (1 << i) && (memProperties.memoryTypes[i].propertyFlags & _properties) == _properties)
+		{
+			return i;
+		}
+	}
+
+	std::cerr << "Failed to find suitable memory type!" << std::endl;
 }
 
 void Application::InitWindow()
