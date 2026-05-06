@@ -93,7 +93,9 @@ private:
 	[[nodiscard]] vk::raii::ShaderModule CreateShaderModule(const std::vector<char>& _code);
 
 	uint32_t FindMemoryType(uint32_t _typeFilter, vk::MemoryPropertyFlags _properties) const;
-
+	std::pair<vk::raii::Buffer, vk::raii::DeviceMemory> CreateBuffer(vk::DeviceSize _size, vk::BufferUsageFlags _usage, 
+		vk::MemoryPropertyFlags _properties);
+	void CopyBuffer(vk::raii::Buffer& _srcBuffer, vk::raii::Buffer& _dstBuffer, vk::DeviceSize _size);
 	void InitWindow();
 };
 

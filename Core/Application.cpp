@@ -574,24 +574,21 @@ void Application::TransitionImageLayout(uint32_t _imageIndex,
 
 void Application::CreateVertexBuffer()
 {
-	vk::BufferCreateInfo bufferInfo{};
-	bufferInfo.setSize(sizeof(vertices[0]) * vertices.size());
-	bufferInfo.setUsage(vk::BufferUsageFlagBits::eVertexBuffer);
-	bufferInfo.setSharingMode(vk::SharingMode::eExclusive);
+	vk::DeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
-	m_vertexBuffer = vk::raii::Buffer(m_device, bufferInfo);
+	auto [stagingBuffer, stagingBufferMemory] =
+		CreateBuffer(bufferSize, vk::BufferUsageFlagBits::eTransferSrc, 
+			vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
 
-	vk::MemoryRequirements memRequirements = m_vertexBuffer.getMemoryRequirements();
-	vk::MemoryAllocateInfo memoryAllocateInfo{};
-	memoryAllocateInfo.setAllocationSize(memRequirements.size);
-	memoryAllocateInfo.setMemoryTypeIndex(FindMemoryType(memRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent));
+	void* dataStaging = stagingBufferMemory.mapMemory(0, bufferSize);
+	memcpy(dataStaging, vertices.data(), bufferSize);
+	stagingBufferMemory.unmapMemory();
 
-	m_vertexBufferMemory = vk::raii::DeviceMemory(m_device, memoryAllocateInfo);
-	m_vertexBuffer.bindMemory(*m_vertexBufferMemory, 0);
+	std::tie(m_vertexBuffer, m_vertexBufferMemory) =
+		CreateBuffer(bufferSize, vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eTransferDst,
+			vk::MemoryPropertyFlagBits::eDeviceLocal);
 
-	void* data = m_vertexBufferMemory.mapMemory(0, bufferInfo.size);
-	memcpy(data, vertices.data(), bufferInfo.size);
-	m_vertexBufferMemory.unmapMemory();
+	CopyBuffer(stagingBuffer, m_vertexBuffer, bufferSize);
 }
 
 void Application::DrawFrame()
@@ -680,6 +677,49 @@ uint32_t Application::FindMemoryType(uint32_t _typeFilter, vk::MemoryPropertyFla
 	}
 
 	std::cerr << "Failed to find suitable memory type!" << std::endl;
+}
+
+std::pair<vk::raii::Buffer, vk::raii::DeviceMemory> Application::CreateBuffer(vk::DeviceSize _size,
+	vk::BufferUsageFlags _usage, vk::MemoryPropertyFlags _properties)
+{
+	vk::BufferCreateInfo bufferInfo{};
+	bufferInfo.setSize(_size);
+	bufferInfo.setUsage(_usage);
+	bufferInfo.setSharingMode(vk::SharingMode::eExclusive);
+
+	vk::raii::Buffer buffer = vk::raii::Buffer(m_device, bufferInfo);
+
+	vk::MemoryRequirements memRequirements = buffer.getMemoryRequirements();
+	vk::MemoryAllocateInfo allocInfo{};
+	allocInfo.setAllocationSize(memRequirements.size);
+	allocInfo.setMemoryTypeIndex(FindMemoryType(memRequirements.memoryTypeBits, _properties));
+
+	vk::raii::DeviceMemory bufferMemory = vk::raii::DeviceMemory(m_device, allocInfo);
+	buffer.bindMemory(*bufferMemory, 0);
+
+	return { std::move(buffer), std::move(bufferMemory) };
+}
+
+void Application::CopyBuffer(vk::raii::Buffer& _srcBuffer, vk::raii::Buffer& _dstBuffer, vk::DeviceSize _size)
+{
+	vk::CommandBufferAllocateInfo allocInfo{};
+	allocInfo.setCommandPool(m_commandPool);
+	allocInfo.setLevel(vk::CommandBufferLevel::ePrimary);
+	allocInfo.setCommandBufferCount(1);
+
+	vk::raii::CommandBuffer commandCopyBuffer = 
+		std::move(m_device.allocateCommandBuffers(allocInfo).front());
+	vk::CommandBufferBeginInfo beginInfo{};
+	beginInfo.setFlags(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+	commandCopyBuffer.begin(beginInfo);
+	commandCopyBuffer.copyBuffer(*_srcBuffer, *_dstBuffer, vk::BufferCopy(0, 0, _size));
+	commandCopyBuffer.end();
+
+	vk::SubmitInfo submitInfo{};
+	submitInfo.setCommandBufferCount(1);
+	submitInfo.setPCommandBuffers(&*commandCopyBuffer);
+	m_graphicsQueue.submit(submitInfo, nullptr);
+	m_graphicsQueue.waitIdle();
 }
 
 void Application::InitWindow()
