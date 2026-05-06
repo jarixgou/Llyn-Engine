@@ -8,9 +8,14 @@
 #include "Utils/Utils.h"
 
 const std::vector<Vertex> vertices = {
-	{{0.0f, -0.5f, 0.f}, {0.f, 0.f, 0.f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-	{{0.5f, 0.5f, 0.f}, {0.f, 0.f, 0.f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-	{{-0.5f, 0.5f, 0.f}, {0.f, 0.f, 0.f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+	{{-0.5f, -0.5f, 0.f}, {0.f, 0.f, 0.f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+	{{0.5f, -0.5f, 0.f}, {0.f, 0.f, 0.f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+	{{0.5f, 0.5f, 0.f}, {0.f, 0.f, 0.f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+	{{-0.5f, 0.5f, 0.f}, {0.f, 0.f, 0.f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+};
+
+const std::vector<uint16_t> indices = {
+	0, 1, 2, 2, 3, 0
 };
 
 const std::vector<char const*> validationLayers =
@@ -90,6 +95,7 @@ void Application::InitVulkan()
 	CreateGraphicsPipeline();
 	CreateCommandPool();
 	CreateVertexBuffer();
+	CreateIndexBuffer();
 	CreateCommandBuffer();
 	CreateSyncObjects();
 }
@@ -520,9 +526,10 @@ void Application::RecordCommandBuffer(uint32_t _imageIndex)
 	m_commandBuffers[m_frameIndex].beginRendering(renderingInfo);
 	m_commandBuffers[m_frameIndex].bindPipeline(vk::PipelineBindPoint::eGraphics, *m_graphicsPipeline);
 	m_commandBuffers[m_frameIndex].bindVertexBuffers(0, *m_vertexBuffer, {0});
+	m_commandBuffers[m_frameIndex].bindIndexBuffer(*m_indexBuffer, 0, vk::IndexType::eUint16);
 	m_commandBuffers[m_frameIndex].setViewport(0, vk::Viewport(0.0f, 0.0f, static_cast<float>(m_swapChainExtent.width), static_cast<float>(m_swapChainExtent.height), 0.0f, 1.0f));
 	m_commandBuffers[m_frameIndex].setScissor(0, area);
-	m_commandBuffers[m_frameIndex].draw(static_cast<uint32_t>(vertices.size()), 1, 0, 0);
+	m_commandBuffers[m_frameIndex].drawIndexed(static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 	m_commandBuffers[m_frameIndex].endRendering();
 
 	// After rendering, transition the swapchain image to vk::ImageLayout::ePresentSrcKHR
@@ -589,6 +596,25 @@ void Application::CreateVertexBuffer()
 			vk::MemoryPropertyFlagBits::eDeviceLocal);
 
 	CopyBuffer(stagingBuffer, m_vertexBuffer, bufferSize);
+}
+
+void Application::CreateIndexBuffer()
+{
+	vk::DeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+
+	auto [stagingBuffer, stagingBufferMemory] =
+		CreateBuffer(bufferSize, vk::BufferUsageFlagBits::eTransferSrc,
+			vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
+
+	void* dataStaging = stagingBufferMemory.mapMemory(0, bufferSize);
+	memcpy(dataStaging, indices.data(), bufferSize);
+	stagingBufferMemory.unmapMemory();
+
+	std::tie(m_indexBuffer, m_indexBufferMemory) =
+		CreateBuffer(bufferSize, vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eTransferDst,
+			vk::MemoryPropertyFlagBits::eDeviceLocal);
+
+	CopyBuffer(stagingBuffer, m_indexBuffer, bufferSize);
 }
 
 void Application::DrawFrame()

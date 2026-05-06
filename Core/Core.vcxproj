@@ -162,7 +162,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Matrix\Mat2.h" />
     <ClInclude Include="Matrix\Mat3.h" />
+    <ClInclude Include="Matrix\Mat4.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Vector\FwdVec2.h" />
     <ClInclude Include="Vector\FwdVec3.h" />
@@ -174,7 +176,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Matrix\Mat2.cpp" />
     <ClCompile Include="Matrix\Mat3.cpp" />
+    <ClCompile Include="Matrix\Mat4.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

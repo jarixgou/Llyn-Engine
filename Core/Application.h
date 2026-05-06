@@ -49,6 +49,8 @@ private:
 
 	vk::raii::Buffer m_vertexBuffer = nullptr;
 	vk::raii::DeviceMemory m_vertexBufferMemory = nullptr;
+	vk::raii::Buffer m_indexBuffer = nullptr;
+	vk::raii::DeviceMemory m_indexBufferMemory = nullptr;
 
 	std::vector<const char*> m_requiredDeviceExtension = {
 		vk::KHRSwapchainExtensionName };
@@ -87,6 +89,7 @@ private:
 		vk::PipelineStageFlags2 _dstStageMask);
 
 	void CreateVertexBuffer();
+	void CreateIndexBuffer();
 
 	void DrawFrame();
 
