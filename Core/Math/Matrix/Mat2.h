@@ -1,7 +1,7 @@
 #ifndef MAT2__H
 #define MAT2__H
 
-#include "../Vector/FwdVec2.h"
+#include "../../Vector/FwdVec2.h"
 
 struct Mat2
 {

@@ -1,7 +1,7 @@
 #ifndef MAT3__H
 #define MAT3__H
 
-#include "../Vector/FwdVec3.h"
+#include "../../Vector/FwdVec3.h"
 
 struct Mat3
 {
@@ -16,12 +16,6 @@ struct Mat3
 	float c0 = 0;
 	float c1 = 0;
 	float c2 = 0;
-
-	Mat3& operator+=(const Mat3& _other);
-	Mat3 operator+(const Mat3& _other) const;
-
-	Mat3& operator-=(const Mat3& _other);
-	Mat3 operator-(const Mat3& _other);
 
 	Mat3& operator*=(const Mat3& _other);
 	Mat3 operator*(const Mat3& _other);

@@ -9,16 +9,16 @@ struct Vec3
 	T z = 0;
 
 	Vec3& operator+=(const Vec3& _other);
-	Vec3 operator+(const Vec3& _other);
+	Vec3 operator+(const Vec3& _other) const;
 
 	Vec3& operator-=(const Vec3& _other);
-	Vec3 operator-(const Vec3& _other);
+	Vec3 operator-(const Vec3& _other) const;
 
 	Vec3& operator*=(const Vec3& _other);
-	Vec3 operator*(const Vec3& _other);
+	Vec3 operator*(const Vec3& _other) const;
 
 	Vec3& operator/=(const Vec3& _other);
-	Vec3 operator/(const Vec3& _other);
+	Vec3 operator/(const Vec3& _other) const;
 
 	bool operator==(const Vec3& _other);
 	bool operator!=(const Vec3& _other);
@@ -35,7 +35,7 @@ Vec3<T>& Vec3<T>::operator+=(const Vec3& _other)
 }
 
 template <typename T>
-Vec3<T> Vec3<T>::operator+(const Vec3& _other)
+Vec3<T> Vec3<T>::operator+(const Vec3& _other) const
 {
 	Vec3 tmp = *this;
 	tmp += _other;
@@ -53,7 +53,7 @@ Vec3<T>& Vec3<T>::operator-=(const Vec3& _other)
 }
 
 template <typename T>
-Vec3<T> Vec3<T>::operator-(const Vec3& _other)
+Vec3<T> Vec3<T>::operator-(const Vec3& _other) const
 {
 	Vec3 tmp = *this;
 	tmp -= _other;
@@ -71,7 +71,7 @@ Vec3<T>& Vec3<T>::operator*=(const Vec3& _other)
 }
 
 template <typename T>
-Vec3<T> Vec3<T>::operator*(const Vec3& _other)
+Vec3<T> Vec3<T>::operator*(const Vec3& _other) const
 {
 	Vec3 tmp = *this;
 	tmp *= _other;
@@ -87,7 +87,7 @@ Vec3<T>& Vec3<T>::operator/=(const Vec3& _other)
 }
 
 template <typename T>
-Vec3<T> Vec3<T>::operator/(const Vec3& _other)
+Vec3<T> Vec3<T>::operator/(const Vec3& _other) const
 {
 	Vec3 tmp = *this;
 	tmp /= _other;

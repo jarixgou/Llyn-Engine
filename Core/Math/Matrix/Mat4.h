@@ -1,7 +1,7 @@
 #ifndef MAT4__H
 #define MAT4__H
 
-#include "../Vector/FwdVec4.h"
+#include "../../Vector/FwdVec4.h"
 
 struct Mat4
 {
@@ -24,12 +24,6 @@ struct Mat4
 	float d1 = 0.0f;
 	float d2 = 0.0f;
 	float d3 = 0.0f;
-
-	Mat4& operator+=(const Mat4& _other);
-	Mat4 operator+(const Mat4& _other) const;
-
-	Mat4& operator-=(const Mat4& _other);
-	Mat4 operator-(const Mat4& _other) const;
 
 	Mat4& operator*=(const Mat4& _other);
 	Mat4 operator*(const Mat4& _other) const;

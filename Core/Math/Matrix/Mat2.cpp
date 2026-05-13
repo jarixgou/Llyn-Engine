@@ -1,5 +1,7 @@
 #include "Mat2.h"
 
+#include "../../Vector/Vec2.h"
+
 Mat2& Mat2::operator+=(const Mat2& _other)
 {
 }

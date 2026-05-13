@@ -1,6 +1,6 @@
 struct VSInput
 {
-    float3 position;
+    float3 pos;
     float3 normal;
     float3 color;
     float2 texCoord; 
@@ -10,11 +10,31 @@ struct VSOutput
 {
     float4 vsPosition : SV_Position;
 
-    float3 fragPosition;
+    float3 fragPos;
     float3 normal;
     float3 color;
     float2 texCoord;
 }
+
+struct ModelData
+{
+    float4x4 model;
+    float4x4 invModel;
+}
+
+struct Camera
+{
+    float4x4 view;
+    float4x4 proj;
+
+    float3 pos;
+}
+
+[[vk::binding(0, 0)]]
+ConstantBuffer<Camera> camera;
+
+[[vk::binding(1, 0)]]
+ConstantBuffer<ModelData> modelData;
 
 [shader("vertex")]
 VSOutput vertMain(VSInput _input)
@@ -24,14 +44,14 @@ VSOutput vertMain(VSInput _input)
     output.color = _input.color;
     output.texCoord = _input.texCoord;
 
-    // output.fragPosition = vec3(model * vec4(_input.position, 1.0));
-    output.fragPosition = _input.position;
+    output.fragPos = mul(modelData.model, float4(_input.pos, 1.0f)).xyz;
+    //output.fragPosition = _input.position;
 
     // output.normal = transpose(inverse(mat3(model))) * _input.normal;
-    output.normal = _input.normal;
+    output.normal = mul((float3x3)modelData.invModel, _input.normal);
 
     // output.vsPosition = proj * view * float4(_input.fragPosition, 1.0);
-    output.vsPosition = float4(output.fragPosition, 1.0);
+    output.vsPosition = mul(camera.proj, mul(camera.view, float4(output.fragPos, 1.0)));
     return output;
 }
 
