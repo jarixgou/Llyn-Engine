@@ -162,11 +162,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Entities\ECS.h" />
+    <ClInclude Include="Entities\SparseSet.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\Matrix\Mat2.h" />
     <ClInclude Include="Math\Matrix\Mat3.h" />
     <ClInclude Include="Math\Matrix\Mat4.h" />
-    <ClInclude Include="Quaternions.h" />
+    <ClInclude Include="Math\Quaternions.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Vector\FwdVec2.h" />
@@ -183,6 +185,7 @@
     <ClCompile Include="Math\Matrix\Mat2.cpp" />
     <ClCompile Include="Math\Matrix\Mat3.cpp" />
     <ClCompile Include="Math\Matrix\Mat4.cpp" />
+    <ClCompile Include="Math\Quaternions.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />
   </ItemGroup>

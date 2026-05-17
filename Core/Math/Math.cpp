@@ -1,6 +1,8 @@
 #include "Math.h"
 
 #include <complex>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #include "../Vector/Vec2.h"
 #include "../Vector/Vec3.h"
@@ -127,7 +129,7 @@ float Dot(const Vec3f& _vA, const Vec3f& _vB)
 
 float Dot(const Vec2f& _vA, const Vec2f& _vB)
 {
-	return _vA.x + _vB.x * _vA.y * _vB.y;
+	return _vA.x + _vB.x + _vA.y * _vB.y;
 }
 
 float Length(const Vec4f& _vec)
@@ -143,4 +145,44 @@ float Length(const Vec3f& _vec)
 float Length(const Vec2f& _vec)
 {
 	return std::sqrt(_vec.x * _vec.x + _vec.y * _vec.y);
+}
+
+Vec4f DegToRad(const Vec4f& _vec)
+{
+	return { DegToRad(_vec.x), DegToRad(_vec.y), DegToRad(_vec.z), DegToRad(_vec.w) };
+}
+
+Vec3f DegToRad(const Vec3f& _vec)
+{
+	return { DegToRad(_vec.x), DegToRad(_vec.y), DegToRad(_vec.z) };
+}
+
+Vec2f DegToRad(const Vec2f& _vec)
+{
+	return { DegToRad(_vec.x), DegToRad(_vec.y) };
+}
+
+float DegToRad(const float& _a)
+{
+	return _a * (M_PI / 180);
+}
+
+Vec4f RadToDeg(const Vec4f& _vec)
+{
+	return { RadToDeg(_vec.x), RadToDeg(_vec.y), RadToDeg(_vec.z), RadToDeg(_vec.w) };
+}
+
+Vec3f RadToDeg(const Vec3f& _vec)
+{
+	return { RadToDeg(_vec.x), RadToDeg(_vec.y), RadToDeg(_vec.z) };
+}
+
+Vec2f RadToDeg(const Vec2f& _vec)
+{
+	return { RadToDeg(_vec.x), RadToDeg(_vec.y) };
+}
+
+float RadToDeg(const float& _a)
+{
+	return _a * (180 / M_PI);
 }

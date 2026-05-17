@@ -3,6 +3,10 @@
 
 #include "../../Vector/FwdVec2.h"
 
+/*
+ *	a0	b0
+ *	a1	b1
+ */
 struct Mat2
 {
 	float a0 = 0.0f;

@@ -34,4 +34,14 @@ float Length(const Vec4f& _vec);
 float Length(const Vec3f& _vec);
 float Length(const Vec2f& _vec);
 
+Vec4f DegToRad(const Vec4f& _vec);
+Vec3f DegToRad(const Vec3f& _vec);
+Vec2f DegToRad(const Vec2f& _vec);
+float DegToRad(const float& _a);
+
+Vec4f RadToDeg(const Vec4f& _vec);
+Vec3f RadToDeg(const Vec3f& _vec);
+Vec2f RadToDeg(const Vec2f& _vec);
+float RadToDeg(const float& _a);
+
 #endif

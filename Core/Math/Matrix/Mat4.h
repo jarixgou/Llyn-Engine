@@ -3,6 +3,12 @@
 
 #include "../../Vector/FwdVec4.h"
 
+/*
+ *	a0	b0	c0	d0
+ *	a1	b1	c1	d1
+ *	a2	b2	c2	d2
+ *	a3	b3	c3	d3
+ */
 struct Mat4
 {
 	float a0 = 0.0f;
