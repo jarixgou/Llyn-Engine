@@ -6,11 +6,12 @@ template<typename T>
 class SparseSet
 {
 private:
+	static constexpr size_t m_tombstone = std::numeric_limits<size_t>::max();
+
 	std::vector<T> m_dense;
 	std::vector<size_t> m_sparse;
 
 public:
-
 	void Insert(const size_t& _entityID, const T& _component);
 	T* Get(const size_t& _entityID);
 	void Remove(size_t _entityID);
@@ -24,7 +25,7 @@ void SparseSet<T>::Insert(const size_t& _entityID, const T& _component)
 {
 	if (_entityID >= m_sparse.size())
 	{
-		m_sparse.resize(_entityID + 1);
+		m_sparse.resize(_entityID + 1, m_tombstone);
 	}
 
 	const size_t idx = m_dense.size();
@@ -40,8 +41,14 @@ T* SparseSet<T>::Get(const size_t& _entityID)
 		return nullptr;
 	}
 
-	const size_t index = m_sparse[_entityID];
-	return &m_dense[index];
+	const size_t idx = m_sparse[_entityID];
+
+	if (idx == m_tombstone)
+	{
+		return nullptr;
+	}
+
+	return &m_dense[idx];
 }
 
 template <typename T>
@@ -54,7 +61,15 @@ void SparseSet<T>::Remove(size_t _entityID)
 
 	const size_t idx = m_sparse[_entityID];
 
+	if (idx == m_tombstone)
+	{
+		return;
+	}
 
+	m_dense[idx] = m_dense.back();
+	m_dense.pop_back();
+
+	m_sparse[_entityID] = m_tombstone;
 }
 
 template <typename T>

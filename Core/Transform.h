@@ -1,7 +1,7 @@
 #ifndef TRANSFORM__H
 #define TRANSFORM__H
 
-#include "Quaternions.h"
+#include "Math/Quaternions.h"
 #include "Vector/Vec3.h"
 
 struct Mat4;
