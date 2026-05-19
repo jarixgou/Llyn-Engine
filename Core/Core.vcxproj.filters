@@ -66,7 +66,7 @@
     <ClInclude Include="Entities\SparseSet.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Entities\ComponentPool.h">
+    <ClInclude Include="Entities\Component.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

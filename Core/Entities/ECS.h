@@ -1,15 +1,12 @@
 #ifndef ECS__H
 #define ECS__H
+
 #include <array>
 #include <bitset>
 #include <queue>
 #include <unordered_map>
 
-#include "ComponentPool.h"
-
-#define MAX_COMPONENT 64
-
-using ComponentMask = std::bitset<MAX_COMPONENT>;
+#include "Component.h"
 
 class ECS
 {
@@ -101,6 +98,11 @@ template <typename T>
 T* ECS::GetComponent(const size_t& _entityID)
 {
 	if (!EntityIsValid(_entityID))
+	{
+		return nullptr;
+	}
+
+	if (!HasComponent<T>(_entityID))
 	{
 		return nullptr;
 	}

@@ -162,7 +162,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Entities\ComponentPool.h" />
+    <ClInclude Include="Entities\Component.h" />
     <ClInclude Include="Entities\ECS.h" />
     <ClInclude Include="Entities\SparseSet.h" />
     <ClInclude Include="Math\Math.h" />
