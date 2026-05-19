@@ -1,5 +1,7 @@
 #ifndef COMPONENT_POOL__H
 #define COMPONENT_POOL__H
+#include <bitset>
+
 #include "SparseSet.h"
 
 #define MAX_COMPONENT 64
