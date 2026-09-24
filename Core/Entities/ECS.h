@@ -6,96 +6,115 @@
 #include <queue>
 #include <unordered_map>
 
-#include "Component.h"
+#include "../LlynCore.h"
+#include "../Component/Component.h"
 
 class ECS
 {
 private: // Variable part
-	std::array<IComponentPool*, MAX_COMPONENT> m_componentPool{nullptr};
+	std::unordered_map<StringHash, size_t> m_hashComponentID;
+	std::vector<IComponent*> m_componentPool;
 
 	std::vector<ComponentMask> m_componentMasks;
 
-	static size_t m_nextComponentTypeID;
+	std::queue<EntityID> m_freeEntitiesID;
+	EntityID m_nextEntityID = 0;
 
-	std::queue<size_t> m_freeEntitiesID;
-	size_t m_nextEntityID = 0;
+	uint32_t m_entityCount = 0;
 
 private: // Private func
-	bool EntityIsValid(const size_t& _entityID) const;
+	bool EntityIsValid(const EntityID& _entityID) const;
+
+	template <typename T>
+	size_t GetComponentID();
 
 	template<typename T>
-	static size_t GetComponentTypeID();
-
-	template<typename T>
-	ComponentPool<T>& GetPool();
+	SparseSet<T>* GetPool();
 public: // Public func
-	size_t CreateEntity();
+	EntityID CreateEntity();
 
 	template<typename... T>
 	static ComponentMask CreateComponentMask();
 
 	template<typename... T>
-	void AddComponents(const size_t& _entityID, const T&... _components);
+	void AddComponents(const EntityID& _entityID, const T&... _components);
 
 	template<typename T>
-	T* GetComponent(const size_t& _entityID);
+	T* GetComponent(const EntityID& _entityID);
 
 	template<typename... T>
-	void RemoveComponents(const size_t& _entityID);
+	void RemoveComponents(const EntityID& _entityID);
 
-	void DestroyEntity(const size_t& _entityID);
+	void DestroyEntity(const EntityID& _entityID);
 
 	template<typename... T>
-	bool HasComponent(const size_t& _entityID) const;
+	bool HasComponent(const EntityID& _entityID);
 
-	ComponentMask* GetComponentMask(const size_t& _entityID);
+	ComponentMask* GetComponentMask(const EntityID& _entityID);
+
+	template<typename T>
+	std::vector<T> GetComponents();
+
+	template<typename T>
+	bool GetComponentIsDirty();
+
+	template<typename T>
+	void SetComponentIsDirty(bool _dirty);
+
+	uint32_t GetEntityCount();
 };
 
 template <typename T>
-size_t ECS::GetComponentTypeID()
+size_t ECS::GetComponentID()
 {
-	static size_t typeID = m_nextComponentTypeID++;
-	return typeID;
+	StringHash hashCompoentID = GET_TYPE_SIGNATURE(T);
+
+	if (!m_hashComponentID.contains(hashCompoentID))
+	{
+		m_hashComponentID[hashCompoentID] = m_componentPool.size();
+		m_componentPool.push_back(nullptr);
+	}
+	return m_hashComponentID[hashCompoentID];
 }
 
 template <typename T>
-ComponentPool<T>& ECS::GetPool()
+SparseSet<T>* ECS::GetPool()
 {
-	const size_t typeID = GetComponentTypeID<T>();
+	const size_t typeID = GetComponentID<T>();
 
-	const IComponentPool* content = m_componentPool[typeID];
+	IComponent* content = m_componentPool[typeID];
 	if (content == nullptr)
 	{
 		ComponentPool<T>* newComponent = new ComponentPool<T>();
 		m_componentPool[typeID] = newComponent;
-		return *newComponent;
+		return static_cast<SparseSet<T>*>(newComponent);
 	}
 
-	return *static_cast<ComponentPool<T>*>(content);
+	return static_cast<SparseSet<T>*>(static_cast<ComponentPool<T>*>(content));
 }
 
 template <typename ... T>
 ComponentMask ECS::CreateComponentMask()
 {
 	ComponentMask mask;
-	(mask.set(GetComponentTypeID<T>()), ...);
+	(mask.set(GetComponentID<T>()), ...);
 	return mask;
 }
 
 template <typename ... T>
-void ECS::AddComponents(const size_t& _entityID, const T&... _components)
+void ECS::AddComponents(const EntityID& _entityID, const T&... _components)
 {
 	if (!EntityIsValid(_entityID))
 	{
 		return;
 	}
 
-	(GetPool<T>().Insert(_entityID, _components), ...);
-	(m_componentMasks[_entityID].set(GetComponentTypeID<T>()), ...);
+	(GetPool<T>()->Insert(_entityID, _components), ...);
+	(m_componentMasks[_entityID].set(GetComponentID<T>()), ...);
 }
 
 template <typename T>
-T* ECS::GetComponent(const size_t& _entityID)
+T* ECS::GetComponent(const EntityID& _entityID)
 {
 	if (!EntityIsValid(_entityID))
 	{
@@ -107,23 +126,23 @@ T* ECS::GetComponent(const size_t& _entityID)
 		return nullptr;
 	}
 
-	return GetPool<T>().Get(_entityID);
+	return GetPool<T>()->Get(_entityID);
 }
 
 template <typename ... T>
-void ECS::RemoveComponents(const size_t& _entityID)
+void ECS::RemoveComponents(const EntityID& _entityID)
 {
 	if (!EntityIsValid(_entityID))
 	{
 		return;
 	}
 
-	(GetPool<T>().Remove(_entityID), ...);
-	(m_componentMasks[_entityID].reset(GetComponentTypeID<T>()), ...);
+	(GetPool<T>()->Remove(_entityID), ...);
+	(m_componentMasks[_entityID].reset(GetComponentID<T>()), ...);
 }
 
 template <typename ... T>
-bool ECS::HasComponent(const size_t& _entityID) const
+bool ECS::HasComponent(const EntityID& _entityID)
 {
 	if (!EntityIsValid(_entityID))
 	{
@@ -131,9 +150,27 @@ bool ECS::HasComponent(const size_t& _entityID) const
 	}
 
 	ComponentMask queryMask;
-	(queryMask.set(GetComponentTypeID<T>()), ...);
+	(queryMask.set(GetComponentID<T>()), ...);
 
 	return (m_componentMasks[_entityID] & queryMask) == queryMask;
+}
+
+template <typename T>
+std::vector<T> ECS::GetComponents()
+{
+	return GetPool<T>()->GetVector();
+}
+
+template <typename T>
+bool ECS::GetComponentIsDirty()
+{
+	return GetPool<T>()->GetIsDirty();
+}
+
+template <typename T>
+void ECS::SetComponentIsDirty(bool _dirty)
+{
+	GetPool<T>()->SetIsDirty(_dirty);
 }
 
 #endif

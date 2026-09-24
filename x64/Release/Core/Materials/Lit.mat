@@ -1,0 +1,22 @@
+{
+    "Mode": 0,
+    "Surface": {
+        "Mode": 0,
+        "BlendMode": 0
+    },
+    "RenderFace": 0,
+    "AlphaClipping": false,
+    "BaseMap": {
+        "Texture": "Core/Textures/DefaultBase.png",
+        "Color": [ 1.0, 1.0, 1.0 ]
+    },
+    "SpecularMap": {
+        "Texture": "Core/Textures/DefaultSpecular.png",
+        "Color": [ 0.0, 0.0, 0.0 ],
+        "Smoothness": 0.5
+    },
+    "Shader": {
+        "Vertex": "Core/Shaders/Default.vert.spv",
+        "Fragment": "Core/Shaders/Lit.frag.spv"
+    }
+}

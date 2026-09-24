@@ -2,61 +2,39 @@
 
 #include <immintrin.h>
 
+#include "Mat4.h"
 #include "../../Vector/Vec3.h"
 
-float Dot3AVX(const float* _row, const float* _col);
-float Dot3SSE(const float* _row, const float* _col);
-
-Mat3& Mat3::operator*=(const Mat3& _other)
+Mat3& Mat3::operator*=(const Mat3& _m)
 {
-	const float row[3][3] = {
-		{a0, a1, a2},
-		{b0, b1, b2},
-		{c0, c1, c2}
-	};
-
-	const float col[3][3] = {
-		{ _other.a0, _other.b0, _other.c0 },
-		{ _other.a1, _other.b1, _other.c1 },
-		{ _other.a2, _other.b2, _other.c2 }
-	};
-
-	float out[3][3] = { 0 };
+	Mat3 mat;
 
 #ifdef __AVX__
-	for (size_t y = 0; y < 3; y++)
+	for (int y = 0; y < 3; ++y)
 	{
-		for (size_t x = 0; x < 3; x++)
+		for (int x = 0; x < 3; ++x)
 		{
-			out[y][x] = Dot3AVX(row[y], col[x]);
+			const __m256 a = _mm256_set_ps(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, m[y][0], m[y][1], m[y][2]);
+			const __m256 b = _mm256_set_ps(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, _m.m[0][x], _m.m[1][x], _m.m[2][x]);
+
+			const __m256 mul = _mm256_mul_ps(a, b);
+
+			__m256 hadd = _mm256_hadd_ps(mul, mul);
+			hadd = _mm256_hadd_ps(hadd, hadd);
+
+			alignas(32) float result[8];
+			_mm256_store_ps(result, hadd);
+
+			mat.m[y][x] = result[0];
 		}
 	}
 #elif defined(__SSE2__)
-	for (size_t y = 0; y < 3; y++)
-	{
-		for (size_t x = 0; x < 3; x++)
-		{
-			out[y][x] = Dot3SSE(row[y], col[x]);
-		}
-	}
+
 #else
-	for (size_t y = 0; y < 3; y++)
-	{
-		for (size_t x = 0; x < 3; x++)
-		{
-			out[y][x] = 
-				row[y][0] * col[x][0] + 
-				row[y][1] * col[x][1] +
-				row[y][2] * col[x][2];
-		}
-	}
+
 #endif
 
-	a0 = out[0][0]; a1 = out[0][1]; a2 = out[0][2];
-	b0 = out[1][0]; b1 = out[1][1]; b2 = out[1][2];
-	c0 = out[2][0]; c1 = out[2][1]; c2 = out[2][2];
-
-	return *this;
+	return mat;
 }
 
 Mat3 Mat3::operator*(const Mat3& _other)
@@ -71,56 +49,87 @@ Mat3& Mat3::operator/=(const Mat3& _other)
 #ifdef __AVX__
 #elif defined(__SSE2__)
 #else
-	a0 += _other.a0; a1 += _other.a1; a2 += _other.a2;
-	b0 += _other.b0; b1 += _other.b1; b2 += _other.b2;
-	c0 += _other.c0; c1 += _other.c1; c2 += _other.c2;
 #endif
+
+	Mat3 mat;
+	return mat;
 }
 
 Mat3 Mat3::operator/(const Mat3& _other)
-{}
+{
+	Mat3 mat;
+	return mat;
+}
 
 bool Mat3::operator==(const Mat3& _other) const
-{}
+{
+	return true;
+}
 
 bool Mat3::operator!=(const Mat3& _other) const
-{}
+{
+	return true;
+}
 
 Mat3& Mat3::operator*=(const Vec3f& _vec)
 {
-
+	Mat3 mat;
+	return mat;
 }
 
 Mat3 Mat3::operator*(const Vec3f& _vec) const
 {
-
+	Mat3 mat;
+	return mat;
 }
 
-float Dot3AVX(const float* _row, const float* _col)
+Mat3 Mat3::operator*(const float& _f) const
 {
-	const __m256 r = _mm256_set_ps(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, _row[2], _row[1], _row[0]);
-	const __m256 c = _mm256_set_ps(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, _col[2], _col[1], _col[0]);
-
-	const __m256 mul = _mm256_mul_ps(r, c);
-	const __m256 sum1 = _mm256_hadd_ps(mul, mul);
-	const __m256 sum2 = _mm256_hadd_ps(sum1, sum1);
+	Mat3 mat;
+#ifdef __AVX__
+	const __m256 a = _mm256_set_ps(m[0][0], m[0][1], m[0][2], m[1][0], m[1][1], m[1][2], m[2][0], m[2][1]);
+	const __m256 b = _mm256_set1_ps(_f);
 
 	alignas(32) float result[8];
-	_mm256_store_ps(result, sum2);
+	_mm256_store_ps(result, _mm256_mul_ps(a, b));
 
-	return result[0];
+	mat.m[0][0] = result[7];
+	mat.m[0][1] = result[6];
+	mat.m[0][2] = result[5];
+
+	mat.m[1][0] = result[4];
+	mat.m[1][1] = result[3];
+	mat.m[1][2] = result[2];
+
+	mat.m[2][0] = result[1];
+	mat.m[2][1] = result[0];
+	mat.m[2][2] = m[2][2] * _f;
+
+#elif defined(__SSE2__)
+#else
+
+#endif
+
+	return mat;
 }
 
-float Dot3SSE(const float* _row, const float* _col)
+Mat3& Mat3::operator*=(const float& _f)
 {
-	const __m128 r = _mm_set_ps(0.0f, _row[2], _row[1], _row[0]);
-	const __m128 c = _mm_set_ps(0.0f, _col[2], _col[1], _col[0]);
+	Mat3 mat = *this * _f;
+	return mat;
+}
 
-	const __m128 mul = _mm_mul_ps(r, c);
-	__m128 shuf = _mm_shuffle_ps(mul, mul, _MM_SHUFFLE(2, 3, 0, 1));
-	__m128 sum = _mm_add_ps(mul, shuf);
-	shuf = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(1, 0, 3, 2));
-	sum = _mm_add_ps(sum, shuf);
+Mat3& Mat3::operator=(const Mat4& _m4)
+{
+	Mat3 mat;
 
-	return _mm_cvtss_f32(sum);
+	for (int y = 0; y < 3; ++y)
+	{
+		for (int x = 0; x < 3; ++x)
+		{
+			mat.m[y][x] = _m4.m[y][x];
+		}
+	}
+
+	return mat;
 }

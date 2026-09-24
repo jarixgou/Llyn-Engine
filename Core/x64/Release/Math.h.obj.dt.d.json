@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\llyn engine\\core\\math\\math.h",
+        "ProvidedModule": "",
+        "Includes": [
+            "d:\\llyn engine\\core\\vector\\fwdvec2.h",
+            "d:\\llyn engine\\core\\vector\\fwdvec3.h",
+            "d:\\llyn engine\\core\\vector\\fwdvec4.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\llyn engine\\core\\math\\quaternions.h",
+        "ProvidedModule": "",
+        "Includes": [
+            "d:\\llyn engine\\core\\vector\\fwdvec3.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

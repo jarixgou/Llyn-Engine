@@ -69,7 +69,6 @@ $RECYCLE.BIN/
 
 # Build results
 [Dd]ebug/
-x64/
 x86/
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/

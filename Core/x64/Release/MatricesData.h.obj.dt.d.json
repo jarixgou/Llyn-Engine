@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\llyn engine\\core\\render\\matricesdata.h",
+        "ProvidedModule": "",
+        "Includes": [
+            "d:\\llyn engine\\core\\math\\matrix\\mat4.h",
+            "d:\\llyn engine\\core\\vector\\fwdvec4.h",
+            "d:\\llyn engine\\core\\math\\matrix\\mat3.h",
+            "d:\\llyn engine\\core\\vector\\fwdvec3.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

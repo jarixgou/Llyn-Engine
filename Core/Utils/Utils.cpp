@@ -24,4 +24,16 @@ namespace Utils
 
 		return buffer;
 	}
+
+	bool CheckFileExtension(const std::string& _file, const std::string& _ext)
+	{
+		const size_t dotPos = _file.find_last_of('.');
+
+		if (dotPos == std::string::npos || _file.substr(dotPos + 1) != _ext)
+		{
+			return false;
+		}
+
+		return true;
+	}
 }

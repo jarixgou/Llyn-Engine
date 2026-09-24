@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\VK_DescriptorHandle.h.obj",
+            "outputs": [
+                "D:\\Llyn Engine\\x64\\Release\\Core.pdb",
+                "x64\\Release\\",
+                "D:\\Llyn Engine\\Core\\x64\\Release\\VK_DescriptorHandle.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Render\\Vulkan\\VK_DescriptorHandle.h",
+                    "source-path": "d:\\llyn engine\\core\\render\\vulkan\\vk_descriptorhandle.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\VK_Buffer.h.obj",
+            "outputs": [
+                "D:\\Llyn Engine\\x64\\Release\\Core.pdb",
+                "x64\\Release\\",
+                "D:\\Llyn Engine\\Core\\x64\\Release\\VK_Buffer.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Render\\Vulkan\\VK_Buffer.h",
+                    "source-path": "d:\\llyn engine\\core\\render\\vulkan\\vk_buffer.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

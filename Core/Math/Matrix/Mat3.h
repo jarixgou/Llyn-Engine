@@ -3,26 +3,22 @@
 
 #include "../../Vector/FwdVec3.h"
 
+struct Mat4;
+
 /*
- *	a0	b0	c0
- *	a1	b1	c1
- *	a2	b2	c2
+ *	m00	m01	m02
+ *	m10	m11	m12
+ *	m20	m21	m22
  */
 struct Mat3
 {
-	float a0 = 0;
-	float a1 = 0;
-	float a2 = 0;
+	float m[3][3] = {
+		{0.0f, 0.0f, 0.0f},
+		{0.0f, 0.0f, 0.0f},
+		{0.0f, 0.0f, 0.0f}
+	};
 
-	float b0 = 0;
-	float b1 = 0;
-	float b2 = 0;
-
-	float c0 = 0;
-	float c1 = 0;
-	float c2 = 0;
-
-	Mat3& operator*=(const Mat3& _other);
+	Mat3& operator*=(const Mat3& _m);
 	Mat3 operator*(const Mat3& _other);
 
 	Mat3& operator/=(const Mat3& _other);
@@ -33,6 +29,11 @@ struct Mat3
 
 	Mat3& operator*=(const Vec3f& _vec);
 	Mat3 operator*(const Vec3f& _vec) const;
+
+	Mat3 operator*(const float& _f) const;
+	Mat3& operator*=(const float& _f);
+
+	Mat3& operator=(const Mat4& _m4);
 };
 
 #endif

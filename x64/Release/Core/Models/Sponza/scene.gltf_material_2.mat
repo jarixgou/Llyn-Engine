@@ -1,0 +1,19 @@
+{
+    "BaseMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": "Core/Models/Sponza/textures/material_2_baseColor.png"
+    },
+    "SpecularMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Smoothness": 0.5,
+        "Texture": "Core/Textures/DefaultSpecular.png"
+    }
+}

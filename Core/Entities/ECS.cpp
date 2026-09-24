@@ -1,15 +1,13 @@
 #include "ECS.h"
 
-size_t ECS::m_nextComponentTypeID = 0;
-
-bool ECS::EntityIsValid(const size_t& _entityID) const
+bool ECS::EntityIsValid(const EntityID& _entityID) const
 {
 	return _entityID < m_nextEntityID;
 }
 
-size_t ECS::CreateEntity()
+EntityID ECS::CreateEntity()
 {
-	size_t newID = 0;
+	EntityID newID = 0;
 
 	if (!m_freeEntitiesID.empty())
 	{
@@ -24,17 +22,19 @@ size_t ECS::CreateEntity()
 		m_componentMasks.emplace_back();
 	}
 
+	m_entityCount += 1;
+
 	return newID;
 }
 
-void ECS::DestroyEntity(const size_t& _entityID)
+void ECS::DestroyEntity(const EntityID& _entityID)
 {
 	if (!EntityIsValid(_entityID))
 	{
 		return;
 	}
 
-	for (size_t i = 0; i < m_nextComponentTypeID; ++i)
+	for (size_t i = 0; i < m_componentPool.size(); ++i)
 	{
 		if (m_componentMasks[_entityID].test(i))
 		{
@@ -42,10 +42,12 @@ void ECS::DestroyEntity(const size_t& _entityID)
 		}
 	}
 
+	m_entityCount -= 1;
+
 	m_freeEntitiesID.emplace(_entityID);
 }
 
-ComponentMask* ECS::GetComponentMask(const size_t& _entityID)
+ComponentMask* ECS::GetComponentMask(const EntityID& _entityID)
 {
 	if (!EntityIsValid(_entityID))
 	{
@@ -53,4 +55,9 @@ ComponentMask* ECS::GetComponentMask(const size_t& _entityID)
 	}
 
 	return &m_componentMasks[_entityID];
+}
+
+uint32_t ECS::GetEntityCount()
+{
+	return m_entityCount;
 }

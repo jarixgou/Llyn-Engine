@@ -4,8 +4,8 @@
 #include "../../Vector/FwdVec2.h"
 
 /*
- *	a0	b0
- *	a1	b1
+ *	m00	m01
+ *	m10	m11
  */
 struct Mat2
 {

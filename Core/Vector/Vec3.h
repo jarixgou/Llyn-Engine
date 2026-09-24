@@ -17,6 +17,9 @@ struct Vec3
 	Vec3& operator*=(const Vec3& _other);
 	Vec3 operator*(const Vec3& _other) const;
 
+	Vec3& operator*=(const float& _f);
+	Vec3 operator*(const float& _f);
+
 	Vec3& operator/=(const Vec3& _other);
 	Vec3 operator/(const Vec3& _other) const;
 
@@ -75,6 +78,25 @@ Vec3<T> Vec3<T>::operator*(const Vec3& _other) const
 {
 	Vec3 tmp = *this;
 	tmp *= _other;
+	return tmp;
+}
+
+template <typename T>
+Vec3<T>& Vec3<T>::operator*=(const float& _f)
+{
+	x *= _f;
+	y *= _f;
+	z *= _f;
+
+	return *this;
+}
+
+template <typename T>
+Vec3<T> Vec3<T>::operator*(const float& _f)
+{
+	Vec3 tmp = *this;
+	tmp *= _f;
+
 	return tmp;
 }
 

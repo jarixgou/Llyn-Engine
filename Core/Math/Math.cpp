@@ -12,65 +12,149 @@
 #include "Matrix/Mat3.h"
 #include "Matrix/Mat4.h"
 
-Mat4 LookAt(const Vec3f& _eye, const Vec3f& _target, const Vec3f& _worldUp)
+#include "Quaternions.h"
+
+Quaternions LookAtQuat(const Vec3f& _forward, Vec3f& _up)
 {
+	Quaternions quat;
+
+	Mat4 mat = LookAtMat(_forward, _up);
+
+	const float trace = mat.m[0][0] + mat.m[1][1] + mat.m[2][2];
+	if (trace > 0.0f)
+	{
+		const float s = sqrtf(trace + 1.0f) * 2;
+
+		quat.w = 0.25f * s;
+		quat.x = (mat.m[1][2] - mat.m[2][1]) / s;
+		quat.y = (mat.m[2][0] - mat.m[0][2]) / s;
+		quat.z = (mat.m[0][1] - mat.m[1][0]) / s;
+	}
+	else if (mat.m[0][0] > mat.m[1][1] && mat.m[0][0] > mat.m[2][2])
+	{
+		const float s = sqrtf(1.0f + mat.m[0][0] - mat.m[1][1] - mat.m[2][2]) * 2;
+
+		quat.w = (mat.m[1][2] - mat.m[2][1]) / s;
+		quat.x = 0.25f * s;
+		quat.y = (mat.m[0][1] + mat.m[1][0]) / s;
+		quat.z = (mat.m[0][2] + mat.m[2][0]) / s;
+	}
+	else if (mat.m[1][1] > mat.m[2][2])
+	{
+		const float s = sqrtf(1.0f + mat.m[1][1] - mat.m[0][0] - mat.m[2][2]) * 2;
+
+		quat.w = (mat.m[2][0] - mat.m[0][2]) / s;
+		quat.x = (mat.m[0][1] + mat.m[1][0]) / s;
+		quat.y = 0.25f * s;
+		quat.z = (mat.m[1][2] + mat.m[2][1]) / s;
+	}
+	else
+	{
+		const float s = sqrt(1.0f + mat.m[2][2] - mat.m[0][0] - mat.m[1][1]) * 2;
+
+		quat.w = (mat.m[0][1] - mat.m[1][0]) / s;
+		quat.x = (mat.m[0][2] + mat.m[2][0]) / s;
+		quat.y = (mat.m[1][2] + mat.m[2][1]) / s;
+		quat.z = 0.25f * s;
+	}
+
+	return quat;
+}
+
+Mat4 LookAtMat(const Vec3f& _forward, const Vec3f& _up)
+{
+	const Vec3f forward = Normalize(_forward);
+	const Vec3f right = Normalize(Cross(_up, forward));
+	const Vec3f up = Cross(forward, right);
+
 	Mat4 mat;
+	mat.m[0][0] = right.x;   mat.m[0][1] = up.x;   mat.m[0][2] = forward.x;   mat.m[0][3] = 0.0f;
+	mat.m[1][0] = right.y;   mat.m[1][1] = up.y;   mat.m[1][2] = forward.y;   mat.m[1][3] = 0.0f;
+	mat.m[2][0] = right.z;   mat.m[2][1] = up.z;   mat.m[2][2] = forward.z;   mat.m[2][3] = 0.0f;
+	mat.m[3][0] = 0.0f;      mat.m[3][1] = 0.0f;   mat.m[3][2] = 0.0f;        mat.m[3][3] = 1.0f;
 
-	const Vec3f forward = Normalize(_eye - _target);
-	const Vec3f right = Normalize(Cross(forward, _worldUp));
-	const Vec3f up = Cross(right, forward);
+	return mat;
+}
 
-	mat.a0 = right.x; mat.b0 = right.y; mat.c0 = right.z;
-	mat.a1 = up.x; mat.b1 = up.y; mat.c1 = up.z;
-	mat.a2 = forward.x; mat.b2 = forward.y; mat.c2 = forward.z;
+Mat4 View(
+	const Vec3f& _eye,
+	const Vec3f& _target,
+	const Vec3f& _worldUp)
+{
+	Mat4 mat = IdentityMat4();
 
-	mat.d3 = 1;
+	const Vec3f forward = Normalize(_target - _eye);
+	const Vec3f right = Normalize(Cross(_worldUp, forward));
+	const Vec3f up = Cross(forward, right);
 
-	const Vec3f pos = { -_eye.x, -_eye.y, -_eye.z};
-	const Mat4 translate = Translate(pos);
+	mat.m[0][0] = right.x;
+	mat.m[0][1] = right.y;
+	mat.m[0][2] = right.z;
+	mat.m[0][3] = -Dot(right, _eye);
 
-	return mat * translate;
+	mat.m[1][0] = up.x;
+	mat.m[1][1] = up.y;
+	mat.m[1][2] = up.z;
+	mat.m[1][3] = -Dot(up, _eye);
+
+	mat.m[2][0] = forward.x;
+	mat.m[2][1] = forward.y;
+	mat.m[2][2] = forward.z;
+	mat.m[2][3] = -Dot(forward, _eye);
+
+	mat.m[3][0] = 0.0f;
+	mat.m[3][1] = 0.0f;
+	mat.m[3][2] = 0.0f;
+	mat.m[3][3] = 1.0f;
+
+	return mat;
 }
 
 Mat4 Perspective(const float& _fov, const float& _aspectRatio, const float& _near, const float& _far)
 {
-	const float fov = 1.0f / std::tan(_fov * 0.5f);
-	Mat4 mat;
+	Mat4 mat{};
 
-	mat.a0 = fov / _aspectRatio;
-	mat.b1 = -fov;
-	mat.c2 = _far / (_far - _near);
-	mat.c3 = -1.0f;
-	mat.d2 = (_far * _near) / (_far - _near);
+	const float t = 1.0f / std::tan(_fov * 0.5f);
 
-	return mat;
-}
+	mat.m[0][0] = t / _aspectRatio;
+	mat.m[1][1] = -t;
 
-Mat4 Translate(const Vec3f& _vec)
-{
-	Mat4 mat = IdentityMat4();
-	mat.d0 = _vec.x;
-	mat.d1 = _vec.y;
-	mat.d2 = _vec.z;
+	mat.m[2][2] = _far / (_far - _near);
+
+	mat.m[2][3] = -(_near * _far / (_far - _near));
+	mat.m[3][2] = 1.0f;
 
 	return mat;
 }
 
-Mat4 Scale(const Vec3f& _vec)
+Mat4 Translate(const Mat4& _mat, const Vec3f& _vec)
 {
-	Mat4 mat;
+	Mat4 translate = IdentityMat4();
+	translate.m[0][3] = _vec.x;
+	translate.m[1][3] = _vec.y;
+	translate.m[2][3] = _vec.z;
 
-	return mat;
+	return _mat * translate;
+}
+
+Mat4 Scale(const Mat4& _mat, const Vec3f& _vec)
+{
+	Mat4 scale = IdentityMat4();
+	scale.m[0][0] = _vec.x;
+	scale.m[1][1] = _vec.y;
+	scale.m[2][2] = _vec.z;
+
+	return _mat * scale;
 }
 
 Mat4 IdentityMat4()
 {
-	return {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	};
+	Mat4 mat{};
+	mat.m[0][0] = 1.0f;
+	mat.m[1][1] = 1.0f;
+	mat.m[2][2] = 1.0f;
+	mat.m[3][3] = 1.0f;
+	return mat;
 }
 
 Mat3 IdentityMat3()
@@ -88,6 +172,111 @@ Mat2 IdentityMat2()
 		1.0f, 0.0f,
 		0.0f, 1.0f
 	};
+}
+
+Mat4 TransposeMat4(const Mat4 _m)
+{
+	Mat4 result{};
+
+	for (int y = 0; y < 4; ++y)
+	{
+		for (int x = 0; x < 4; ++x)
+		{
+			result.m[x][y] = _m.m[y][x];
+		}
+	}
+
+	return result;
+}
+
+Mat3 TransposeMat3(const Mat3& _mat)
+{
+	Mat3 mat;
+	mat.m[0][0] = _mat.m[0][0];
+	mat.m[1][0] = _mat.m[0][1];
+	mat.m[2][0] = _mat.m[0][2];
+
+	mat.m[0][1] = _mat.m[1][0];
+	mat.m[1][1] = _mat.m[1][1];
+	mat.m[2][1] = _mat.m[1][2];
+
+	mat.m[0][2] = _mat.m[2][0];
+	mat.m[1][2] = _mat.m[2][1];
+	mat.m[2][2] = _mat.m[2][2];
+
+	return mat;
+}
+
+float DeterminantMat3(const Mat3& _mat)
+{
+	return
+		_mat.m[0][0] * (_mat.m[1][1] * _mat.m[2][2] -
+			_mat.m[1][2] * _mat.m[2][1])
+
+		- _mat.m[0][1] * (_mat.m[1][0] * _mat.m[2][2] -
+			_mat.m[1][2] * _mat.m[2][0])
+
+		+ _mat.m[0][2] * (_mat.m[1][0] * _mat.m[2][1] -
+			_mat.m[1][1] * _mat.m[2][0]);
+}
+
+Mat3 CofactorSignsMat3(const Mat3& _mat)
+{
+	Mat3 mat;
+
+	mat.m[0][0] = _mat.m[0][0];
+	mat.m[1][0] = -_mat.m[1][0];
+	mat.m[2][0] = _mat.m[2][0];
+
+	mat.m[0][1] = -_mat.m[0][1];
+	mat.m[1][1] = _mat.m[1][1];
+	mat.m[2][1] = -_mat.m[2][1];
+	
+	mat.m[0][2] = _mat.m[0][2];
+	mat.m[1][2] = -_mat.m[1][2];
+	mat.m[2][2] = _mat.m[2][2];
+
+	return mat;
+}
+
+Mat3 MinorMat3(const Mat3& _mat) 
+{
+	Mat3 mat;
+
+	mat.m[0][0] = _mat.m[1][1] * _mat.m[2][2] - _mat.m[1][2] * _mat.m[2][1];
+	mat.m[0][1] = _mat.m[1][0] * _mat.m[2][2] - _mat.m[1][2] * _mat.m[2][0];
+	mat.m[0][2] = _mat.m[1][0] * _mat.m[2][1] - _mat.m[1][1] * _mat.m[2][0];
+
+	mat.m[1][0] = _mat.m[0][1] * _mat.m[2][2] - _mat.m[0][2] * _mat.m[2][1];
+	mat.m[1][1] = _mat.m[0][0] * _mat.m[2][2] - _mat.m[0][2] * _mat.m[2][0];
+	mat.m[1][2] = _mat.m[0][0] * _mat.m[2][1] - _mat.m[0][1] * _mat.m[2][0];
+
+	mat.m[2][0] = _mat.m[0][1] * _mat.m[1][2] - _mat.m[0][2] * _mat.m[1][1];
+	mat.m[2][1] = _mat.m[0][0] * _mat.m[1][2] - _mat.m[0][2] * _mat.m[1][0];
+	mat.m[2][2] = _mat.m[0][0] * _mat.m[1][1] - _mat.m[0][1] * _mat.m[1][0];
+
+	return mat;
+}
+
+Mat3 InverseMat3(const Mat3& _mat)
+{
+	Mat3 mat;
+
+	const Mat3 minor = MinorMat3(_mat);
+	const Mat3 cofactor = TransposeMat3(CofactorSignsMat3(minor));
+	const float det =  1 / DeterminantMat3(_mat);
+
+	mat = cofactor * det;
+
+	return mat;
+}
+
+Vec3f RotateAroundAxis(Vec3f _v, Vec3f _axis, float _angle)
+{
+	const float c = cosf(_angle);
+	const float s = sinf(_angle);
+
+	return _v * c + Cross(_axis, _v) * s + _axis * Dot(_axis, _v) * (1.0f - c);
 }
 
 Vec3f Cross(const Vec3f& _vA, const Vec3f& _vB)
@@ -132,6 +321,11 @@ float Dot(const Vec2f& _vA, const Vec2f& _vB)
 	return _vA.x + _vB.x + _vA.y * _vB.y;
 }
 
+float Angle(const Vec3f& _vA, const Vec3f& _vB)
+{
+	return acosf(Dot(_vA, _vB) / (Length(_vA) * Length(_vB)));
+}
+
 float Length(const Vec4f& _vec)
 {
 	return std::sqrt(_vec.x * _vec.x + _vec.y * _vec.y + _vec.z * _vec.z + _vec.w * _vec.w);
@@ -164,7 +358,7 @@ Vec2f DegToRad(const Vec2f& _vec)
 
 float DegToRad(const float& _a)
 {
-	return _a * (M_PI / 180);
+	return static_cast<float>(_a * (M_PI / 180));
 }
 
 Vec4f RadToDeg(const Vec4f& _vec)
@@ -184,5 +378,5 @@ Vec2f RadToDeg(const Vec2f& _vec)
 
 float RadToDeg(const float& _a)
 {
-	return _a * (180 / M_PI);
+	return static_cast<float>(_a * (180 / M_PI));
 }

@@ -2,19 +2,26 @@
 #define SPARSE_SET__H
 #include <vector>
 
+#include "../LlynCore.h"
+
 template<typename T>
 class SparseSet
 {
 private:
-	static constexpr size_t m_tombstone = std::numeric_limits<size_t>::max();
-
 	std::vector<T> m_dense;
-	std::vector<size_t> m_sparse;
+	std::vector<EntityID> m_sparse;
+
+	bool isDirty = false;
 
 public:
 	void Insert(const size_t& _entityID, const T& _component);
 	T* Get(const size_t& _entityID);
 	void Remove(size_t _entityID);
+
+	std::vector<T> GetVector();
+
+	bool GetIsDirty();
+	void SetIsDirty(bool _dirty);
 
 	T* Data();
 	size_t Size();
@@ -23,14 +30,20 @@ public:
 template <typename T>
 void SparseSet<T>::Insert(const size_t& _entityID, const T& _component)
 {
-	if (_entityID >= m_sparse.size())
-	{
-		m_sparse.resize(_entityID + 1, m_tombstone);
-	}
-
 	const size_t idx = m_dense.size();
 	m_dense.emplace_back(_component);
-	m_sparse[_entityID] = idx;
+
+	if (_entityID >= m_sparse.size())
+	{
+		m_sparse.resize(_entityID + 1, TOMBSTONE_ENTITY);
+		m_sparse[_entityID] = static_cast<EntityID>(idx);
+	}
+	else
+	{
+		m_sparse[_entityID] = static_cast<EntityID>(idx);
+	}
+
+	isDirty = true;
 }
 
 template <typename T>
@@ -43,7 +56,7 @@ T* SparseSet<T>::Get(const size_t& _entityID)
 
 	const size_t idx = m_sparse[_entityID];
 
-	if (idx == m_tombstone)
+	if (idx == TOMBSTONE_ENTITY)
 	{
 		return nullptr;
 	}
@@ -61,7 +74,7 @@ void SparseSet<T>::Remove(size_t _entityID)
 
 	const size_t idx = m_sparse[_entityID];
 
-	if (idx == m_tombstone)
+	if (idx == TOMBSTONE_ENTITY)
 	{
 		return;
 	}
@@ -69,7 +82,27 @@ void SparseSet<T>::Remove(size_t _entityID)
 	m_dense[idx] = m_dense.back();
 	m_dense.pop_back();
 
-	m_sparse[_entityID] = m_tombstone;
+	m_sparse[_entityID] = TOMBSTONE_ENTITY;
+
+	isDirty = true;
+}
+
+template <typename T>
+std::vector<T> SparseSet<T>::GetVector()
+{
+	return m_dense;
+}
+
+template <typename T>
+bool SparseSet<T>::GetIsDirty()
+{
+	return isDirty;
+}
+
+template <typename T>
+void SparseSet<T>::SetIsDirty(bool _dirty)
+{
+	isDirty = _dirty;
 }
 
 template <typename T>

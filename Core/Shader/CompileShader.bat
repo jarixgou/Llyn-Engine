@@ -1,3 +1,2 @@
-C:/VulkanSDK/1.4.341.1/Bin/slangc.exe Default.slang -target spirv -profile spirv_1_4 -emit-spirv-directly -fvk-use-entrypoint-name -entry vertMain -entry fragMain -o slang.spv
-
+C:/VulkanSDK/1.4.357.0/Bin/glslangValidator.exe -V -x -o ImGui_glsl_shader.frag.u32 ImGui_glsl_shader.frag
 pause

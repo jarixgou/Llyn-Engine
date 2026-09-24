@@ -4,8 +4,18 @@
 #include <math.h>
 #include <cmath>
 
+#include "Math.h"
 #include "../Vector/Vec3.h"
 #include "Matrix/Mat4.h"
+
+void Quaternions::Normalize()
+{
+	float magnitude = sqrtf(w * w + x * x + y * y + z * z);
+	w /= magnitude;
+	x /= magnitude;
+	y /= magnitude;
+	z /= magnitude;
+}
 
 Mat4 Quaternions::GetMatrix() const
 {
@@ -14,35 +24,38 @@ Mat4 Quaternions::GetMatrix() const
 	const float xSqr = x * x;
 	const float ySqr = y * y;
 	const float zSqr = z * z;
+
 	const float xy = x * y;
-	const float wz = w * z;
 	const float xz = x * z;
-	const float wy = w * y;
 	const float yz = y * z;
+
 	const float wx = w * x;
+	const float wy = w * y;
+	const float wz = w * z;
 
-	mat.a0 = 1.0f - 2.0f * (ySqr + zSqr);
-	mat.a1 = 2.0f * (xy + wz);
-	mat.a2 = 2.0f * (xz - wy);
-	mat.a3 = 0.0f;
+	mat.m[0][0] = 1.0f - 2.0f * (ySqr + zSqr);
+	mat.m[0][1] = 2.0f * (xy + wz);
+	mat.m[0][2] = 2.0f * (xz - wy);
+	mat.m[0][3] = 0.0f;
 
-	mat.b0 = 2.0f * (xy - wz);
-	mat.b1 = 1.0f - 2.0f * (xSqr + zSqr);
-	mat.b2 = 2.0f * (yz + wx);
-	mat.b3 = 0.0f;
+	mat.m[1][0] = 2.0f * (xy - wz);
+	mat.m[1][1] = 1.0f - 2.0f * (xSqr + zSqr);
+	mat.m[1][2] = 2.0f * (yz + wx);
+	mat.m[1][3] = 0.0f;
 
-	mat.c0 = 2.0f * (xz + wy);
-	mat.c1 = 2.0f * (yz - wx);
-	mat.c2 = 1 - 2.0f * (xSqr + ySqr);
-	mat.c3 = 0.0f;
+	mat.m[2][0] = 2.0f * (xz + wy);
+	mat.m[2][1] = 2.0f * (yz - wx);
+	mat.m[2][2] = 1.0f - 2.0f * (xSqr + ySqr);
+	mat.m[2][3] = 0.0f;
 
-	mat.d0 = 0.0f;
-	mat.d1 = 0.0f;
-	mat.d2 = 0.0f;
-	mat.d3 = 1.0f;
+	mat.m[3][0] = 0.0f;
+	mat.m[3][1] = 0.0f;
+	mat.m[3][2] = 0.0f;
+	mat.m[3][3] = 1.0f;
 
 	return mat;
 }
+
 
 void Quaternions::SetEuler(Vec3f _vec)
 {
@@ -70,4 +83,69 @@ Vec3f Quaternions::GetEuler() const
 	vec.z = atan2f(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
 
 	return vec;
+}
+
+void Quaternions::SetAxisAngle(const Vec3f& _axis, float _angle)
+{
+	const float c = cosf(_angle / 2);
+	const float s = sinf(_angle / 2);
+
+	w = c;
+	x = _axis.x * s;
+	y = _axis.y * s;
+	z = _axis.z * s;
+}
+
+Vec3f Quaternions::Rotate(const Vec3f& _v)
+{
+	Vec3f t = Cross({ x, y, z }, _v) * 2.0f;
+
+	return _v + t * w + Cross({ x, y, z }, t);
+}
+
+Vec3f Quaternions::GetForward() const
+{
+	Vec3f vec;
+	vec.x = 2.0f * (x * z + w * y);
+	vec.y = 2.0f * (y * z - w * x);
+	vec.z = 1.0f - 2.0f * (x * x + y * y);
+
+	return vec;
+}
+
+Vec3f Quaternions::GetRight()
+{
+	Vec3f vec;
+	vec.x = 1.0f - 2.0f * (y * y + z * z);
+	vec.y = 2.0f * (x * y + w * z);
+	vec.z = 2.0f * (x * z - w * y);
+	
+	return vec;
+}
+
+Vec3f Quaternions::GetUp()
+{
+	Vec3f vec;
+	vec.x = 2.0f * (x * y - w * z);
+	vec.y = 1.0f - 2.0f * (x * x + z * z);
+	vec.z = 2.0f * (y * z + w * x);
+
+	return vec;
+}
+
+Quaternions Quaternions::operator*(const Quaternions& _other)
+{
+	Quaternions quat;
+	quat.w = w * _other.w - x * _other.x - y * _other.y - z * _other.z;
+	quat.x = w * _other.x + x * _other.w + y * _other.z - z * _other.y;
+	quat.y = w * _other.y - x * _other.z + y * _other.w + z * _other.x;
+	quat.z = w * _other.z + x * _other.y - y * _other.x + z * _other.w;
+
+	return quat;
+}
+
+Quaternions& Quaternions::operator*=(const Quaternions& _other)
+{
+	*this = *this * _other;
+	return *this;
 }

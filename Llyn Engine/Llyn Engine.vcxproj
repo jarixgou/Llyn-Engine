@@ -123,14 +123,15 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)Librairies\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDIr)Librairies\Include;$(VULKAN_SDK)\Include</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;$(SolutionDir)Librairies\Lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;dxcompiler.lib;GenericCodeGen.lib;gfx.lib;glslang.lib;glslang-default-resource-limits.lib;MachineIndependent.lib;OSDependent.lib;shaderc.lib;shaderc_combined.lib;shaderc_shared.lib;shaderc_util.lib;slang.lib;slang-compiler.lib;slang-rt.lib;SPIRV.lib;spirv-cross-c.lib;spirv-cross-core.lib;spirv-cross-cpp.lib;spirv-cross-c-shared.lib;spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-msl.lib;spirv-cross-reflect.lib;spirv-cross-util.lib;spirv-reflect-static.lib;SPIRV-Tools.lib;SPIRV-Tools-diff.lib;SPIRV-Tools-link.lib;SPIRV-Tools-lint.lib;SPIRV-Tools-opt.lib;SPIRV-Tools-reduce.lib;SPIRV-Tools-shared.lib;VulkanSafeStruct.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

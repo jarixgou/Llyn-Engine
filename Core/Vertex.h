@@ -1,33 +1,23 @@
 #ifndef VERTEX__H
 #define VERTEX__H
 
-#include <vulkan/vulkan.hpp>
+#include "LlynCore.h"
 
 #include "Vector/Vec2.h"
 #include "Vector/Vec3.h"
 
 struct Vertex
 {
-	Vec3f position = { 0.f, 0.f, 0.f };
-	Vec3f normal = { 0.f, 0.f, 0.f };
-	Vec3f color = { 1.f, 1.f, 1.f };
-	Vec2f uv = { 0.f, 0.f };
+	GPU_ALIGN Vec3f pos = { 0.0f, 0.0f, 0.0f };
 
-	static vk::VertexInputBindingDescription GetBindingDescrition()
-	{
-		return { 0, sizeof(Vertex), vk::VertexInputRate::eVertex };
-	}
+	GPU_ALIGN Vec3f normal = { 0.0f, 0.0f, 0.0f };
+	GPU_ALIGN Vec3f tangent = { 0.0f, 0.0f, 0.0f };
+	GPU_ALIGN Vec3f bitangent = { 0.0f, 0.0f, 0.0f };
 
-	static std::array<vk::VertexInputAttributeDescription, 4> GetAttributeDescriptions()
-	{
-		return {
-			{
-				{0, 0, vk::Format::eR32G32B32Sfloat, offsetof(Vertex, position)},
-				{1, 0, vk::Format::eR32G32B32Sfloat, offsetof(Vertex, normal)},
-				{2, 0, vk::Format::eR32G32B32Sfloat, offsetof(Vertex, color)},
-				{3, 0, vk::Format::eR32G32Sfloat, offsetof(Vertex, uv)},
-			} };
-	}
+	GPU_ALIGN Vec3f color = { 1.0f, 1.0f, 1.0f };
+
+	GPU_ALIGN Vec2f uv0 = { 0.0f, 0.0f };
+	Vec2f uv1 = { 0.f, 0.0f };
 };
 
 #endif
