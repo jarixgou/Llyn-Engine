@@ -55,6 +55,15 @@ public:
 	T* GetRessource(const std::string& _fileName);
 
 	template<typename T>
+	T* GetRessourceByID(RessourceID _id);
+	
+	template<typename T>
+	std::string GetRessourceName(RessourceID _id);
+
+	template<typename T>
+	std::vector<std::string> GetRessourcesName();
+
+	template<typename T>
 	std::vector<T> GetRessources();
 
 	template<typename T>
@@ -103,6 +112,8 @@ RessourceID RessourceManager::GetRessourceID(const std::string& _filePath)
 
 		return TOMBSTONE_RESOURCE;
 	}
+
+	newRessource->name = _filePath;
 
 	if (!ressourceHandle.freeIDs.empty())
 	{
@@ -187,6 +198,55 @@ T* RessourceManager::GetRessource(const std::string& _filePath)
 	LOGGER_INFO("Loaded : " + _filePath);
 
 	return static_cast<T*>(newRessource);
+}
+
+template <typename T>
+T* RessourceManager::GetRessourceByID(RessourceID _id)
+{
+	if (_id == TOMBSTONE_RESOURCE)
+	{
+		return nullptr;
+	}
+
+	auto& ressourceHandler = m_ressourcesHandle[GET_TYPE_SIGNATURE(T)];
+
+	if (ressourceHandler.ressourcesKey.contains(_id))
+	{
+		return ressourceHandler.ressources[_id];
+	}
+}
+
+template <typename T>
+std::string RessourceManager::GetRessourceName(RessourceID _id)
+{
+	if (_id == TOMBSTONE_RESOURCE)
+	{
+		return "None";
+	}
+
+	auto& ressourceHandler = m_ressourcesHandle[GET_TYPE_SIGNATURE(T)];
+
+	if (ressourceHandler.ressourcesKey.contains(_id))
+	{
+		return ressourceHandler.ressourcesKey[_id];
+	}
+	
+	return "None";
+}
+
+template <typename T>
+std::vector<std::string> RessourceManager::GetRessourcesName()
+{
+	auto& ressourceHandler = m_ressourcesHandle[GET_TYPE_SIGNATURE(T)];
+
+	std::vector<std::string> names;
+	names.reserve(ressourceHandler.ressources.size());
+	for (auto & [name, ressource] : ressourceHandler.ressourcesID)
+	{
+		names.emplace_back(name);
+	}
+
+	return names;
 }
 
 template <typename T>

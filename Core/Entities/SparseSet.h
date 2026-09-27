@@ -1,6 +1,7 @@
 #ifndef SPARSE_SET__H
 #define SPARSE_SET__H
 #include <vector>
+#include <iostream>
 
 #include "../LlynCore.h"
 
@@ -9,7 +10,7 @@ class SparseSet
 {
 private:
 	std::vector<T> m_dense;
-	std::vector<EntityID> m_sparse;
+	std::vector<uint32_t> m_sparse;
 
 	bool isDirty = false;
 
@@ -36,11 +37,11 @@ void SparseSet<T>::Insert(const size_t& _entityID, const T& _component)
 	if (_entityID >= m_sparse.size())
 	{
 		m_sparse.resize(_entityID + 1, TOMBSTONE_ENTITY);
-		m_sparse[_entityID] = static_cast<EntityID>(idx);
+		m_sparse[_entityID] = idx;
 	}
 	else
 	{
-		m_sparse[_entityID] = static_cast<EntityID>(idx);
+		m_sparse[_entityID] = idx;
 	}
 
 	isDirty = true;

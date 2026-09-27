@@ -3,6 +3,7 @@
 
 #include <array>
 #include <bitset>
+#include <iostream>
 #include <queue>
 #include <unordered_map>
 
@@ -21,7 +22,6 @@ private: // Variable part
 	EntityID m_nextEntityID = 0;
 
 	uint32_t m_entityCount = 0;
-
 private: // Private func
 	bool EntityIsValid(const EntityID& _entityID) const;
 
@@ -80,7 +80,7 @@ size_t ECS::GetComponentID()
 template <typename T>
 SparseSet<T>* ECS::GetPool()
 {
-	const size_t typeID = GetComponentID<T>();
+	const uint32_t typeID = GetComponentID<T>();
 
 	IComponent* content = m_componentPool[typeID];
 	if (content == nullptr)

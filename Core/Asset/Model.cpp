@@ -164,7 +164,8 @@ void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_
 
 	if (_gltfAsset.nodes[_nodeIndex].meshIndex.has_value() && !checked)
 	{
-		MeshFilter* meshFilter = MeshFilterPooler::Get().GetMesh(nodeName);
+		MeshFilter* meshFilter = new MeshFilter;
+		*meshFilter = MeshFilterPooler::Get().GetMesh(nodeName);
 		RessourceID materialID = TOMBSTONE_RESOURCE;
 
 		const size_t meshIndex = _gltfAsset.nodes[_nodeIndex].meshIndex.value();
@@ -203,7 +204,7 @@ void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_
 			}
 
 			// Create a mesh filter 
-			if (meshFilter == nullptr)
+			if (meshFilter->name == "None")
 			{
 				size_t startVertices = verticies.size();
 				size_t startIndices = indices.size();
@@ -288,9 +289,9 @@ void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_
 			}
 		}
 
-		if (meshFilter == nullptr)
+		if (meshFilter->name == "None")
 		{
-			meshFilter = MeshFilterPooler::Get().Add(nodeName, verticies, indices);
+			*meshFilter = MeshFilterPooler::Get().Add(nodeName, verticies, indices);
 		}
 
 		MeshRender* meshRender = new MeshRender;
@@ -320,7 +321,6 @@ void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_
 			// Implement
 		}}, _gltfAsset.nodes[_nodeIndex].transform);
 
-	*transform *= _parentTransform;
 	_rootModel->transform = transform;
 
 	m_checkedID.emplace_back(_nodeIndex);

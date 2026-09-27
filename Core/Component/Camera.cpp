@@ -46,11 +46,11 @@ void Camera::Update(Transform* _transform, const float& _dt)
 
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
-		_transform->pos += {-m_up.x * m_speed * _dt, -m_up.y * m_speed * _dt, -m_up.z * m_speed * _dt};
+		_transform->pos += {m_up.x* m_speed* _dt, m_up.y* m_speed* _dt, m_up.z* m_speed* _dt};
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
-		_transform->pos += {m_up.x* m_speed* _dt, m_up.y* m_speed* _dt, m_up.z* m_speed* _dt};
+		_transform->pos += {-m_up.x * m_speed * _dt, -m_up.y * m_speed * _dt, -m_up.z * m_speed * _dt};
 	}
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
@@ -78,7 +78,7 @@ void Camera::Update(Transform* _transform, const float& _dt)
 		qYaw.SetAxisAngle({ 0.0f, 1.0f, 0.0f }, DegToRad(rotY));
 
 		Quaternions qPitch;
-		qPitch.SetAxisAngle({ 1.0f, 0.0f, 0.0f }, DegToRad(-appliedRotX));
+		qPitch.SetAxisAngle({ 1.0f, 0.0f, 0.0f }, DegToRad(appliedRotX));
 
 		_transform->rot = qYaw * _transform->rot * qPitch;
 		_transform->rot.Normalize();

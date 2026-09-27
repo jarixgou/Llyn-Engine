@@ -18,6 +18,8 @@ D:\Llyn Engine\Core\ImGui\imgui_impl_glfw.cpp;D:\Llyn Engine\Core\x64\Release\im
 D:\Llyn Engine\Core\ImGui\imgui_impl_vulkan.cpp;D:\Llyn Engine\Core\x64\Release\imgui_impl_vulkan.obj
 D:\Llyn Engine\Core\ImGui\imgui_tables.cpp;D:\Llyn Engine\Core\x64\Release\imgui_tables.obj
 D:\Llyn Engine\Core\ImGui\imgui_widgets.cpp;D:\Llyn Engine\Core\x64\Release\imgui_widgets.obj
+D:\Llyn Engine\Core\Interface\HierarchyInterface.cpp;D:\Llyn Engine\Core\x64\Release\HierarchyInterface.obj
+D:\Llyn Engine\Core\Interface\InspectorInterface.cpp;D:\Llyn Engine\Core\x64\Release\InspectorInterface.obj
 D:\Llyn Engine\Core\LlynCore.cpp;D:\Llyn Engine\Core\x64\Release\LlynCore.obj
 D:\Llyn Engine\Core\Logger.cpp;D:\Llyn Engine\Core\x64\Release\Logger.obj
 D:\Llyn Engine\Core\Math\Math.cpp;D:\Llyn Engine\Core\x64\Release\Math.obj

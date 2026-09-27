@@ -117,7 +117,7 @@ Mat4 Perspective(const float& _fov, const float& _aspectRatio, const float& _nea
 	const float t = 1.0f / std::tan(_fov * 0.5f);
 
 	mat.m[0][0] = t / _aspectRatio;
-	mat.m[1][1] = -t;
+	mat.m[1][1] = t;
 
 	mat.m[2][2] = _far / (_far - _near);
 
@@ -174,7 +174,7 @@ Mat2 IdentityMat2()
 	};
 }
 
-Mat4 TransposeMat4(const Mat4 _m)
+Mat4 TransposeMat4(const Mat4& _m)
 {
 	Mat4 result{};
 
@@ -187,6 +187,119 @@ Mat4 TransposeMat4(const Mat4 _m)
 	}
 
 	return result;
+}
+
+float DeterminantMat4(const Mat4& _m)
+{
+	const Mat3 a = {
+		{
+			{_m.m[1][1], _m.m[1][2], _m.m[1][3]},
+			{_m.m[2][1], _m.m[2][2], _m.m[2][3]},
+			{_m.m[3][1], _m.m[3][2], _m.m[3][3]}
+		}
+	};
+
+	const Mat3 b = {
+		{
+			{_m.m[1][0], _m.m[1][2], _m.m[1][3]},
+			{_m.m[2][0], _m.m[2][2], _m.m[2][3]},
+			{_m.m[3][0], _m.m[3][2], _m.m[3][3]}
+		}
+	};
+
+	const Mat3 c = {
+		{
+			{_m.m[1][0], _m.m[1][1], _m.m[1][3]},
+			{_m.m[2][0], _m.m[2][1], _m.m[2][3]},
+			{_m.m[3][0], _m.m[3][1], _m.m[3][3]}
+		}
+	};
+
+	const Mat3 d = {
+		{
+			{_m.m[1][0], _m.m[1][1], _m.m[1][2]},
+			{_m.m[2][0], _m.m[2][1], _m.m[2][2]},
+			{_m.m[3][0], _m.m[3][1], _m.m[3][2]}
+		}
+	};
+
+	return _m.m[0][0] * DeterminantMat3(a)
+		- _m.m[0][1] * DeterminantMat3(b)
+		+ _m.m[0][2] * DeterminantMat3(c)
+		- _m.m[0][3] * DeterminantMat3(d);
+}
+
+Mat4 CofactorSignsMat4(const Mat4& _m)
+{
+	Mat4 result{};
+
+	result.m[0][0] = _m.m[0][0];
+	result.m[0][1] = -_m.m[0][1];
+	result.m[0][2] = _m.m[0][2];
+	result.m[0][3] = -_m.m[0][3];
+
+	result.m[1][0] = -_m.m[1][0];
+	result.m[1][1] = _m.m[1][1];
+	result.m[1][2] = -_m.m[1][2];
+	result.m[1][3] = _m.m[1][3];
+
+	result.m[2][0] = _m.m[2][0];
+	result.m[2][1] = -_m.m[2][1];
+	result.m[2][2] = _m.m[2][2];
+	result.m[2][3] = -_m.m[2][3];
+
+	result.m[3][0] = -_m.m[3][0];
+	result.m[3][1] = _m.m[3][1];
+	result.m[3][2] = -_m.m[3][2];
+	result.m[3][3] = _m.m[3][3];
+
+	return result;
+}
+
+Mat4 MinorMat4(const Mat4& _m)
+{
+	Mat4 result{};
+
+	for (int y = 0; y < 4; ++y)
+	{
+		for (int x = 0; x < 4; ++x)
+		{
+			Mat3 mat3{};
+
+			int row = 0;
+			for (int k = 0; k < 4; ++k)
+			{
+				if (k != y)
+				{
+					int col = 0;
+					for (int j = 0; j < 4; ++j)
+					{
+						if (x != j)
+						{
+							mat3.m[row][col] = _m.m[k][j];
+
+							col += 1;
+						}
+					}
+
+					row += 1;
+				}
+			}
+
+			result.m[y][x] = DeterminantMat3(mat3);
+		}
+	}
+
+	return result;
+}
+
+Mat4 InverseMat4(const Mat4& _m)
+{
+	const Mat4 minor = MinorMat4(_m);
+	const Mat4 cofactor = TransposeMat4(CofactorSignsMat4(minor));
+	const float det = 1 / DeterminantMat4(_m);
+
+	return cofactor * det;
 }
 
 Mat3 TransposeMat3(const Mat3& _mat)
@@ -231,7 +344,7 @@ Mat3 CofactorSignsMat3(const Mat3& _mat)
 	mat.m[0][1] = -_mat.m[0][1];
 	mat.m[1][1] = _mat.m[1][1];
 	mat.m[2][1] = -_mat.m[2][1];
-	
+
 	mat.m[0][2] = _mat.m[0][2];
 	mat.m[1][2] = -_mat.m[1][2];
 	mat.m[2][2] = _mat.m[2][2];
@@ -239,7 +352,7 @@ Mat3 CofactorSignsMat3(const Mat3& _mat)
 	return mat;
 }
 
-Mat3 MinorMat3(const Mat3& _mat) 
+Mat3 MinorMat3(const Mat3& _mat)
 {
 	Mat3 mat;
 
@@ -264,7 +377,7 @@ Mat3 InverseMat3(const Mat3& _mat)
 
 	const Mat3 minor = MinorMat3(_mat);
 	const Mat3 cofactor = TransposeMat3(CofactorSignsMat3(minor));
-	const float det =  1 / DeterminantMat3(_mat);
+	const float det = 1 / DeterminantMat3(_mat);
 
 	mat = cofactor * det;
 
@@ -281,10 +394,10 @@ Vec3f RotateAroundAxis(Vec3f _v, Vec3f _axis, float _angle)
 
 Vec3f Cross(const Vec3f& _vA, const Vec3f& _vB)
 {
-	return { 
-		_vA.y * _vB.z - _vA.z * _vB.y, 
-		_vA.z * _vB.x - _vA.x * _vB.z, 
-		_vA.x * _vB.y - _vA.y * _vB.x 
+	return {
+		_vA.y * _vB.z - _vA.z * _vB.y,
+		_vA.z * _vB.x - _vA.x * _vB.z,
+		_vA.x * _vB.y - _vA.y * _vB.x
 	};
 }
 

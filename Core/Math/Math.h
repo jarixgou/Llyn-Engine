@@ -25,7 +25,11 @@ Mat4 IdentityMat4();
 Mat3 IdentityMat3();
 Mat2 IdentityMat2();
 
-Mat4 TransposeMat4(const Mat4 _m);
+Mat4 TransposeMat4(const Mat4& _m);
+float DeterminantMat4(const Mat4& _m);
+Mat4 CofactorSignsMat4(const Mat4& _m);
+Mat4 MinorMat4(const Mat4& _m);
+Mat4 InverseMat4(const Mat4& _m);
 
 Mat3 TransposeMat3(const Mat3& _mat);
 float DeterminantMat3(const Mat3& _mat);

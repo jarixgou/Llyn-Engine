@@ -1,4 +1,4 @@
-#include "MeshFIlterPooler.h"
+#include "MeshFilterPooler.h"
 #include "../Render/UniformManager.h"
 
 MeshFilterPooler& MeshFilterPooler::Get()
@@ -9,18 +9,20 @@ MeshFilterPooler& MeshFilterPooler::Get()
 
 void MeshFilterPooler::Init()
 {
+	m_filterCount = 0;
 	m_frameSends.resize(MAX_FRAMES_IN_FLIGHT, false);
 }
 
-MeshFilter* MeshFilterPooler::Add(const std::string& _name, const std::vector<Vertex>& _vertices,
-                                  const std::vector<Index>& _indices)
+MeshFilter MeshFilterPooler::Add(const std::string& _name, const std::vector<Vertex>& _vertices,
+                                 const std::vector<Index>& _indices)
 {
 	if (m_pooler.contains(_name))
 	{
-		return &m_pooler[_name];
+		return m_pooler[_name];
 	}
 
 	MeshFilter newMeshFilter;
+	newMeshFilter.name = _name;
 	newMeshFilter.vertexOffset = static_cast<uint32_t>(m_vertices.size());
 	newMeshFilter.vertexCount = static_cast<uint32_t>(_vertices.size());
 	newMeshFilter.indexOffset = static_cast<uint32_t>(m_indices.size());
@@ -33,16 +35,31 @@ MeshFilter* MeshFilterPooler::Add(const std::string& _name, const std::vector<Ve
 
 	m_meshFilterDirty = true;
 
-	return &m_pooler[_name];
+	m_filterCount += 1;
+
+	return m_pooler[_name];
 }
 
-MeshFilter* MeshFilterPooler::GetMesh(const std::string& _name)
+MeshFilter MeshFilterPooler::GetMesh(const std::string& _name)
 {
 	if (m_pooler.contains(_name))
 	{
-		return &m_pooler[_name];
+		return m_pooler[_name];
 	}
-	return nullptr;
+	return MeshFilter{};
+}
+
+std::vector<std::string> MeshFilterPooler::GetMeshFiltersName()
+{
+	std::vector<std::string> names;
+	names.reserve(m_filterCount);
+
+	for (auto & [name, meshFilter] : m_pooler)
+	{
+		names.emplace_back(name);
+	}
+
+	return names;
 }
 
 void MeshFilterPooler::UpdateMeshFilter(IUniformManager* _uniformManager, uint32_t _frameIndex)

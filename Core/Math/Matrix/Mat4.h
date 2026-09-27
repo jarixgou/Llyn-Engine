@@ -29,6 +29,9 @@ struct Mat4
 	Mat4& operator*=(const Vec4f& _vec);
 	Mat4 operator*(const Vec4f& _vec) const;
 
+	Mat4& operator*=(const float& _f);
+	Mat4 operator*(const float& _f) const;
+
 	Mat4& operator=(const Mat3& _m3);
 };
 

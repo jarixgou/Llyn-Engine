@@ -3,6 +3,10 @@
 
 #include "../../LlynCore.h"
 
+#include "../../Render/GPUDirLight.h"
+#include "../../Render/GPUPointLight.h"
+#include "../../Render/GPUSpotLight.h"
+
 #include "DirLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
@@ -13,13 +17,13 @@ class LightManager
 private:
 	bool m_init = false;
 
-	std::vector<DirLight> m_dirLightsCache;
+	std::vector<GPUDirLight> m_dirLightsCache;
 	std::vector<bool> m_frameSendsDirLight;
 
-	std::vector<PointLight> m_pointLightsCache;
+	std::vector<GPUPointLight> m_pointLightsCache;
 	std::vector<bool> m_frameSendsPointLight;
 
-	std::vector<SpotLight> m_spotLightsCache;
+	std::vector<GPUSpotLight> m_spotLightsCache;
 	std::vector<bool> m_frameSendsSpotLight;
 
 	LightData m_lightData;

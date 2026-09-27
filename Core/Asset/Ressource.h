@@ -5,6 +5,8 @@
 class IRessource
 {
 public:
+	std::string name = "Default";
+
 	IRessource() = default;
 	virtual ~IRessource() = default;
 	virtual bool Load(const std::string& _fileName) = 0;

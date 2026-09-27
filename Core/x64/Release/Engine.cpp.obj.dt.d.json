@@ -261,7 +261,9 @@
             "d:\\llyn engine\\core\\imgui\\imgui_impl_glfw.h",
             "d:\\llyn engine\\core\\imgui\\imgui_impl_vulkan.h",
             "d:\\llyn engine\\core\\imgui\\imgui_internal.h",
-            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\math.h"
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\math.h",
+            "d:\\llyn engine\\core\\interface\\hierarchyinterface.h",
+            "d:\\llyn engine\\core\\interface\\inspectorinterface.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

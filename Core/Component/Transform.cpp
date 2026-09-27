@@ -28,7 +28,8 @@ Transform Transform::operator+(const Transform& _other)
 Transform& Transform::operator+=(const Transform& _other)
 {
 	Transform transform = *this + _other;
-	return transform;
+	*this = transform;
+	return *this;
 }
 
 Transform Transform::operator*(const Transform& _other)
@@ -45,5 +46,6 @@ Transform Transform::operator*(const Transform& _other)
 Transform Transform::operator*=(const Transform& _other)
 {
 	Transform transform = *this * _other;
-	return transform;
+	*this = transform;
+	return *this;
 }

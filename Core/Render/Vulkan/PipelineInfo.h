@@ -29,7 +29,7 @@ struct PipelineInfo
 {
 	SurfaceType surfaceType = SurfaceType::OPAQUE;
 	BlendMode blendMode = BlendMode::ALPHA;
-	RenderFace renderFace = RenderFace::BACK;
+	RenderFace renderFace = RenderFace::FRONT;
 
 	std::string shader = "Core/Shaders/slang.spv";
 

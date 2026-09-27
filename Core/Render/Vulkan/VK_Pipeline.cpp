@@ -9,7 +9,6 @@
 #include "../../Logger.h"
 #include "../../Utils/Utils.h"
 #include "../../Vertex.h"
-#include "../../Utils/VK_Utils.h"
 
 void VK_Pipeline::Init(const VK_Device* _device, const VK_SwapChain* _swapChain, const PipelineInfo& _info)
 {
@@ -197,7 +196,7 @@ void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_Swap
 	colorBlendfCreateInfo.attachmentCount = 1;
 	colorBlendfCreateInfo.pAttachments = &colorBlendAttachment;
 
-	uint32_t lightingModeValue = 3;
+	uint32_t lightingModeValue = 4;
 
 	VkSpecializationMapEntry specMapEntry{};
 	specMapEntry.constantID = 0;

@@ -7,8 +7,7 @@
 struct MatricesData
 {
 	Mat4 mvp;
-	Mat3 normal;
-	float pad[3];
+	Mat4 normal;
 };
 
 #endif // !MATRICES_DATA__H

@@ -17,6 +17,8 @@ private:
 	LightManager* m_lightManager = nullptr;
 	IUniformManager* m_uniformManager = nullptr;
 
+	HierarchyInterface* m_hierarchyInterface = nullptr;
+
 	Clock* m_clock = nullptr;
 public:
 	void Init();

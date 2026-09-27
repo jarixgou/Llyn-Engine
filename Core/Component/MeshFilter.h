@@ -6,6 +6,8 @@
 class MeshFilter : public IComponent
 {
 public:
+	std::string name = "None";
+
 	uint32_t vertexOffset = 0;
 	uint32_t vertexCount = 0;
 

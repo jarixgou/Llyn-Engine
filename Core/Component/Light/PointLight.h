@@ -7,10 +7,10 @@
 
 struct PointLight : public IComponent
 {
-	GPU_ALIGN Vec3f pos = { 0.0f, 0.0f, 0.0f };
-	GPU_ALIGN Vec3f ambient = { 0.5f, 0.5f, 0.5f };
-	GPU_ALIGN Vec3f diffuse = { 1.0f, 1.0f, 1.0f };
-	GPU_ALIGN Vec3f Specular = { 1.0f, 1.0f, 1.0f };
+	Vec3f pos = { 0.0f, 0.0f, 0.0f };
+	Vec3f ambient = { 0.5f, 0.5f, 0.5f };
+	Vec3f diffuse = { 1.0f, 1.0f, 1.0f };
+	Vec3f specular = { 1.0f, 1.0f, 1.0f };
 
 	float constant = 1.0f;
 	float linear = 0.09f;

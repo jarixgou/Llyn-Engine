@@ -72,6 +72,9 @@ typedef uint16_t RessourceID;
 typedef uint32_t EntityID;
 typedef uint32_t ComponentID;
 
+// ImGui Interface forward declaration
+class HierarchyInterface;
+
 #define TOMBSTONE_COMPONENT (std::numeric_limits<ComponentID>::max)()
 #define TOMBSTONE_ENTITY (std::numeric_limits<EntityID>::max)()
 #define TOMBSTONE_RESOURCE (std::numeric_limits<RessourceID>::max)()

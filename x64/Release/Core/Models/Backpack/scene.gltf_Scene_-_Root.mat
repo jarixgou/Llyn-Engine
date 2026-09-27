@@ -5,7 +5,7 @@
             1.0,
             1.0
         ],
-        "Texture": "Core/Textures/DefaultBase.png"
+        "Texture": "Core/Models/Backpack/textures/Scene_-_Root_baseColor.jpeg"
     },
     "SpecularMap": {
         "Color": [

@@ -126,10 +126,10 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\ctime",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\time.h",
             "d:\\llyn engine\\core\\utils\\utils.h",
+            "d:\\llyn engine\\core\\vector\\fwdvec3.h",
             "d:\\llyn engine\\core\\vertex.h",
             "d:\\llyn engine\\core\\vector\\vec2.h",
-            "d:\\llyn engine\\core\\vector\\vec3.h",
-            "d:\\llyn engine\\core\\utils\\vk_utils.h"
+            "d:\\llyn engine\\core\\vector\\vec3.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

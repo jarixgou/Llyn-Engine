@@ -69,10 +69,30 @@ Mat4 Mat4::operator*(const Vec4f& _vec) const
 	return mat;
 }
 
+Mat4& Mat4::operator*=(const float& _f)
+{
+	Mat4 result = *this * _f;
+	*this = result;
+	return *this;
+}
+
+Mat4 Mat4::operator*(const float& _f) const
+{
+	Mat4 result{};
+
+	for (int y = 0; y < 4; ++y)
+	{
+		for (int x = 0; x < 4; ++x)
+		{
+			result.m[y][x] = m[y][x] * _f;
+		}
+	}
+
+	return result;
+}
+
 Mat4& Mat4::operator=(const Mat3& _m3)
 {
-	Mat4 mat = *this;
-
 	for (int y = 0; y < 3; ++y)
 	{
 		for (int x = 0; x < 3; ++x)
@@ -81,15 +101,15 @@ Mat4& Mat4::operator=(const Mat3& _m3)
 		}
 	}
 
-	mat.m[3][0] = 0.0f;
-	mat.m[3][1] = 0.0f;
-	mat.m[3][2] = 0.0f;
+	m[3][0] = 0.0f;
+	m[3][1] = 0.0f;
+	m[3][2] = 0.0f;
 
-	mat.m[3][0] = 0.0f;
-	mat.m[3][1] = 0.0f;
-	mat.m[3][2] = 0.0f;
+	m[3][0] = 0.0f;
+	m[3][1] = 0.0f;
+	m[3][2] = 0.0f;
 
-	mat.m[3][3] = 0.0f;
+	m[3][3] = 0.0f;
 
-	return mat;
+	return *this;
 }

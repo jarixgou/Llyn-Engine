@@ -19,6 +19,9 @@
 #include "ImGui/imgui_impl_vulkan.h"
 #include "ImGui/imgui_internal.h"
 
+#include "Interface/HierarchyInterface.h"
+#include "Interface/InspectorInterface.h"
+
 void Engine::Init()
 {
 	m_scene = new Scene;
@@ -29,6 +32,9 @@ void Engine::Init()
 
 	m_lightManager = new LightManager;
 	m_lightManager->Init();
+
+	m_hierarchyInterface = new HierarchyInterface;
+	m_hierarchyInterface->Init(&m_scene->hierarchy);
 
 	m_clock = new Clock;
 	m_clock->Restart();
@@ -46,8 +52,15 @@ void Engine::Init()
 
 	Model* model = RessourceManager::Get().GetRessource<Model>("Core/Models/Sponza/scene.gltf");
 	model->SetModel(m_scene->ecs, &entity);
-	Transform* transform = m_scene->ecs->GetComponent<Transform>(entity.id);
 
+	Entity dirLight;
+	dirLight.name = "Dir Light";
+	dirLight.id = m_scene->ecs->CreateEntity();
+	Transform dirLightTransform;
+	DirLight dirLightComponent;
+	m_scene->ecs->AddComponents(dirLight.id, dirLightComponent, dirLightTransform);
+
+	m_scene->hierarchy.emplace_back(dirLight);
 	m_scene->hierarchy.emplace_back(entity);
 }
 
@@ -61,7 +74,10 @@ void Engine::Update()
 
 	ImGui::NewFrame();
 
-	bool demo = true;
+	m_hierarchyInterface->Update();
+	InspectorInterface::Update(m_hierarchyInterface->GetSelectedEntity(), m_scene->ecs);
+
+	bool demo = false;
 	ImGui::ShowDemoWindow(&demo);
 
 	ImGui::Render();

@@ -14,6 +14,8 @@ private:
 	std::vector<Vertex> m_vertices;
 	std::vector<Index> m_indices;
 
+	uint32_t m_filterCount = 0;
+
 	bool m_init = false;
 
 	bool m_meshFilterDirty = false;
@@ -23,8 +25,10 @@ public:
 
 	void Init();
 
-	MeshFilter* Add(const std::string& _name, const std::vector<Vertex>& _vertices, const std::vector<Index>& _indices);
-	MeshFilter* GetMesh(const std::string& _name);
+	MeshFilter Add(const std::string& _name, const std::vector<Vertex>& _vertices, const std::vector<Index>& _indices);
+	MeshFilter GetMesh(const std::string& _name);
+
+	std::vector<std::string> GetMeshFiltersName();
 
 	void UpdateMeshFilter(IUniformManager* _uniformManager, uint32_t _frameIndex);
 	

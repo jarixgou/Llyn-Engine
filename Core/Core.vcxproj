@@ -206,6 +206,8 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClInclude Include="ImGui\imstb_rectpack.h" />
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
+    <ClInclude Include="Interface\HierarchyInterface.h" />
+    <ClInclude Include="Interface\InspectorInterface.h" />
     <ClInclude Include="LlynCore.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Math\Math.h" />
@@ -213,7 +215,10 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClInclude Include="Math\Matrix\Mat3.h" />
     <ClInclude Include="Math\Matrix\Mat4.h" />
     <ClInclude Include="Math\Quaternions.h" />
+    <ClInclude Include="Render\GPUDirLight.h" />
     <ClInclude Include="Render\GPUMaterial.h" />
+    <ClInclude Include="Render\GPUPointLight.h" />
+    <ClInclude Include="Render\GPUSpotLight.h" />
     <ClInclude Include="Render\MatricesData.h" />
     <ClInclude Include="Render\MetaData.h" />
     <ClInclude Include="Render\UniformManager.h" />
@@ -268,6 +273,8 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClCompile Include="ImGui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Interface\HierarchyInterface.cpp" />
+    <ClCompile Include="Interface\InspectorInterface.cpp" />
     <ClCompile Include="LlynCore.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Math\Math.cpp" />

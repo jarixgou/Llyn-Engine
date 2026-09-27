@@ -51,7 +51,7 @@ struct VSOutput
 struct Matrices
 {
     float4x4 mvp;
-    float3x3 normal;
+    float4x4 normal;
 }
 
 struct Material
@@ -79,17 +79,31 @@ struct MetaData
 struct DirLight
 {
     float3 dir;
+    float pad0;
+
     float3 ambient;
+    float pad1;
+
     float3 diffuse;
+    float pad2;
+
     float3 specular;
+    float pad3;
 }
 
 struct PointLight
 {
     float3 pos;
+    float pad0;
+
     float3 ambient;
+    float pad1;
+
     float3 diffuse;
+    float pad2;
+
     float3 specular;
+    float pad3;
 
     float constant;
     float linear;
@@ -101,9 +115,17 @@ struct PointLight
 struct SpotLight
 {
     float3 pos;
+    float pad0;
+
     float3 dir;
+    float pad1;
+
     float3 ambient;
+    float pad2;
+
     float3 diffuse;
+    float pad3;
+
     float3 specular;
 
     float cutOff;
@@ -171,7 +193,7 @@ VSOutput vertMain(uint _vertexID : SV_VertexID, uint _instance: SV_StartInstance
     VSOutput output;
 
     output.pos = mul(float4(vertexData.pos, 1.0f), matrix.mvp);
-    output.normal = mul(vertexData.normal, matrix.normal);
+    output.normal = mul(vertexData.normal, float3x3(matrix.normal));
 
     output.tangent = vertexData.tangent;
     output.bitangent = vertexData.bitangent;
@@ -215,7 +237,7 @@ float4 CalcDirLight(DirLight _light, VSOutput _vertIn)
     const float3 ambient = _light.ambient * float3(albedoTex.x, albedoTex.y, albedoTex.z);
 
     // Diffuse
-    const float3 normal = normalize(camPos - fragPos);
+    const float3 normal = normalize(_vertIn.normal);
     const float3 lightDir = normalize(-_light.dir);
     const float diffuse = max(dot(normal, lightDir), 0.0f);
     const float3 finalDiffuse = _light.diffuse * diffuse * float3(albedoTex.x, albedoTex.y, albedoTex.z);
@@ -226,7 +248,7 @@ float4 CalcDirLight(DirLight _light, VSOutput _vertIn)
     const float specular = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
     const float3 finalSpecular = _light.specular * specular * float3(specularTex.x, specularTex.y, specularTex.z);
 
-    return float4(ambient + diffuse + finalSpecular, 1.0f);
+    return float4(ambient + finalDiffuse + finalSpecular, 1.0f);
 }
 
 float4 CalcPointLight(PointLight _light, VSOutput _vertIn)
@@ -321,6 +343,11 @@ float4 CalcWireframe(float3 _bary, float4 _color, float4 _wireframeColor)
 [shader("fragment")]
 float4 fragMain(VSOutput _vertIn) : SV_Target
 {
+    if (GetTexture(materials[_vertIn.materialID].albedoID, _vertIn.uv0).w < 0.1f)
+    {
+        discard;
+    }
+
     float4 color = float4(0.0f);
 
     switch (lightingMode)

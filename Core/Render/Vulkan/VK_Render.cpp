@@ -123,7 +123,7 @@ void VK_Render::Update(Scene* _scene, Camera* _camera, LightManager* _lightManag
 
 	for (size_t i = 0; i < _scene->hierarchy.size(); i++)
 	{
-		ParseEntites(_scene->ecs, &_scene->hierarchy[i], Transform(), instance, _camera);
+		ParseEntites(_scene->ecs, &_scene->hierarchy[i], IdentityMat4(), instance, _camera);
 	}
 
 	if (m_matricesDatas.empty())
@@ -237,8 +237,8 @@ void VK_Render::DisplayWindow(uint32_t _imageIndex)
 
 }
 
-void VK_Render::ParseEntites(ECS* _ecs, const Entity* _entity, Transform _transform,
-	uint32_t& _instance, const Camera* _camera)
+void VK_Render::ParseEntites(ECS* _ecs, const Entity* _entity, Mat4 _transformMat,
+                             uint32_t& _instance, const Camera* _camera)
 {
 	LLYN_ASSERT(_ecs != nullptr || _entity != nullptr);
 
@@ -248,7 +248,7 @@ void VK_Render::ParseEntites(ECS* _ecs, const Entity* _entity, Transform _transf
 	}
 
 	const Transform* baseTransform = _ecs->GetComponent<Transform>(_entity->id);
-	_transform *= *baseTransform;
+	_transformMat *= baseTransform->GetMatrix();
 
 	if (_ecs->HasComponent<MeshFilter, MeshRender>(_entity->id))
 	{
@@ -271,14 +271,12 @@ void VK_Render::ParseEntites(ECS* _ecs, const Entity* _entity, Transform _transf
 
 		m_metaDatas.emplace_back(metadata);
 
-		const Mat4 transfromMatrix = _transform.GetMatrix();
-		const Mat4 baseMatrice4x4 = (_camera->GetProjMatrix() * _camera->GetViewMatrix()) * transfromMatrix;
-		Mat3 baseMatrice3x3;
-		baseMatrice3x3 = transfromMatrix;
+		const Mat4 transfromMatrix = _transformMat;
+		const Mat4 MVP = (_camera->GetProjMatrix() * _camera->GetViewMatrix()) * transfromMatrix;
 
 		MatricesData matrices;
-		matrices.mvp = baseMatrice4x4;
-		matrices.normal = TransposeMat3(InverseMat3(baseMatrice3x3));
+		matrices.mvp = MVP;
+		matrices.normal = TransposeMat4(InverseMat4(transfromMatrix));
 
 		m_matricesDatas.emplace_back(matrices);
 
@@ -287,6 +285,6 @@ void VK_Render::ParseEntites(ECS* _ecs, const Entity* _entity, Transform _transf
 
 	for (int i = 0; i < _entity->childs.size(); ++i)
 	{
-		ParseEntites(_ecs, &_entity->childs[i], _transform, _instance, _camera);
+		ParseEntites(_ecs, &_entity->childs[i], _transformMat, _instance, _camera);
 	}
 }

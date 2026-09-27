@@ -9,11 +9,11 @@
 
 struct SpotLight : public IComponent
 {
-	GPU_ALIGN Vec3f pos = { 0.0f, 0.0f, 0.0f };
-	GPU_ALIGN Vec3f dir = { 0.0f , -1.0f, 0.0f };
-	GPU_ALIGN Vec3f ambient = { 0.5f, 0.5f, 0.5f };
-	GPU_ALIGN Vec3f diffuse = { 1.0f, 1.0f, 1.0f };
-	GPU_ALIGN Vec3f specular = { 1.0f, 1.0f, 1.0f };
+	Vec3f pos = { 0.0f, 0.0f, 0.0f };
+	Vec3f dir = { 0.0f , -1.0f, 0.0f };
+	Vec3f ambient = { 0.5f, 0.5f, 0.5f };
+	Vec3f diffuse = { 1.0f, 1.0f, 1.0f };
+	Vec3f specular = { 1.0f, 1.0f, 1.0f };
 
 	float cutOff = DegToRad(12.5f);
 	float outerCutOff = DegToRad(17.5f);

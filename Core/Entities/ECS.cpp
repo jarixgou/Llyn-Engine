@@ -1,5 +1,7 @@
 #include "ECS.h"
 
+#include <iostream>
+
 bool ECS::EntityIsValid(const EntityID& _entityID) const
 {
 	return _entityID < m_nextEntityID;

@@ -42,7 +42,7 @@ private:
 	void ClearWindow(IUniformManager* _uniformManager, uint32_t _imageIndex);
 	void DisplayWindow(uint32_t _imageIndex);
 
-	void ParseEntites(ECS* _ecs, const Entity* _entity, Transform _currentTransform, uint32_t&
+	void ParseEntites(ECS* _ecs, const Entity* _entity, Mat4 _transformMat, uint32_t&
 	                  _instance, const Camera* _camera);
 };
 
