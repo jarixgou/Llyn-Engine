@@ -13,7 +13,7 @@
             1.0,
             1.0
         ],
-        "Smoothness": 0.5,
+        "Smoothness": 32.0,
         "Texture": "Core/Textures/DefaultSpecular.png"
     }
 }

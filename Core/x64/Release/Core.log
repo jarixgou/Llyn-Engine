@@ -1,24 +1,3 @@
 ﻿  Analyse des sources à la recherche des dépendances de module...
-  InspectorInterface.cpp
-D:\Llyn Engine\Core\Math\Math.h(12,7): warning C4099: 'Quaternions' : nom de type déjà rencontré avec 'struct' et utilisant maintenant 'class'
-  (compiler le fichier source 'Interface/InspectorInterface.cpp')
-      D:\Llyn Engine\Core\Math\Quaternions.h(8,8):
-      voir la déclaration de 'Quaternions'
-  
-D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'uint32_t', perte possible de données
-  (compiler le fichier source 'Interface/InspectorInterface.cpp')
-      D:\Llyn Engine\Core\Entities\ECS.h(83,24):
-      le contexte d’instanciation du modèle (le plus ancien) est
-          D:\Llyn Engine\Core\Interface\InspectorInterface.cpp(38,35):
-          voir la référence à l'instanciation de la fonction modèle 'T *ECS::GetComponent<Transform>(const EntityID &)' en cours de compilation
-          with
-          [
-              T=Transform
-          ]
-          D:\Llyn Engine\Core\Entities\ECS.h(129,9):
-          voir la référence à l'instanciation de la fonction modèle 'SparseSet<Transform> *ECS::GetPool<Transform>(void)' en cours de compilation
-  
-D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'const uint32_t', perte possible de données
-  (compiler le fichier source 'Interface/InspectorInterface.cpp')
-  
+  VK_Pipeline.cpp
   Core.vcxproj -> D:\Llyn Engine\x64\Release\Core.lib

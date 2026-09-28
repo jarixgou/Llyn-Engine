@@ -276,6 +276,7 @@ void VK_Render::ParseEntites(ECS* _ecs, const Entity* _entity, Mat4 _transformMa
 
 		MatricesData matrices;
 		matrices.mvp = MVP;
+		matrices.localPos = transfromMatrix;
 		matrices.normal = TransposeMat4(InverseMat4(transfromMatrix));
 
 		m_matricesDatas.emplace_back(matrices);

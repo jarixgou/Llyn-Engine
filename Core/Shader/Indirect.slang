@@ -34,6 +34,8 @@ struct VSOutput
 {
     float4 pos : SV_Position;
 
+    float3 worldPos;
+
     float3 color;
 
     float3 normal;
@@ -51,6 +53,7 @@ struct VSOutput
 struct Matrices
 {
     float4x4 mvp;
+    float4x4 localPos;
     float4x4 normal;
 }
 
@@ -64,7 +67,7 @@ struct Material
     float pad0;
 
     float3 specularColor;
-    float shininess;
+    float smoothness;
 }
 
 struct MetaData
@@ -193,6 +196,7 @@ VSOutput vertMain(uint _vertexID : SV_VertexID, uint _instance: SV_StartInstance
     VSOutput output;
 
     output.pos = mul(float4(vertexData.pos, 1.0f), matrix.mvp);
+    output.worldPos = mul(vertexData.pos, float3x3(matrix.localPos));
     output.normal = mul(vertexData.normal, float3x3(matrix.normal));
 
     output.tangent = vertexData.tangent;
@@ -219,17 +223,20 @@ float4 GetTexture(uint32_t _textureID, float2 _uv)
 {
     if (_textureID == TOMBSTONE_ID)
     {
-        return float4(1.0f);
+        return float4(0.0f);
     }
 
     return textures[NonUniformResourceIndex((uint)_textureID)].Sample(_uv);
 }
 
+float ShininessFromSmoothness(float _smoothness)
+{
+    return exp2(1.0f + _smoothness * 10.0f);
+}
+
 float4 CalcDirLight(DirLight _light, VSOutput _vertIn)
 {
     const Material material = materials[_vertIn.materialID];
-
-    const float3 fragPos = float3(_vertIn.pos.x, _vertIn.pos.y, _vertIn.pos.z);
 
     const float4 albedoTex = GetTexture(material.albedoID, _vertIn.uv0) * float4(material.albedoColor, 1.0f);
     const float4 specularTex = GetTexture(material.specularID, _vertIn.uv0) * float4(material.specularColor, 1.0f);
@@ -243,9 +250,9 @@ float4 CalcDirLight(DirLight _light, VSOutput _vertIn)
     const float3 finalDiffuse = _light.diffuse * diffuse * float3(albedoTex.x, albedoTex.y, albedoTex.z);
 
     // Specular
-    const float3 viewDir = normalize(camPos - fragPos);
-    const float3 reflectionDir = reflect(-lightDir, normal);
-    const float specular = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
+    const float3 viewDir = normalize(camPos - _vertIn.worldPos);
+    const float3 halfwayDir = normalize(lightDir + viewDir);
+    const float specular = pow(max(dot(normal, halfwayDir), 0.0f), ShininessFromSmoothness(material.smoothness));
     const float3 finalSpecular = _light.specular * specular * float3(specularTex.x, specularTex.y, specularTex.z);
 
     return float4(ambient + finalDiffuse + finalSpecular, 1.0f);
@@ -255,9 +262,7 @@ float4 CalcPointLight(PointLight _light, VSOutput _vertIn)
 {
     const Material material = materials[_vertIn.materialID];
 
-    const float3 fragPos = float3(_vertIn.pos.x, _vertIn.pos.y, _vertIn.pos.z);
-
-    const float3 lightVec = _light.pos - fragPos;
+    const float3 lightVec = _light.pos - _vertIn.worldPos;
 
     const float dist = length(lightVec);
     const float attenuation = 1.0 / (_light.constant + _light.linear * dist + _light.quadratic * (dist * dist));
@@ -274,9 +279,9 @@ float4 CalcPointLight(PointLight _light, VSOutput _vertIn)
     float3 finalDiffuse = _light.diffuse * diffuse * float3(albedoTex.x, albedoTex.y, albedoTex.z);
 
     // Specular
-    const float3 viewDir = normalize(camPos - fragPos);
-    const float3 reflectionDir = reflect(-lightDir, normal);
-    const float spec = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
+    const float3 viewDir = normalize(camPos - _vertIn.worldPos);
+    const float3 halfWayDir = normalize(lightDir + viewDir);
+    const float spec = pow(max(dot(normal, halfWayDir), 0.0f), ShininessFromSmoothness(material.smoothness));
     float3 finalSpec = _light.specular * spec * float3(specularTex.x, specularTex.y, specularTex.z);
 
     ambient *= attenuation;
@@ -290,9 +295,7 @@ float4 CalcSpotLight(SpotLight _light, VSOutput _vertIn)
 {
     const Material material = materials[_vertIn.materialID];
 
-    const float3 fragPos = float3(_vertIn.pos.x, _vertIn.pos.y, _vertIn.pos.z);
-
-    const float3 lightVec = _light.pos - fragPos;
+    const float3 lightVec = _light.pos - _vertIn.worldPos;
     const float3 lightDir = normalize(lightVec);
 
     const float theta = dot(lightDir, normalize(-_light.dir));
@@ -314,9 +317,9 @@ float4 CalcSpotLight(SpotLight _light, VSOutput _vertIn)
         float3 finalDiffuse = _light.diffuse * diffuse * float3(albedoTex.x, albedoTex.y, albedoTex.z);
 
         // Specular
-        const float3 viewDir = normalize(camPos - fragPos);
-        const float3 reflectionDir = reflect(-_light.dir, normal);
-        const float specular = pow(max(dot(viewDir, reflectionDir), 0.0f), material.shininess);
+        const float3 viewDir = normalize(camPos - _vertIn.worldPos);
+        const float3 halfWayDir = normalize(lightDir + viewDir);
+        const float specular = pow(max(dot(normal, halfWayDir), 0.0f), ShininessFromSmoothness(material.smoothness));
         float3 finalSpecular = _light.specular * specular * float3(specularTex.x, specularTex.y, specularTex.z);
 
         finalDiffuse *= intensity;

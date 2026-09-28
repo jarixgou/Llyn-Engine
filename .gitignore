@@ -14,7 +14,6 @@
 
 # Static libraries
 *.a
-*.lib
 
 # Executables
 *.exe
@@ -92,3 +91,7 @@ x86/
 
 # Publish Web Output
 *.[Pp]ublish.xml
+
+
+x64/Release/Core.lib
+x64/Debug/Core.lib

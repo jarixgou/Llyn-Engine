@@ -7,6 +7,7 @@
 struct MatricesData
 {
 	Mat4 mvp;
+	Mat4 localPos;
 	Mat4 normal;
 };
 
