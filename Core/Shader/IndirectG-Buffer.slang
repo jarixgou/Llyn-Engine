@@ -72,10 +72,10 @@ struct VSOutput
 
 struct FGOutput
 {
-    float4 pos : SV_Target0;
-    float4 normal : SV_Target1;
-    float4 albedo : SV_Target2;
-    float4 specular : SV_Target3;
+    float3 pos : SV_Target0;
+    float3 normal : SV_Target1;
+    float3 albedo : SV_Target2;
+    float2 specular : SV_Target3;
 }
 
 // Bindless
@@ -147,9 +147,14 @@ float4 GetTexture(uint32_t _textureID, float2 _uv)
 [shader("fragment")]
 FGOutput fragMain(VSOutput _vsOutput)
 {
+    const Material material = materials[_vsOutput.materialID];
+
     FGOutput output;
 
-
+    output.pos = _vsOutput.worldPos;
+    output.normal = _vsOutput.normal;
+    output.albedo = GetTexture(material.albedoID, _vsOutput.uv0).xyz;
+    output.specular = { GetTexture(material.specularID, _vsOutput.uv0).x, material.smoothness };
 
     return output;
 }
