@@ -119,7 +119,7 @@ Vec3<T> Vec3<T>::operator/(const Vec3& _other) const
 template <typename T>
 bool Vec3<T>::operator==(const Vec3& _other)
 {
-	return this->x == _other.x && this->y == _other.y && this->z == _other.z;
+	return x == _other.x && y == _other.y && z == _other.z;
 }
 
 template <typename T>

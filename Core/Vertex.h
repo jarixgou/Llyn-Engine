@@ -18,6 +18,9 @@ struct Vertex
 
 	GPU_ALIGN Vec2f uv0 = { 0.0f, 0.0f };
 	Vec2f uv1 = { 0.f, 0.0f };
+
+	bool operator==(const Vertex& _v);
+	bool operator!=(const Vertex& _v);
 };
 
 #endif

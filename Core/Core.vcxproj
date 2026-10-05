@@ -303,6 +303,7 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClCompile Include="Render\Vulkan\VK_Instance.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Render.cpp" />
     <ClCompile Include="Render\Vulkan\VK_ShaderBuffer.cpp" />
+    <ClCompile Include="Render\Vulkan\VK_Texture.cpp" />
     <ClCompile Include="Render\Vulkan\VK_VmaAllocatorWrapper.cpp" />
     <ClCompile Include="Render\Window.cpp" />
     <ClCompile Include="Scene.cpp" />

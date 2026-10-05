@@ -11,7 +11,7 @@ private:
 	VmaAllocator m_allocator = nullptr;
 	VK_Device* m_device = nullptr;
 public:
-	VK_VmaAllocatorWrapper& Get();
+	static VK_VmaAllocatorWrapper& Get();
 
 	void Init(VK_Device* _device, VK_Instance* _instance);
 	void Cleanup();

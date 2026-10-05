@@ -32,10 +32,13 @@ void VK_Image::Cleanup(VK_Device* _device)
 
 void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout)
 {
+	TransitionLayout(_cmdBuff, m_layout, _newLayout);
 }
 
 void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout)
 {
+	ImageBarrier(_cmdBuff, _oldLayout, _newLayout, 1, 0);
+	m_layout = _newLayout;
 }
 
 bool VK_Image::HasStencilComponent(VkFormat _format)

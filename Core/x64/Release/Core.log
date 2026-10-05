@@ -1,3 +1,82 @@
 ﻿  Analyse des sources à la recherche des dépendances de module...
-  VK_Pipeline.cpp
+  Engine.cpp
+  VK_Render.cpp
+D:\Llyn Engine\Core\Math\Math.h(12,7): warning C4099: 'Quaternions' : nom de type déjà rencontré avec 'struct' et utilisant maintenant 'class'
+  (compiler le fichier source 'Render/Vulkan/VK_Render.cpp')
+      D:\Llyn Engine\Core\Math\Quaternions.h(8,8):
+      voir la déclaration de 'Quaternions'
+  
+D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'uint32_t', perte possible de données
+  (compiler le fichier source 'Render/Vulkan/VK_Render.cpp')
+      D:\Llyn Engine\Core\Entities\ECS.h(83,24):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          D:\Llyn Engine\Core\Render\Vulkan\VK_Render.cpp(251,41):
+          voir la référence à l'instanciation de la fonction modèle 'T *ECS::GetComponent<Transform>(const EntityID &)' en cours de compilation
+          with
+          [
+              T=Transform
+          ]
+          D:\Llyn Engine\Core\Entities\ECS.h(129,9):
+          voir la référence à l'instanciation de la fonction modèle 'SparseSet<Transform> *ECS::GetPool<Transform>(void)' en cours de compilation
+  
+D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'const uint32_t', perte possible de données
+  (compiler le fichier source 'Render/Vulkan/VK_Render.cpp')
+  
+D:\Llyn Engine\Core\Math\Math.h(12,7): warning C4099: 'Quaternions' : nom de type déjà rencontré avec 'struct' et utilisant maintenant 'class'
+  (compiler le fichier source 'Engine.cpp')
+      D:\Llyn Engine\Core\Math\Quaternions.h(8,8):
+      voir la déclaration de 'Quaternions'
+  
+D:\Llyn Engine\Core\Asset\RessourceManager.h(190,27): warning C4267: 'initialisation' : conversion de 'size_t' en 'RessourceID', perte possible de données
+  (compiler le fichier source 'Engine.cpp')
+      D:\Llyn Engine\Core\Asset\RessourceManager.h(190,27):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          D:\Llyn Engine\Core\Engine.cpp(53,41):
+          voir la référence à l'instanciation de la fonction modèle 'T *RessourceManager::GetRessource<Model>(const std::string &)' en cours de compilation
+          with
+          [
+              T=Model
+          ]
+  
+D:\Llyn Engine\Core\Asset\RessourceManager.h(190,27): warning C4267: 'initialisation' : conversion de 'size_t' en 'const RessourceID', perte possible de données
+  (compiler le fichier source 'Engine.cpp')
+  
+D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'uint32_t', perte possible de données
+  (compiler le fichier source 'Engine.cpp')
+      D:\Llyn Engine\Core\Entities\ECS.h(83,24):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          D:\Llyn Engine\Core\Engine.cpp(61,16):
+          voir la référence à l'instanciation de la fonction modèle 'void ECS::AddComponents<DirLight,Transform>(const EntityID &,const DirLight &,const Transform &)' en cours de compilation
+          D:\Llyn Engine\Core\Entities\ECS.h(112,3):
+          voir la référence à l'instanciation de la fonction modèle 'SparseSet<DirLight> *ECS::GetPool<DirLight>(void)' en cours de compilation
+  
+D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'const uint32_t', perte possible de données
+  (compiler le fichier source 'Engine.cpp')
+  
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267: '=' : conversion de 'size_t' en '_Ty', perte possible de données
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267:         with
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267:         [
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267:             _Ty=std::_Vbase
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267:         ]
+  (compiler le fichier source 'Engine.cpp')
+      D:\Llyn Engine\Core\Entities\SparseSet.h(40,25):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          D:\Llyn Engine\Core\Entities\ECS.h(112,17):
+          voir la référence à l'instanciation classe modèle 'SparseSet<DirLight>' en cours de compilation
+          D:\Llyn Engine\Core\Entities\SparseSet.h(33,1):
+          pendant la compilation de la fonction membre classe modèle 'void SparseSet<DirLight>::Insert(const size_t &,const T &)'
+          with
+          [
+              T=DirLight
+          ]
+              D:\Llyn Engine\Core\Entities\ECS.h(112,47):
+              voir la première référence à « SparseSet<DirLight>::Insert » dans « ECS::AddComponents »
+  
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267: '=' : conversion de 'size_t' en '_Ty', perte possible de données
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         with
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         [
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267:             _Ty=std::_Vbase
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         ]
+  (compiler le fichier source 'Engine.cpp')
+  
   Core.vcxproj -> D:\Llyn Engine\x64\Release\Core.lib
