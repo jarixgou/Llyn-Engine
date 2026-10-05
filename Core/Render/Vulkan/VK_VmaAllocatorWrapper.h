@@ -11,6 +11,8 @@ private:
 	VmaAllocator m_allocator = nullptr;
 	VK_Device* m_device = nullptr;
 public:
+	VK_VmaAllocatorWrapper& Get();
+
 	void Init(VK_Device* _device, VK_Instance* _instance);
 	void Cleanup();
 
@@ -19,8 +21,8 @@ public:
 	void DestroyBuffer(VkBuffer _buff, VmaAllocation _alloc) const;
 
 	void CreateImage(const VkImageCreateInfo& _imageInfo, VmaMemoryUsage _memUsage,
-		VkImage& _outImage, VmaAllocation& _outAlloc);
-	void DestroyImage(VkImage _image, VmaAllocation _alloc);
+		VkImage& _outImage, VmaAllocation& _outAlloc) const;
+	void DestroyImage(VkImage _image, VmaAllocation _alloc) const;
 };
 
 #endif

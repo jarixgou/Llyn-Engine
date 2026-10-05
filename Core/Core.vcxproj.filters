@@ -237,6 +237,18 @@
     <ClInclude Include="Render\GPUPointLight.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Vulkan\VK_VmaAllocatorWrapper.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Vulkan\VK_Image.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Vulkan\VK_StageAndAccess.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Vulkan\VK_Texture.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Utils\Utils.cpp">
@@ -387,6 +399,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Interface\InspectorInterface.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Vulkan\VK_VmaAllocatorWrapper.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Vulkan\VK_Image.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

@@ -226,6 +226,7 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClInclude Include="Render\Vulkan\VK_DescriptorLayoutHandle.h" />
     <ClInclude Include="Render\Vulkan\VK_DescriptorLayoutHandleHash.h" />
     <ClInclude Include="Render\Vulkan\VK_DescriptorManager.h" />
+    <ClInclude Include="Render\Vulkan\VK_Image.h" />
     <ClInclude Include="Render\Vulkan\VK_ImGui.h" />
     <ClInclude Include="Render\Vulkan\PipelineInfo.h" />
     <ClInclude Include="Render\Render.h" />
@@ -234,10 +235,13 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClInclude Include="Render\Vulkan\VK_LayoutInfo.h" />
     <ClInclude Include="Render\Vulkan\VK_Pipeline.h" />
     <ClInclude Include="Render\Vulkan\VK_RenderWindow.h" />
+    <ClInclude Include="Render\Vulkan\VK_StageAndAccess.h" />
     <ClInclude Include="Render\Vulkan\VK_SwapChain.h" />
     <ClInclude Include="Render\Vulkan\VK_Instance.h" />
     <ClInclude Include="Render\Vulkan\VK_Render.h" />
     <ClInclude Include="Render\Vulkan\VK_ShaderBuffer.h" />
+    <ClInclude Include="Render\Vulkan\VK_Texture.h" />
+    <ClInclude Include="Render\Vulkan\VK_VmaAllocatorWrapper.h" />
     <ClInclude Include="Render\Window.h" />
     <ClInclude Include="Asset\Material.h" />
     <ClInclude Include="Scene.h" />
@@ -291,6 +295,7 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClCompile Include="Render\Vulkan\VK_DescriptorHandle.h" />
     <ClCompile Include="Render\Vulkan\VK_Device.cpp" />
     <ClCompile Include="Render\Vulkan\VK_FrameSync.cpp" />
+    <ClCompile Include="Render\Vulkan\VK_Image.cpp" />
     <ClCompile Include="Render\Vulkan\VK_ImGui.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Pipeline.cpp" />
     <ClCompile Include="Render\Vulkan\VK_RenderWindow.cpp" />
@@ -298,6 +303,7 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClCompile Include="Render\Vulkan\VK_Instance.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Render.cpp" />
     <ClCompile Include="Render\Vulkan\VK_ShaderBuffer.cpp" />
+    <ClCompile Include="Render\Vulkan\VK_VmaAllocatorWrapper.cpp" />
     <ClCompile Include="Render\Window.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Utils\Utils.cpp" />

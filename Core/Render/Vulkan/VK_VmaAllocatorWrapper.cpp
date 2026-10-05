@@ -3,6 +3,12 @@
 #include "VK_Device.h"
 #include "VK_Instance.h"
 
+VK_VmaAllocatorWrapper& VK_VmaAllocatorWrapper::Get()
+{
+	static VK_VmaAllocatorWrapper instance;
+	return instance;
+}
+
 void VK_VmaAllocatorWrapper::Init(VK_Device* _device, VK_Instance* _instance)
 {
 	LLYN_ASSERT(_device != nullptr || _instance != nullptr)
@@ -46,7 +52,7 @@ void VK_VmaAllocatorWrapper::DestroyBuffer(VkBuffer _buff, VmaAllocation _alloc)
 }
 
 void VK_VmaAllocatorWrapper::CreateImage(const VkImageCreateInfo& _imageInfo, VmaMemoryUsage _memUsage,
-	VkImage& _outImage, VmaAllocation& _outAlloc)
+	VkImage& _outImage, VmaAllocation& _outAlloc) const
 {
 	VmaAllocationCreateInfo allocationCreateInfo{};
 	allocationCreateInfo.usage = _memUsage;
@@ -55,7 +61,7 @@ void VK_VmaAllocatorWrapper::CreateImage(const VkImageCreateInfo& _imageInfo, Vm
 		"Failed to create image ");
 }
 
-void VK_VmaAllocatorWrapper::DestroyImage(VkImage _image, VmaAllocation _alloc)
+void VK_VmaAllocatorWrapper::DestroyImage(VkImage _image, VmaAllocation _alloc) const
 {
 	vmaDestroyImage(m_allocator, _image, _alloc);
 }

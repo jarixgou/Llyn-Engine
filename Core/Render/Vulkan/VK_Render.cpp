@@ -148,7 +148,7 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 {
 	LLYN_ASSERT(_scene != nullptr && _uniformManager != nullptr);
 
-	 auto [imageIndex, cmdBuff] = m_frameSync->Begin(m_device, m_renderWindow->GetSwapChain());
+	auto [imageIndex, cmdBuff] = m_frameSync->Begin(m_device, m_renderWindow->GetSwapChain());
 
 	Update(_scene, _camera, _lightManager, _uniformManager);
 
