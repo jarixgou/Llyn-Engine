@@ -24,8 +24,7 @@ void VK_Buffer::SetFrameSync(VK_FrameSync* _frameSync)
 
 void VK_Buffer::Cleanup()
 {
-	vkDestroyBuffer(*device->GetDevice(), buffer, VK_NULL_HANDLE);
-	vkFreeMemory(*device->GetDevice(), memory, VK_NULL_HANDLE);
+	VK_VmaAllocatorWrapper::Get().DestroyBuffer(buffer, allocation);
 }
 
 VkCommandPool VK_Buffer::CreateCommandPool()
@@ -64,8 +63,7 @@ std::vector<VkCommandBuffer> VK_Buffer::CreateCommandBuffer(VkCommandPool _cmdPo
 	return cmdBuffs;
 }
 
-VK_Buffer VK_Buffer::CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage,
-	VkMemoryPropertyFlags _memProps)
+VK_Buffer VK_Buffer::CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage, VmaAllocationCreateFlags _flags)
 {
 	LLYN_ASSERT(device != nullptr);
 
@@ -78,10 +76,7 @@ VK_Buffer VK_Buffer::CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage,
 	buffCreateInfo.usage = _usage;
 	buffCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	VK_CHECK(vkCreateBuffer(*device->GetDevice(), &buffCreateInfo, VK_NULL_HANDLE, &buffer.buffer),
-		"Failed to create buffer !");
-
-	buffer.memory = VK_MemoryHelper::AllocateDeviceMemory(buffer.buffer, _memProps);
+	VK_VmaAllocatorWrapper::Get().CreateBuffer(buffCreateInfo, VMA_MEMORY_USAGE_AUTO, _flags, buffer.buffer, buffer.allocation);
 
 	return buffer;
 }
@@ -94,25 +89,21 @@ VK_Buffer VK_Buffer::CreateStagingBuffer(void* _data, VkDeviceSize _size, VkBuff
 	VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 	VkMemoryPropertyFlags memProps = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
-	VK_Buffer stagingBuff = CreateBuffer(_size, usage, memProps);
+	VK_Buffer stagingBuff = CreateBuffer(_size, usage, TODO);
 
-	// Map the memory of the stage buffer
+	// Map the allocation of the stage buffer
 	void* mem;
-	const VkDeviceSize offset = 0;
-	const VkMemoryMapFlags flags = 0;
-	VK_CHECK(vkMapMemory(*device->GetDevice(), stagingBuff.memory, offset, _size, flags, &mem),
-		"Failed to map memory !");
+	VK_VmaAllocatorWrapper::Get().MapMemory(&mem, stagingBuff.allocation);
 
 	// Copy buffer
 	memcpy(mem, _data, _size);
 
-	// Unmap the mapped memory
-	vkUnmapMemory(*device->GetDevice(), stagingBuff.memory);
+	// Unmap the mapped allocation
+	VK_VmaAllocatorWrapper::Get().UnMapMemory(stagingBuff.allocation);
 
 	// Create the final buffer
 	usage = _usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-	memProps = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-	VK_Buffer finalBuffer = CreateBuffer(_size, usage, memProps);
+	VK_Buffer finalBuffer = CreateBuffer(_size, usage, TODO);
 
 	// Copy the staging buffer to the final buffer
 	CopyBuffer(stagingBuff.buffer, finalBuffer.buffer, _size);
@@ -127,12 +118,8 @@ VK_Buffer VK_Buffer::CreateIndirectBuffer(VkDeviceSize _size)
 	LLYN_ASSERT(device != nullptr);
 
 	VkBufferUsageFlags usage = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
-	VkMemoryPropertyFlags memProps = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
-	VK_Buffer indirectBuffer = CreateBuffer(_size, usage, memProps);
-
-	VK_CHECK(vkMapMemory(*device->GetDevice(), indirectBuffer.memory, 0, _size, 0, &indirectBuffer.data),
-		"Failed to map indirect buffer memory");
+	VK_Buffer indirectBuffer = CreateBuffer(_size, usage, TODO);
 
 	return indirectBuffer;
 }
@@ -141,7 +128,10 @@ VK_Buffer VK_Buffer::CreateUBO(VkDeviceSize _size)
 {
 	LLYN_ASSERT(device != nullptr);
 
-	return CreateBuffer(_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	VK_Buffer buffer = CreateBuffer(_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, TODO);
+	VK_VmaAllocatorWrapper::Get().MapMemory(&buffer.mappedMemory, buffer.allocation);
+
+	return buffer;
 }
 
 VK_Buffer VK_Buffer::CreateSSBO(void* _data, VkDeviceSize _size)

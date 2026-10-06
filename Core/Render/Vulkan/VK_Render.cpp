@@ -154,7 +154,7 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	if (!m_indirectCmds.empty())
 	{
-		memcpy(m_indirectDrawBuff[m_frameSync->GetFrameIndex()]->data, m_indirectCmds.data(), ARRAY_SIZE_IN_BYTES(m_indirectCmds));
+		memcpy(m_indirectDrawBuff[m_frameSync->GetFrameIndex()]->mappedMemory, m_indirectCmds.data(), ARRAY_SIZE_IN_BYTES(m_indirectCmds));
 	}
 
 	m_frameSync->Reset(m_device);

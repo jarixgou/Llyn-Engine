@@ -3,7 +3,7 @@
 #include "VK_Device.h"
 #include "VK_LayoutInfo.h"
 
-void VK_ShaderBuffer::CreateUniform(VK_Device* _device, const VK_LayoutInfo& _layoutInfo, void* _data)
+void VK_ShaderBuffer::CreateUniform(VK_Device* _device, const VK_LayoutInfo& _layoutInfo)
 {
 	LLYN_ASSERT(_device != nullptr);
 
@@ -17,10 +17,6 @@ void VK_ShaderBuffer::CreateUniform(VK_Device* _device, const VK_LayoutInfo& _la
 		if (bufferUsage == VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
 		{
 			buffers[i].CreateUBO(_layoutInfo.count);
-
-			VK_CHECK(vkMapMemory(*_device->GetDevice(), buffers[i].memory, 0, _layoutInfo.count, 0, &_data),
-				"Failed to map memory");
-			buffersMapped.emplace_back(_data);
 		}
 		else
 		{
@@ -39,21 +35,12 @@ void VK_ShaderBuffer::StoreData(const VK_Device* _device, void* _data, size_t _s
 			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT : VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 
 		buffers.resize(MAX_FRAMES_IN_FLIGHT);
-		if (bufferUsage == VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
-		{
-			buffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
-		}
 
 		if (bufferUsage == VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
 		{
 			buffers[_frameIndex] = VK_Buffer::CreateUBO(_size);
 
-			void* mem;
-			VK_CHECK(vkMapMemory(*_device->GetDevice(), buffers[_frameIndex].memory, 0, _size, 0, &mem),
-				"Failed to map memory !");
-			buffersMapped[_frameIndex] = mem;
-
-			memcpy(buffersMapped[_frameIndex], _data, _size);
+			memcpy(buffers[_frameIndex].mappedMemory, _data, _size);
 		}
 		else if (bufferUsage == VK_BUFFER_USAGE_STORAGE_BUFFER_BIT)
 		{
@@ -68,7 +55,7 @@ void VK_ShaderBuffer::StoreData(const VK_Device* _device, void* _data, size_t _s
 		{
 			LLYN_ASSERT(bufferSize == _size);
 
-			memcpy(buffersMapped[_frameIndex], _data, _size);
+			memcpy(buffers[_frameIndex].mappedMemory, _data, _size);
 		}
 		else if (bufferUsage == VK_BUFFER_USAGE_STORAGE_BUFFER_BIT)
 		{

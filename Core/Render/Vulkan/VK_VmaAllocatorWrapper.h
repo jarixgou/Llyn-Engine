@@ -17,12 +17,15 @@ public:
 	void Cleanup();
 
 	void CreateBuffer(const VkBufferCreateInfo& _buffInfo, VmaMemoryUsage _memUsage,
-		VkBuffer& _outBuff, VmaAllocation& _outAlloc) const;
+	                  VmaAllocationCreateFlags _flags, VkBuffer& _outBuff, VmaAllocation& _outAlloc) const;
 	void DestroyBuffer(VkBuffer _buff, VmaAllocation _alloc) const;
 
 	void CreateImage(const VkImageCreateInfo& _imageInfo, VmaMemoryUsage _memUsage,
 		VkImage& _outImage, VmaAllocation& _outAlloc) const;
 	void DestroyImage(VkImage _image, VmaAllocation _alloc) const;
+
+	void MapMemory(void** _mem, VmaAllocation _allocation);
+	void UnMapMemory(VmaAllocation _allocation);
 };
 
 #endif

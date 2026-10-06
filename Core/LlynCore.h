@@ -36,6 +36,8 @@ struct VK_DescriptorLayoutHandle;
 class VK_RenderWindow;
 class VK_VmaAllocatorWrapper;
 class VK_Image;
+class VK_Texture;
+struct VK_TextureInfo;
 struct VK_StageAndAccess;
 
 // Asset forward declaration

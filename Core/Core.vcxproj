@@ -241,6 +241,7 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClInclude Include="Render\Vulkan\VK_Render.h" />
     <ClInclude Include="Render\Vulkan\VK_ShaderBuffer.h" />
     <ClInclude Include="Render\Vulkan\VK_Texture.h" />
+    <ClInclude Include="Render\Vulkan\VK_TextureInfo.h" />
     <ClInclude Include="Render\Vulkan\VK_VmaAllocatorWrapper.h" />
     <ClInclude Include="Render\Window.h" />
     <ClInclude Include="Asset\Material.h" />

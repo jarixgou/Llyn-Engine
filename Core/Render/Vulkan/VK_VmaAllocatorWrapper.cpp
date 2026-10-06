@@ -37,10 +37,11 @@ void VK_VmaAllocatorWrapper::Cleanup()
 }
 
 void VK_VmaAllocatorWrapper::CreateBuffer(const VkBufferCreateInfo& _buffInfo, VmaMemoryUsage _memUsage,
-	VkBuffer& _outBuff, VmaAllocation& _outAlloc) const
+                                          VmaAllocationCreateFlags _flags, VkBuffer& _outBuff, VmaAllocation& _outAlloc) const
 {
 	VmaAllocationCreateInfo allocationCreateInfo{};
 	allocationCreateInfo.usage = _memUsage;
+	allocationCreateInfo.flags = _flags;
 
 	VK_CHECK(vmaCreateBuffer(m_allocator, &_buffInfo, &allocationCreateInfo, &_outBuff, &_outAlloc, nullptr),
 		"Failed to create buffer ");
@@ -64,4 +65,15 @@ void VK_VmaAllocatorWrapper::CreateImage(const VkImageCreateInfo& _imageInfo, Vm
 void VK_VmaAllocatorWrapper::DestroyImage(VkImage _image, VmaAllocation _alloc) const
 {
 	vmaDestroyImage(m_allocator, _image, _alloc);
+}
+
+void VK_VmaAllocatorWrapper::MapMemory(void** _mem, VmaAllocation _allocation)
+{
+	VK_CHECK(vmaMapMemory(m_allocator, _allocation, _mem),
+		"Failed to map memory ! ");
+}
+
+void VK_VmaAllocatorWrapper::UnMapMemory(VmaAllocation _allocation)
+{
+	vmaUnmapMemory(m_allocator, _allocation);
 }

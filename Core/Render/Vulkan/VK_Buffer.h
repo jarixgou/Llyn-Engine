@@ -4,6 +4,7 @@
 #include <vector>
 #include <vulkan/vulkan_core.h>
 
+#include "VK_VmaAllocatorWrapper.h"
 #include "../../Vector/FwdVec2.h"
 #include "../../LlynCore.h"
 
@@ -13,8 +14,8 @@ struct VK_Buffer
 	static VK_FrameSync* frameSync;
 
 	VkBuffer buffer = VK_NULL_HANDLE;
-	VkDeviceMemory memory = VK_NULL_HANDLE;
-	void* data;
+	VmaAllocation allocation = VK_NULL_HANDLE;
+	void* mappedMemory = nullptr;
 
 	static void SetDevice(VK_Device* _device);
 
@@ -26,8 +27,7 @@ struct VK_Buffer
 
 	static std::vector<VkCommandBuffer> CreateCommandBuffer(VkCommandPool _cmdPool, uint32_t _bufferCount);
 
-	static VK_Buffer CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage,
-	                              VkMemoryPropertyFlags _memProps);
+	static VK_Buffer CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage, VmaAllocationCreateFlags _flags);
 
 	static VK_Buffer CreateStagingBuffer(void* _data, VkDeviceSize _size, VkBufferUsageFlags _usage);
 
