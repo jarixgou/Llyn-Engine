@@ -4,14 +4,16 @@
 
 #include "VK_Device.h"
 #include "VK_StageAndAccess.h"
+#include "../../Asset/TextureConfig.h"
 #include "../../Logger.h"
 
-void VK_Image::Init(VkFormat _format, VkImageLayout _layout, VkImageType _type, uint32_t _mipsLevel, bool _swapChain)
+void VK_Image::Init(VkFormat _format, VkImageLayout _layout, ImageType& _type, VkImageAspectFlags _aspect, uint32_t _mipsLevel, bool _swapChain)
 {
 	m_format = _format;
 	m_layout = _layout;
 
-	m_type = _type;
+	m_type = GetType(_type);
+	m_viewType = GetViewType(_type);
 	m_mipsLevel = _mipsLevel;
 
 	m_swapChain = _swapChain;
@@ -30,14 +32,36 @@ void VK_Image::Cleanup(VK_Device* _device)
 	}
 }
 
-void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout)
+void VK_Image::CreateView()
 {
-	TransitionLayout(_cmdBuff, m_layout, _newLayout);
+	VkImageSubresourceRange subresource{};
+	subresource.aspectMask = m_aspect;
+	subresource.baseMipLevel = 0;
+	subresource.levelCount = m_mipsLevel;
+	subresource.baseArrayLayer = 0;
+	subresource.layerCount = 1;
+
+	VkImageViewCreateInfo viewInfo{};
+	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.pNext = VK_NULL_HANDLE;
+	viewInfo.image = m_image;
+	viewInfo.viewType = m_viewType;
+	viewInfo.format = m_format;
+	viewInfo.subresourceRange = subresource;
+
+	VK_CHECK(vkCreateImageView(*VK_Device::Get().GetDevice(), &viewInfo, VK_NULL_HANDLE, &m_imageView),
+		"Failed to create image view ! ");
 }
 
-void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout)
+void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout, uint32_t _baseMipLevel)
 {
-	ImageBarrier(_cmdBuff, _oldLayout, _newLayout, 1, 0);
+	TransitionLayout(_cmdBuff, m_layout, _newLayout, _baseMipLevel);
+}
+
+void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout,
+	uint32_t _baseMipLevel)
+{
+	ImageBarrier(_cmdBuff, _oldLayout, _newLayout, 1, _baseMipLevel);
 	m_layout = _newLayout;
 }
 
@@ -47,8 +71,58 @@ bool VK_Image::HasStencilComponent(VkFormat _format)
 		_format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
+VkImageType VK_Image::GetType(ImageType _type)
+{
+	switch (_type)
+	{
+	case IMAGE_TYPE_1D:
+		return VK_IMAGE_TYPE_1D;
+		break;
+	case IMAGE_TYPE_2D:
+		return VK_IMAGE_TYPE_2D;
+		break;
+	case IMAGE_TYPE_3D:
+		return VK_IMAGE_TYPE_3D;
+		break;
+	case IMAGE_TYPE_CUBE:
+		return VK_IMAGE_TYPE_2D;
+		break;
+	case IMAGE_TYPE_MAX_ENUM:
+		LOGGER_WARNING("Wrong image type ! ");
+		return VK_IMAGE_TYPE_2D;
+		break;
+	}
+
+	LOGGER_WARNING("Don't find the right image type");
+	return VK_IMAGE_TYPE_2D;
+}
+
+VkImageViewType VK_Image::GetViewType(ImageType _type)
+{
+	switch (_type) {
+	case IMAGE_TYPE_1D:
+		return VK_IMAGE_VIEW_TYPE_1D;
+		break;
+	case IMAGE_TYPE_2D:
+		return VK_IMAGE_VIEW_TYPE_2D;
+		break;
+	case IMAGE_TYPE_3D:
+		return VK_IMAGE_VIEW_TYPE_3D;
+		break;
+	case IMAGE_TYPE_CUBE:
+		return VK_IMAGE_VIEW_TYPE_CUBE;
+		break;
+	case IMAGE_TYPE_MAX_ENUM:
+		LOGGER_WARNING("Wrong image type for image view !");
+		break;
+	}
+
+	LOGGER_WARNING("Don't find the right image type for image view ! ");
+	return VK_IMAGE_VIEW_TYPE_2D;
+}
+
 void VK_Image::ImageBarrier(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout,
-	uint32_t _layerCount, uint32_t _baseMipsLevel)
+                            uint32_t _layerCount, uint32_t _baseMipsLevel)
 {
 	assert(_layerCount > 0);
 
@@ -152,7 +226,7 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 		}
 		else
 		{
-			LOGGER_CRTICAL("Unknow barrier case 1 !");
+			LOGGER_CRITICAL("Unknow barrier case 1 !");
 		}
 	}
 	else if (_oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
@@ -186,7 +260,7 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 		}
 		else
 		{
-			LOGGER_CRTICAL("Unknow barrier case 2 !");
+			LOGGER_CRITICAL("Unknow barrier case 2 !");
 		}
 	}
 	else if (_oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
@@ -222,7 +296,7 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 		}
 		else
 		{
-			LOGGER_CRTICAL("Unknow barrier case 3 !");
+			LOGGER_CRITICAL("Unknow barrier case 3 !");
 		}
 	}
 	else if (_oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
@@ -258,7 +332,7 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 		}
 		else
 		{
-			LOGGER_CRTICAL("Unknow barrier case 4 !");
+			LOGGER_CRITICAL("Unknow barrier case 4 !");
 		}
 	}
 	else if (_oldLayout == VK_IMAGE_LAYOUT_GENERAL)
@@ -287,7 +361,7 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 		}
 		else
 		{
-			LOGGER_CRTICAL("Unknow barrier case 5 !");
+			LOGGER_CRITICAL("Unknow barrier case 5 !");
 		}
 	}
 	else if (_oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
@@ -317,7 +391,7 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 		}
 		else
 		{
-			LOGGER_CRTICAL("Unknow barrier case 6 !");
+			LOGGER_CRITICAL("Unknow barrier case 6 !");
 		}
 	}
 	else if (_oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL &&
@@ -338,7 +412,7 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 	}
 	else
 	{
-		LOGGER_CRTICAL("Unknow barrier case 7 !");
+		LOGGER_CRITICAL("Unknow barrier case 7 !");
 	}
 
 	return stageAndAccess;

@@ -182,6 +182,7 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClInclude Include="Asset\Model.h" />
     <ClInclude Include="Asset\RessourceManager.h" />
     <ClInclude Include="Asset\Texture.h" />
+    <ClInclude Include="Asset\TextureConfig.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="Component\Camera.h" />
     <ClInclude Include="Component\Component.h" />

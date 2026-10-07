@@ -17,7 +17,7 @@ void VkCheck(int _result, std::string _message)
 
 	const std::string finalMessage = _message + " " + result;
 
-	LOGGER_CRTICAL(finalMessage);
+	LOGGER_CRITICAL(finalMessage);
 }
 
 std::string GetVkResultMessage(VkResult _result)

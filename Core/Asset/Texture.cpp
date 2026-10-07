@@ -158,6 +158,7 @@ void Texture::GenerateMipMaps(const VK_Device* _device, VkCommandBuffer _cmdBuff
                               VkImage* _image, VkFormat _format, Vec2<uint32_t> _imageSize, uint32_t _mipLevels)
 {
 	LLYN_ASSERT(_device != nullptr);
+
 	VkFormatProperties2 formatProps{};
 	formatProps.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
 	vkGetPhysicalDeviceFormatProperties2(*_device->GetPhycicalDevice(), _format, &formatProps);
@@ -367,10 +368,13 @@ void Texture::LoadConfig(const std::string& _filePath)
 			for (auto field : root)
 			{
 				std::string_view key = field.unescaped_key();
-				if (key == "ImageType" && field.value().is_integer())
+				if (key == "Format" && field.value().is_integer())
 				{
-					m_config.imageType = static_cast<VkImageType>(field.value().get_int32().value());
-					m_config.imageViewType = static_cast<VkImageViewType>(field.value().get_int32().value());
+					m_config.format = static_cast<ImageFormat>(field.value().get_int32().value());
+				}
+				if (key == "Type" && field.value().is_integer())
+				{
+					m_config.type  = static_cast<ImageType>(field.value().get_int32().value());
 				}
 				else if (key == "sRGB" && field.value().is_integer())
 				{
@@ -378,11 +382,11 @@ void Texture::LoadConfig(const std::string& _filePath)
 				}
 				else if (key == "WrapMode" && field.value().is_integer())
 				{
-					m_config.wrapMode = static_cast<VkSamplerAddressMode>(field.value().get_int32().value());
+					m_config.wrapMode = static_cast<WrapMode>(field.value().get_int32().value());
 				}
 				else if (key == "FilterMode" && field.value().is_integer())
 				{
-					m_config.samplerFilter = static_cast<VkFilter>(field.value().get_int32().value());
+					m_config.filter = static_cast<ImageFilter>(field.value().get_int32().value());
 				}
 				else if (key == "Mipmap" && field.value().is_integer())
 				{
@@ -390,7 +394,7 @@ void Texture::LoadConfig(const std::string& _filePath)
 				}
 				else if (key == "MipmapFilter" && field.value().is_integer())
 				{
-					m_config.samplerMimapMode = static_cast<VkSamplerMipmapMode>(field.value().get_int32().value());
+					m_config.mipMapFilter = static_cast<MipMapFilter>(field.value().get_int32().value());
 				}
 			}
 		}
@@ -400,12 +404,13 @@ void Texture::LoadConfig(const std::string& _filePath)
 		m_config = TextureConfig{};
 		nlohmann::json json;
 
-		json["ImageType"] = m_config.imageType;
+		json["Format"] = m_config.format;
+		json["Type"] = m_config.type;
 		json["sRGB"] = m_config.sRGB;
 		json["WrapMode"] = m_config.wrapMode;
-		json["FilterMode"] = m_config.samplerFilter;
+		json["ImageFilter"] = m_config.filter;
 		json["Mipmap"] = m_config.mipmap;
-		json["MipmapFilter"] = m_config.samplerMimapMode;
+		json["MipmapFilter"] = m_config.mipMapFilter;
 
 		std::ofstream file(metaDataPath);
 		file << json.dump(4);

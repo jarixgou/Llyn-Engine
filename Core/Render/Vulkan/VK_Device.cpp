@@ -10,6 +10,12 @@ std::vector<const char*> VK_Device::m_requiredDeviceExtension =
 	VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 };
 
+VK_Device& VK_Device::Get()
+{
+	static VK_Device instance;
+	return instance;
+}
+
 void VK_Device::Init(VK_Instance* _instance)
 {
 	if (_instance == nullptr)

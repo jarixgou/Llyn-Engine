@@ -17,6 +17,8 @@ private:
 
 	static std::vector<const char*> m_requiredDeviceExtension;
 public:
+	static VK_Device& Get();
+
 	void Init(VK_Instance* _instance);
 	void Cleanup();
 

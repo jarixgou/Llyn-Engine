@@ -41,6 +41,11 @@ struct VK_TextureInfo;
 struct VK_StageAndAccess;
 
 // Asset forward declaration
+enum ImageType;
+enum WrapMode;
+enum ImageFilter;
+enum MipMapFilter;
+enum ImageFormat;
 struct TextureConfig;
 class Texture;
 class Material;

@@ -38,6 +38,6 @@ private:
 #define LOGGER_INFO(x) Logger::Get().Print(x, LoggerLevel::Info)
 #define LOGGER_WARNING(x) Logger::Get().Print(x, LoggerLevel::Warning)
 #define LOGGER_ERROR(x) Logger::Get().Print(x, LoggerLevel::Error)
-#define LOGGER_CRTICAL(x) Logger::Get().Print(x, LoggerLevel::Critical)
+#define LOGGER_CRITICAL(x) Logger::Get().Print(x, LoggerLevel::Critical)
 
 #endif

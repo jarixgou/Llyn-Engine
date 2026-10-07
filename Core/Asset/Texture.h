@@ -8,16 +8,7 @@
 #include "Ressource.h"
 #include "../Vector/FwdVec2.h"
 
-struct TextureConfig
-{
-	VkImageType imageType = VK_IMAGE_TYPE_2D;
-	VkImageViewType imageViewType = VK_IMAGE_VIEW_TYPE_2D;
-	VkSamplerAddressMode wrapMode = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	VkFilter samplerFilter = VK_FILTER_NEAREST;
-	VkSamplerMipmapMode samplerMimapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
-	bool sRGB = true;
-	bool mipmap = true;
-};
+#include "TextureConfig.h"
 
 class Texture : public IRessource
 {

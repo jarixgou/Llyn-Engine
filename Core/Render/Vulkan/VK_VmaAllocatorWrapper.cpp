@@ -53,10 +53,11 @@ void VK_VmaAllocatorWrapper::DestroyBuffer(VkBuffer _buff, VmaAllocation _alloc)
 }
 
 void VK_VmaAllocatorWrapper::CreateImage(const VkImageCreateInfo& _imageInfo, VmaMemoryUsage _memUsage,
-	VkImage& _outImage, VmaAllocation& _outAlloc) const
+                                         VmaAllocationCreateFlags _flags, VkImage& _outImage, VmaAllocation& _outAlloc) const
 {
 	VmaAllocationCreateInfo allocationCreateInfo{};
 	allocationCreateInfo.usage = _memUsage;
+	allocationCreateInfo.flags = _flags;
 
 	VK_CHECK(vmaCreateImage(m_allocator, &_imageInfo, &allocationCreateInfo, &_outImage, &_outAlloc, nullptr),
 		"Failed to create image ");

@@ -13,18 +13,28 @@ protected:
 	VkFormat m_format = VK_FORMAT_UNDEFINED;
 	VkImageLayout m_layout = VK_IMAGE_LAYOUT_UNDEFINED;
 	VkImageType m_type = VK_IMAGE_TYPE_2D;
-private:
+	VkImageViewType m_viewType = VK_IMAGE_VIEW_TYPE_2D;
+	VkImageAspectFlags m_aspect = VK_IMAGE_ASPECT_NONE;
 	uint32_t m_mipsLevel = 0;
+private:
 	bool m_swapChain = false;
 public:
-	void Init(VkFormat _format, VkImageLayout _layout, VkImageType _type, uint32_t _mipsLevel, bool _swapChain = false);
+	static void SetDevice(VK_Device* _device);
+
+	void Init(VkFormat _format, VkImageLayout _layout, ImageType& _type, VkImageAspectFlags _aspect, uint32_t _mipsLevel, bool _swapChain = false);
 	void Cleanup(VK_Device* _device);
+
+	void CreateView();
 
 	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout);
 	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout);
+	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout, uint32_t _baseMipLevel);
 
 	bool HasStencilComponent(VkFormat _format);
 private:
+	static VkImageType GetType(ImageType _type);
+	static VkImageViewType GetViewType(ImageType _type);
+
 	void ImageBarrier(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout,
 	                  VkImageLayout _newLayout, uint32_t _layerCount, uint32_t _baseMipsLevel);
 
