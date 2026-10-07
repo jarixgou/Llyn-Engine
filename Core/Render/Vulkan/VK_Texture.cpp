@@ -15,20 +15,7 @@ void VK_Texture::Init(VK_TextureInfo& _info)
 	const VkFormat actualFormat = _info.preferredFormat != VK_FORMAT_UNDEFINED ?
 		_info.preferredFormat : GetFormat(_info.config.format, _info.config.sRGB);
 
-	VkImageCreateInfo imageInfo{};
-	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	imageInfo.pNext = VK_NULL_HANDLE;
-	imageInfo.format = actualFormat;
-	imageInfo.extent = { _info.textureSize.x, _info.textureSize.y, 1 };
-	imageInfo.mipLevels = actualMipLevels;
-	imageInfo.arrayLayers = 1;
-	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	imageInfo.usage = _info.usage;
-
-	VK_Image::Init(actualFormat, _info.layout, _info.config.type, _info.aspect, actualMipLevels);
-
-	VK_VmaAllocatorWrapper::Get().CreateImage(imageInfo, VMA_MEMORY_USAGE_AUTO, 0, m_image, m_allocation);
+	VK_Image::Init(actualFormat, _info.layout, _info.config.type, _info.aspect, _info.usage, actualMipLevels, _info.textureSize);
 
 	if (_info.data != nullptr)
 	{
@@ -43,7 +30,7 @@ void VK_Texture::Init(VK_TextureInfo& _info)
 
 		if (_info.config.mipmap)
 		{
-			// TODO: Create mip map generation
+			GenerateMipMaps(cmdBuff, _info.textureSize);
 		}
 		else
 		{
@@ -52,13 +39,18 @@ void VK_Texture::Init(VK_TextureInfo& _info)
 
 		VK_Buffer::EndSingleTimeCommand(cmdBuff);
 	}
-
-	CreateView();
 	CreateSampler(GetFilter(_info.config.filter), GetMipFilter(_info.config.mipMapFilter), GetWrapMode(_info.config.wrapMode));
 }
 
+void VK_Texture::Cleanup()
+{
+	vkDestroySampler(*VK_Device::Get().GetDevice(), m_sampler, VK_NULL_HANDLE);
+
+	VK_Image::Cleanup();
+}
+
 void VK_Texture::CreateSampler(VkFilter _filter, VkSamplerMipmapMode _mipFilter,
-	VkSamplerAddressMode _wrapMode)
+                               VkSamplerAddressMode _wrapMode)
 {
 	VkPhysicalDeviceProperties physicDeviceProps{};
 	vkGetPhysicalDeviceProperties(*VK_Device::Get().GetPhycicalDevice(), &physicDeviceProps);
@@ -85,7 +77,7 @@ void VK_Texture::CreateSampler(VkFilter _filter, VkSamplerMipmapMode _mipFilter,
 		"Failed to create sampler");
 }
 
-void VK_Texture::GenarteMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize)
+void VK_Texture::GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize)
 {
 	VkFormatProperties2 formatProps{};
 	formatProps.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;

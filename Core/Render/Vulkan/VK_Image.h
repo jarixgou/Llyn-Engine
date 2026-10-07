@@ -2,6 +2,8 @@
 #define VK_IMAGE__H
 #include <vulkan/vulkan_core.h>
 
+#include "VK_VmaAllocatorWrapper.h"
+#include "../../Vector/FwdVec2.h"
 #include "../../LlynCore.h"
 
 class VK_Image
@@ -15,14 +17,16 @@ protected:
 	VkImageType m_type = VK_IMAGE_TYPE_2D;
 	VkImageViewType m_viewType = VK_IMAGE_VIEW_TYPE_2D;
 	VkImageAspectFlags m_aspect = VK_IMAGE_ASPECT_NONE;
+	VkImageUsageFlags m_usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 	uint32_t m_mipLevels = 0;
 private:
+	VmaAllocation m_allocation = VK_NULL_HANDLE;
 	bool m_swapChain = false;
 public:
-	static void SetDevice(VK_Device* _device);
 
-	void Init(VkFormat _format, VkImageLayout _layout, ImageType& _type, VkImageAspectFlags _aspect, uint32_t _mipsLevel, bool _swapChain = false);
-	void Cleanup(VK_Device* _device);
+	void Init(VkFormat _format, VkImageLayout _layout, const ImageType& _type, VkImageAspectFlags _aspect,
+	          VkImageUsageFlags _usage, uint32_t _mipsLevel, const Vec2u& _textureSize, bool _swapChain = false);
+	void Cleanup();
 
 	void CreateView();
 

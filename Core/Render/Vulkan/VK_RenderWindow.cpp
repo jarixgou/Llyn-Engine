@@ -40,29 +40,21 @@ void VK_RenderWindow::Cleanup(VK_Device* _device)
 
 void VK_RenderWindow::Clear(VkCommandBuffer _cmdBuff, uint32_t _imageIndex)
 {
-	Texture::TransitionImageLayout(_cmdBuff, m_swapChain->GetImage(_imageIndex), 1,
-		VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_ACCESS_2_NONE, VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
-		VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
-		VK_IMAGE_ASPECT_COLOR_BIT);
+	m_swapChain->GetImage(_imageIndex)->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 1);
 
 	if (m_depthResources != nullptr)
 	{
-		Texture::TransitionImageLayout(_cmdBuff, m_depthResources->GetImage(), 1,
-			VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-			VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-			VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT,
-			VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT,
-			VK_IMAGE_ASPECT_DEPTH_BIT);
+		m_depthResources->GetImage()->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL, 1);
 	}
 }
 
 void VK_RenderWindow::BeginRendering(VkCommandBuffer _cmdBuff, uint32_t _imageIndex, VkClearValue* _colorClear, VkClearValue* _depthValue)
 {
-	VkImageView colorView = *m_swapChain->GetImageView(_imageIndex);
-	VkImageView depthView = m_depthResources ? *m_depthResources->GetImageView() : VK_NULL_HANDLE;
+	const VK_Image* colorImage = m_swapChain->GetImage(_imageIndex);
+	const VK_Image* depthImage = m_depthResources->GetImage();
+	VkImageView depthView = m_depthResources ? depthImage->m_imageView : VK_NULL_HANDLE;
 
-	BeginRendering(_cmdBuff, colorView, _colorClear, depthView, _depthValue);
+	BeginRendering(_cmdBuff, colorImage->m_imageView, _colorClear, depthView, _depthValue);
 }
 
 void VK_RenderWindow::BeginRendering(VkCommandBuffer _cmdBuff, VkImageView _imageView, VkClearValue* _clearColor,
@@ -123,11 +115,7 @@ void VK_RenderWindow::EndRendering(VkCommandBuffer _cmdBuff)
 
 void VK_RenderWindow::Display(VkCommandBuffer _cmdBuff, uint32_t _imageIndex)
 {
-	Texture::TransitionImageLayout(_cmdBuff, m_swapChain->GetImage(_imageIndex), 1,
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-		VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT, VK_ACCESS_2_NONE,
-		VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT_KHR, VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT,
-		VK_IMAGE_ASPECT_COLOR_BIT);
+	m_swapChain->GetImage(_imageIndex)->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1);
 }
 
 const VK_SwapChain* VK_RenderWindow::GetSwapChain()

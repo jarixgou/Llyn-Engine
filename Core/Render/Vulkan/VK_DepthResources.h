@@ -4,20 +4,18 @@
 #include <vulkan/vulkan.h>
 
 #include "../../LlynCore.h"
+#include "VK_Image.h"
 
 class VK_DepthResources
 {
 private:
-	VkImage m_image = VK_NULL_HANDLE;
-	VkImageView m_imageView = VK_NULL_HANDLE;
-	VkDeviceMemory m_imageMemory = VK_NULL_HANDLE;
+	VK_Image m_image;
 public:
 	void Init(const VK_Device* _device, VkExtent2D _extent);
 
-	void Cleanup(const VK_Device* _device) const;
+	void Cleanup();
 
-	const VkImage* GetImage();
-	const VkImageView* GetImageView();
+	VK_Image* GetImage();
 
 	static VkFormat FinDepthFormat(const VK_Device* _device);
 private:

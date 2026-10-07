@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "VK_Device.h"
+#include "VK_Image.h"
 #include "VK_Instance.h"
 #include "../Window.h"
 #include "../../Logger.h"
@@ -15,13 +16,18 @@ void VK_SwapChain::Init(const VK_Device* _device, const VK_Instance* _instance)
 	LLYN_ASSERT(_device != nullptr || _instance != nullptr);
 
 	CreateSwapChain(_device, _instance);
-	CreateImageViews(_device);
 }
 
 void VK_SwapChain::Cleanup(VK_Device* _device)
 {
 	LOGGER_INFO("Destroying VK_SwapChain");
 	vkDestroySwapchainKHR(*_device->GetDevice(), m_swapChain, nullptr);
+
+	for (size_t i = 0; i < m_images.size(); ++i)
+	{
+		m_images[i].Cleanup();
+	}
+
 	LOGGER_INFO("VkSwapchainKHR is destroyed");
 }
 
@@ -29,16 +35,10 @@ void VK_SwapChain::Recreate()
 {
 }
 
-const VkImage* VK_SwapChain::GetImage(uint32_t _imageIndex) const
+VK_Image* VK_SwapChain::GetImage(uint32_t _imageIndex)
 {
 	LLYN_ASSERT(_imageIndex < MAX_FRAMES_IN_FLIGHT);
 	return &m_images[_imageIndex];
-}
-
-const VkImageView* VK_SwapChain::GetImageView(uint32_t _imageIndex) const
-{
-	LLYN_ASSERT(_imageIndex < MAX_FRAMES_IN_FLIGHT);
-	return &m_imageViews[_imageIndex];
 }
 
 VkFormat VK_SwapChain::GetFormat() const
@@ -116,22 +116,18 @@ void VK_SwapChain::CreateSwapChain(const VK_Device* _device, const VK_Instance* 
 
 	VK_CHECK(vkCreateSwapchainKHR(*device, &createInfo, nullptr, &m_swapChain), "Failed to create SwapChain KHR !");
 
+	std::vector<VkImage> images;
 	VK_CHECK(vkGetSwapchainImagesKHR(*device, m_swapChain, &m_imageCount, nullptr), "Failed to get SwapChain Images KHR !");
-	m_images.resize(m_imageCount);
-	VK_CHECK(vkGetSwapchainImagesKHR(*device, m_swapChain, &m_imageCount, m_images.data()), "Failed to get SwapChain Images KHR !");
-}
+	images.resize(m_imageCount);
+	VK_CHECK(vkGetSwapchainImagesKHR(*device, m_swapChain, &m_imageCount, images.data()), "Failed to get SwapChain Images KHR !");
 
-void VK_SwapChain::CreateImageViews(const VK_Device* _device)
-{
-	assert(m_imageViews.empty());
-
-	m_imageViews.reserve(m_images.size());
-	for (size_t i = 0; i < m_images.size(); ++i)
+	m_images.resize(images.size());
+	for (int i = 0; i < images.size(); ++i)
 	{
-		VkImageView imageView = Texture::CreateImageView(1, VK_IMAGE_VIEW_TYPE_2D, &m_images[i],
-			m_surfaceFormat.format, VK_IMAGE_ASPECT_COLOR_BIT);
+		m_images[i].m_image = images[i];
+		m_images[i].Init(m_surfaceFormat.format, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, IMAGE_TYPE_2D,
+			VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 1, Vec2u(), true);
 
-		m_imageViews.emplace_back(imageView);
 	}
 }
 

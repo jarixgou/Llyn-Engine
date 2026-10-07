@@ -180,7 +180,8 @@
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vulkan_funcs.hpp",
             "d:\\llyn engine\\core\\llyncore.h",
             "d:\\llyn engine\\core\\asset\\ressource.h",
-            "d:\\llyn engine\\core\\vector\\fwdvec2.h"
+            "d:\\llyn engine\\core\\vector\\fwdvec2.h",
+            "d:\\llyn engine\\core\\asset\\textureconfig.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

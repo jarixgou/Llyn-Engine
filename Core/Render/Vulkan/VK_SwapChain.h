@@ -12,8 +12,7 @@ class VK_SwapChain
 {
 private:
 	VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
-	std::vector<VkImage> m_images;
-	std::vector<VkImageView> m_imageViews;
+	std::vector<VK_Image> m_images;
 	VkSurfaceFormatKHR m_surfaceFormat = {};
 	VkExtent2D m_extent = {};
 
@@ -25,8 +24,7 @@ public:	// Public function
 
 	void Recreate();
 
-	const VkImage* GetImage(uint32_t _imageIndex) const;
-	const VkImageView* GetImageView(uint32_t _imageIndex) const;
+	VK_Image* GetImage(uint32_t _imageIndex);
 
 	VkFormat GetFormat() const;
 	const VkSwapchainKHR* GetSwapChain() const;
@@ -37,7 +35,6 @@ public:	// Public function
 	uint32_t GetMinImageCount() const;
 private: // Private function
 	void CreateSwapChain(const VK_Device* _device, const VK_Instance* _instance);
-	void CreateImageViews(const VK_Device* _device);
 
 	static VkExtent2D ChooseExtent(const VkSurfaceCapabilitiesKHR& _capabilities, const Vec2i& _windowSize);
 	static uint32_t ChooseMinImageCount(const VkSurfaceCapabilitiesKHR& _capabilities);

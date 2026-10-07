@@ -40,7 +40,7 @@ void VK_ShaderBuffer::StoreData(const VK_Device* _device, void* _data, size_t _s
 		{
 			buffers[_frameIndex] = VK_Buffer::CreateUBO(_size);
 
-			memcpy(buffers[_frameIndex].mappedMemory, _data, _size);
+			memcpy(buffers[_frameIndex].allocationInfo.pMappedData, _data, _size);
 		}
 		else if (bufferUsage == VK_BUFFER_USAGE_STORAGE_BUFFER_BIT)
 		{
@@ -55,7 +55,7 @@ void VK_ShaderBuffer::StoreData(const VK_Device* _device, void* _data, size_t _s
 		{
 			LLYN_ASSERT(bufferSize == _size);
 
-			memcpy(buffers[_frameIndex].mappedMemory, _data, _size);
+			memcpy(buffers[_frameIndex].allocationInfo.pMappedData, _data, _size);
 		}
 		else if (bufferUsage == VK_BUFFER_USAGE_STORAGE_BUFFER_BIT)
 		{

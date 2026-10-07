@@ -3,11 +3,13 @@
 #include <assert.h>
 
 #include "VK_Device.h"
+#include "../../Vector/Vec2.h"
 #include "VK_StageAndAccess.h"
 #include "../../Asset/TextureConfig.h"
 #include "../../Logger.h"
 
-void VK_Image::Init(VkFormat _format, VkImageLayout _layout, ImageType& _type, VkImageAspectFlags _aspect, uint32_t _mipsLevel, bool _swapChain)
+void VK_Image::Init(VkFormat _format, VkImageLayout _layout, const ImageType& _type, VkImageAspectFlags _aspect, VkImageUsageFlags _usage, uint32_t _mipsLevel, const
+                    Vec2u& _textureSize, bool _swapChain)
 {
 	m_format = _format;
 	m_layout = _layout;
@@ -17,18 +19,34 @@ void VK_Image::Init(VkFormat _format, VkImageLayout _layout, ImageType& _type, V
 	m_mipLevels = _mipsLevel;
 
 	m_swapChain = _swapChain;
+
+	if (!m_swapChain)
+	{
+		VkImageCreateInfo imageInfo{};
+		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		imageInfo.pNext = VK_NULL_HANDLE;
+		imageInfo.format = _format;
+		imageInfo.extent = { _textureSize.x, _textureSize.y, 1 };
+		imageInfo.mipLevels = _mipsLevel;
+		imageInfo.arrayLayers = 1;
+		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+		imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+		imageInfo.usage = _usage;
+		VK_VmaAllocatorWrapper::Get().CreateImage(imageInfo, VMA_MEMORY_USAGE_AUTO, 0, m_image, m_allocation);
+	}
+	CreateView();
 }
 
-void VK_Image::Cleanup(VK_Device* _device)
+void VK_Image::Cleanup()
 {
 	if (m_imageView != VK_NULL_HANDLE)
 	{
-		vkDestroyImageView(*_device->GetDevice(), m_imageView, VK_NULL_HANDLE);
+		vkDestroyImageView(*VK_Device::Get().GetDevice(), m_imageView, VK_NULL_HANDLE);
 	}
 
 	if (!m_swapChain && m_image != VK_NULL_HANDLE)
 	{
-		vkDestroyImage(*_device->GetDevice(), m_image, VK_NULL_HANDLE);
+		VK_VmaAllocatorWrapper::Get().DestroyImage(m_image, m_allocation);
 	}
 }
 

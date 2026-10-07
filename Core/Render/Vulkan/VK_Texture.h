@@ -9,14 +9,14 @@
 
 class VK_Texture : public VK_Image
 {
-private:
+public:
 	VkSampler m_sampler = VK_NULL_HANDLE;
-	VmaAllocation m_allocation = VK_NULL_HANDLE;
 public:
 	void Init(VK_TextureInfo& _info);
+	void Cleanup();
 private:
 	void CreateSampler(VkFilter _filter, VkSamplerMipmapMode _mipFilter, VkSamplerAddressMode _wrapMode);
-	void GenarteMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize);
+	void GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize);
 
 	static VkFormat GetFormat(ImageFormat _format, bool _sRGB);
 	static VkFilter GetFilter(ImageFilter _filter);

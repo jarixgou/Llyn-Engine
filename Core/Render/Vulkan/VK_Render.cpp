@@ -51,7 +51,7 @@ void VK_Render::Cleanup()
 	delete m_frameSync;
 	m_frameSync = nullptr;
 
-	m_depthResources->Cleanup(m_device);
+	m_depthResources->Cleanup();
 	delete m_depthResources;
 	m_depthResources = nullptr;
 
@@ -77,7 +77,6 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 
 	VK_Buffer::SetDevice(m_device);
 	VK_MemoryHelper::SetDevice(m_device);
-	Texture::SetDevice(m_device);
 
 	m_renderWindow->Init(m_device, m_instance, true);
 
@@ -154,7 +153,7 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	if (!m_indirectCmds.empty())
 	{
-		memcpy(m_indirectDrawBuff[m_frameSync->GetFrameIndex()]->mappedMemory, m_indirectCmds.data(), ARRAY_SIZE_IN_BYTES(m_indirectCmds));
+		memcpy(m_indirectDrawBuff[m_frameSync->GetFrameIndex()]->allocationInfo.pMappedData, m_indirectCmds.data(), ARRAY_SIZE_IN_BYTES(m_indirectCmds));
 	}
 
 	m_frameSync->Reset(m_device);

@@ -2,6 +2,7 @@
 
 #include "VK_Device.h"
 #include "VK_LayoutInfo.h"
+#include "VK_Texture.h"
 #include "../../Asset/Texture.h"
 
 void VK_DescriptorManager::Init()
@@ -188,10 +189,11 @@ void VK_DescriptorManager::StoreTextures(std::vector<Texture>& _textures, uint32
 	m_writes.reserve(m_writes.size() + _textures.size());
 	for (size_t i = 0; i < _textures.size(); ++i)
 	{
+		VK_Texture* texture = _textures[i].GetVKTexture();
 		VkDescriptorImageInfo& imageInfo = m_imageInfos.emplace_back();
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		imageInfo.imageView = *_textures[i].GetImageView();
-		imageInfo.sampler = *_textures[i].GetSampler();
+		imageInfo.imageView = texture->m_imageView;
+		imageInfo.sampler = texture->m_sampler;
 
 		VkWriteDescriptorSet write{};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

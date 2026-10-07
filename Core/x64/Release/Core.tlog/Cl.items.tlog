@@ -36,6 +36,7 @@ D:\Llyn Engine\Core\Render\Vulkan\VK_DescriptorManager.cpp;D:\Llyn Engine\Core\x
 D:\Llyn Engine\Core\Render\Vulkan\VK_DescriptorHandle.h;D:\Llyn Engine\Core\x64\Release\VK_DescriptorHandle.h.obj
 D:\Llyn Engine\Core\Render\Vulkan\VK_Device.cpp;D:\Llyn Engine\Core\x64\Release\VK_Device.obj
 D:\Llyn Engine\Core\Render\Vulkan\VK_FrameSync.cpp;D:\Llyn Engine\Core\x64\Release\VK_FrameSync.obj
+D:\Llyn Engine\Core\Render\Vulkan\VK_Image.cpp;D:\Llyn Engine\Core\x64\Release\VK_Image.obj
 D:\Llyn Engine\Core\Render\Vulkan\VK_ImGui.cpp;D:\Llyn Engine\Core\x64\Release\VK_ImGui.obj
 D:\Llyn Engine\Core\Render\Vulkan\VK_Pipeline.cpp;D:\Llyn Engine\Core\x64\Release\VK_Pipeline.obj
 D:\Llyn Engine\Core\Render\Vulkan\VK_RenderWindow.cpp;D:\Llyn Engine\Core\x64\Release\VK_RenderWindow.obj
@@ -43,6 +44,8 @@ D:\Llyn Engine\Core\Render\Vulkan\VK_SwapChain.cpp;D:\Llyn Engine\Core\x64\Relea
 D:\Llyn Engine\Core\Render\Vulkan\VK_Instance.cpp;D:\Llyn Engine\Core\x64\Release\VK_Instance.obj
 D:\Llyn Engine\Core\Render\Vulkan\VK_Render.cpp;D:\Llyn Engine\Core\x64\Release\VK_Render.obj
 D:\Llyn Engine\Core\Render\Vulkan\VK_ShaderBuffer.cpp;D:\Llyn Engine\Core\x64\Release\VK_ShaderBuffer.obj
+D:\Llyn Engine\Core\Render\Vulkan\VK_Texture.cpp;D:\Llyn Engine\Core\x64\Release\VK_Texture.obj
+D:\Llyn Engine\Core\Render\Vulkan\VK_VmaAllocatorWrapper.cpp;D:\Llyn Engine\Core\x64\Release\VK_VmaAllocatorWrapper.obj
 D:\Llyn Engine\Core\Render\Window.cpp;D:\Llyn Engine\Core\x64\Release\Window.obj
 D:\Llyn Engine\Core\Scene.cpp;D:\Llyn Engine\Core\x64\Release\Scene.obj
 D:\Llyn Engine\Core\Utils\Utils.cpp;D:\Llyn Engine\Core\x64\Release\Utils.obj
