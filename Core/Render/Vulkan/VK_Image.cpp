@@ -14,7 +14,7 @@ void VK_Image::Init(VkFormat _format, VkImageLayout _layout, ImageType& _type, V
 
 	m_type = GetType(_type);
 	m_viewType = GetViewType(_type);
-	m_mipsLevel = _mipsLevel;
+	m_mipLevels = _mipsLevel;
 
 	m_swapChain = _swapChain;
 }
@@ -37,7 +37,7 @@ void VK_Image::CreateView()
 	VkImageSubresourceRange subresource{};
 	subresource.aspectMask = m_aspect;
 	subresource.baseMipLevel = 0;
-	subresource.levelCount = m_mipsLevel;
+	subresource.levelCount = m_mipLevels;
 	subresource.baseArrayLayer = 0;
 	subresource.layerCount = 1;
 
@@ -131,7 +131,7 @@ void VK_Image::ImageBarrier(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, 
 	VkImageSubresourceRange subresource{};
 	subresource.aspectMask = GetImageAspect(_newLayout);
 	subresource.baseMipLevel = _baseMipsLevel;
-	subresource.levelCount = m_mipsLevel;
+	subresource.levelCount = m_mipLevels;
 	subresource.baseArrayLayer = 0;
 	subresource.layerCount = _layerCount;
 

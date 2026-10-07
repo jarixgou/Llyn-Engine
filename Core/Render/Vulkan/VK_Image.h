@@ -15,7 +15,7 @@ protected:
 	VkImageType m_type = VK_IMAGE_TYPE_2D;
 	VkImageViewType m_viewType = VK_IMAGE_VIEW_TYPE_2D;
 	VkImageAspectFlags m_aspect = VK_IMAGE_ASPECT_NONE;
-	uint32_t m_mipsLevel = 0;
+	uint32_t m_mipLevels = 0;
 private:
 	bool m_swapChain = false;
 public:
@@ -26,8 +26,7 @@ public:
 
 	void CreateView();
 
-	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout);
-	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout);
+	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout, uint32_t _baseMipLevel);
 	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout, uint32_t _baseMipLevel);
 
 	bool HasStencilComponent(VkFormat _format);
