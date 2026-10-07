@@ -37,13 +37,13 @@ void VK_VmaAllocatorWrapper::Cleanup()
 }
 
 void VK_VmaAllocatorWrapper::CreateBuffer(const VkBufferCreateInfo& _buffInfo, VmaMemoryUsage _memUsage,
-                                          VmaAllocationCreateFlags _flags, VkBuffer& _outBuff, VmaAllocation& _outAlloc) const
+                                          VmaAllocationCreateFlags _flags, VkBuffer& _outBuff, VmaAllocation& _outAlloc, VmaAllocationInfo& _outAllocInfo) const
 {
 	VmaAllocationCreateInfo allocationCreateInfo{};
 	allocationCreateInfo.usage = _memUsage;
 	allocationCreateInfo.flags = _flags;
 
-	VK_CHECK(vmaCreateBuffer(m_allocator, &_buffInfo, &allocationCreateInfo, &_outBuff, &_outAlloc, nullptr),
+	VK_CHECK(vmaCreateBuffer(m_allocator, &_buffInfo, &allocationCreateInfo, &_outBuff, &_outAlloc, &_outAllocInfo),
 		"Failed to create buffer ");
 }
 

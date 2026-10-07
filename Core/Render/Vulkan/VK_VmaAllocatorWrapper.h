@@ -17,7 +17,7 @@ public:
 	void Cleanup();
 
 	void CreateBuffer(const VkBufferCreateInfo& _buffInfo, VmaMemoryUsage _memUsage,
-	                  VmaAllocationCreateFlags _flags, VkBuffer& _outBuff, VmaAllocation& _outAlloc) const;
+	                  VmaAllocationCreateFlags _flags, VkBuffer& _outBuff, VmaAllocation& _outAlloc, VmaAllocationInfo& _outAllocInfo) const;
 	void DestroyBuffer(VkBuffer _buff, VmaAllocation _alloc) const;
 
 	void CreateImage(const VkImageCreateInfo& _imageInfo, VmaMemoryUsage _memUsage,

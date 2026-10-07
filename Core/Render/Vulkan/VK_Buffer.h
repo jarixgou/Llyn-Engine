@@ -15,7 +15,7 @@ struct VK_Buffer
 
 	VkBuffer buffer = VK_NULL_HANDLE;
 	VmaAllocation allocation = VK_NULL_HANDLE;
-	void* mappedMemory = nullptr;
+	VmaAllocationInfo allocationInfo;
 
 	static void SetDevice(VK_Device* _device);
 

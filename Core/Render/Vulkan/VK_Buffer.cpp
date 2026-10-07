@@ -76,7 +76,7 @@ VK_Buffer VK_Buffer::CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage,
 	buffCreateInfo.usage = _usage;
 	buffCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	VK_VmaAllocatorWrapper::Get().CreateBuffer(buffCreateInfo, VMA_MEMORY_USAGE_AUTO, _flags, buffer.buffer, buffer.allocation);
+	VK_VmaAllocatorWrapper::Get().CreateBuffer(buffCreateInfo, VMA_MEMORY_USAGE_AUTO, _flags, buffer.buffer, buffer.allocation, buffer.allocationInfo);
 
 	return buffer;
 }
@@ -87,9 +87,9 @@ VK_Buffer VK_Buffer::CreateStagingBuffer(void* _data, VkDeviceSize _size, VkBuff
 
 	// Creating staging buffer 
 	VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-	VkMemoryPropertyFlags memProps = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
-	VK_Buffer stagingBuff = CreateBuffer(_size, usage, TODO);
+	VK_Buffer stagingBuff = CreateBuffer(_size, usage, 
+		VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT);
 
 	// Map the allocation of the stage buffer
 	void* mem;
@@ -103,7 +103,7 @@ VK_Buffer VK_Buffer::CreateStagingBuffer(void* _data, VkDeviceSize _size, VkBuff
 
 	// Create the final buffer
 	usage = _usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-	VK_Buffer finalBuffer = CreateBuffer(_size, usage, TODO);
+	VK_Buffer finalBuffer = CreateBuffer(_size, usage, 0);
 
 	// Copy the staging buffer to the final buffer
 	CopyBuffer(stagingBuff.buffer, finalBuffer.buffer, _size);
@@ -119,7 +119,8 @@ VK_Buffer VK_Buffer::CreateIndirectBuffer(VkDeviceSize _size)
 
 	VkBufferUsageFlags usage = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
 
-	VK_Buffer indirectBuffer = CreateBuffer(_size, usage, TODO);
+	VK_Buffer indirectBuffer = CreateBuffer(_size, usage, 
+		VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT);
 
 	return indirectBuffer;
 }
@@ -128,8 +129,7 @@ VK_Buffer VK_Buffer::CreateUBO(VkDeviceSize _size)
 {
 	LLYN_ASSERT(device != nullptr);
 
-	VK_Buffer buffer = CreateBuffer(_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, TODO);
-	VK_VmaAllocatorWrapper::Get().MapMemory(&buffer.mappedMemory, buffer.allocation);
+	VK_Buffer buffer = CreateBuffer(_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0);
 
 	return buffer;
 }
