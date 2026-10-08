@@ -11,17 +11,17 @@
 
 #include "../../Vector/Vec2.h"
 
-void VK_SwapChain::Init(const VK_Device* _device, const VK_Instance* _instance)
+void VK_SwapChain::Init(const VK_Instance* _instance)
 {
-	LLYN_ASSERT(_device != nullptr || _instance != nullptr);
+	LLYN_ASSERT(_instance != nullptr);
 
-	CreateSwapChain(_device, _instance);
+	CreateSwapChain(&VK_Device::Get(), _instance);
 }
 
-void VK_SwapChain::Cleanup(VK_Device* _device)
+void VK_SwapChain::Cleanup()
 {
 	LOGGER_INFO("Destroying VK_SwapChain");
-	vkDestroySwapchainKHR(*_device->GetDevice(), m_swapChain, nullptr);
+	vkDestroySwapchainKHR(*VK_Device::Get().GetDevice(), m_swapChain, nullptr);
 
 	for (size_t i = 0; i < m_images.size(); ++i)
 	{

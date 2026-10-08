@@ -9,11 +9,9 @@ VK_VmaAllocatorWrapper& VK_VmaAllocatorWrapper::Get()
 	return instance;
 }
 
-void VK_VmaAllocatorWrapper::Init(VK_Device* _device, VK_Instance* _instance)
+void VK_VmaAllocatorWrapper::Init(VK_Instance* _instance)
 {
-	LLYN_ASSERT(_device != nullptr || _instance != nullptr)
-
-	m_device = _device;
+	LLYN_ASSERT(_instance != nullptr)
 
 	VmaVulkanFunctions vmaFunc{};
 	vmaFunc.vkGetInstanceProcAddr = &vkGetInstanceProcAddr;
@@ -22,8 +20,8 @@ void VK_VmaAllocatorWrapper::Init(VK_Device* _device, VK_Instance* _instance)
 	VmaAllocatorCreateInfo allocatorInfo{};
 	allocatorInfo.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
 	allocatorInfo.vulkanApiVersion = _instance->GetAPIVersion();
-	allocatorInfo.physicalDevice = *m_device->GetPhycicalDevice();
-	allocatorInfo.device = *m_device->GetDevice();
+	allocatorInfo.physicalDevice = *VK_Device::Get().GetPhycicalDevice();
+	allocatorInfo.device = *VK_Device::Get().GetDevice();
 	allocatorInfo.instance = *_instance->GetInstance();
 	allocatorInfo.pVulkanFunctions = &vmaFunc;
 

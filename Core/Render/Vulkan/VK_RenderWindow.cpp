@@ -4,12 +4,12 @@
 #include "VK_DepthResources.h"
 #include "../../Asset/Texture.h"
 
-void VK_RenderWindow::Init(VK_Device* _device, VK_Instance* _instance, bool _useDepth)
+void VK_RenderWindow::Init(VK_Instance* _instance, bool _useDepth)
 {
-	LLYN_ASSERT(_device == nullptr || _instance == nullptr);
+	LLYN_ASSERT(_instance == nullptr);
 
 	m_swapChain = new VK_SwapChain;
-	m_swapChain->Init(_device, _instance);
+	m_swapChain->Init(_instance);
 
 	const VkExtent2D* extent = m_swapChain->GetExtent();
 
@@ -29,13 +29,13 @@ void VK_RenderWindow::Init(VK_Device* _device, VK_Instance* _instance, bool _use
 	if (_useDepth)
 	{
 		m_depthResources = new VK_DepthResources;
-		m_depthResources->Init(_device, *m_swapChain->GetExtent());
+		m_depthResources->Init(*m_swapChain->GetExtent());
 	}
 }
 
-void VK_RenderWindow::Cleanup(VK_Device* _device)
+void VK_RenderWindow::Cleanup()
 {
-
+	m_swapChain->Cleanup();
 }
 
 void VK_RenderWindow::Clear(VkCommandBuffer _cmdBuff, uint32_t _imageIndex)

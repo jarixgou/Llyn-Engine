@@ -11,7 +11,7 @@ class VK_DepthResources
 private:
 	VK_Image m_image;
 public:
-	void Init(const VK_Device* _device, VkExtent2D _extent);
+	void Init(VkExtent2D _extent);
 
 	void Cleanup();
 

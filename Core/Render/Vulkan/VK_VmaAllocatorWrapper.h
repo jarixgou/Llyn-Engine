@@ -9,11 +9,10 @@ class VK_VmaAllocatorWrapper
 {
 private:
 	VmaAllocator m_allocator = nullptr;
-	VK_Device* m_device = nullptr;
 public:
 	static VK_VmaAllocatorWrapper& Get();
 
-	void Init(VK_Device* _device, VK_Instance* _instance);
+	void Init(VK_Instance* _instance);
 	void Cleanup();
 
 	void CreateBuffer(const VkBufferCreateInfo& _buffInfo, VmaMemoryUsage _memUsage,

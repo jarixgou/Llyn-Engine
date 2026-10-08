@@ -13,7 +13,6 @@ class VK_Render : public IRender
 {
 private:
 	VK_Instance* m_instance = nullptr;
-	VK_Device* m_device = nullptr;
 	VK_FrameSync* m_frameSync = nullptr;
 	VK_Pipeline* m_defaultPipeline = nullptr;
 	VK_DepthResources* m_depthResources = nullptr;

@@ -14,9 +14,9 @@ private:
 	VkPipelineLayout m_pipelineLayout = VK_NULL_HANDLE;
 	VkPipeline m_pipeline = VK_NULL_HANDLE;
 public:
-	void Init(const VK_Device* _device, const VK_SwapChain* _swapChain, const PipelineInfo& _info);
+	void Init(const VK_SwapChain* _swapChain, const PipelineInfo& _info);
 
-	void Cleanup(const VK_Device* _device);
+	void Cleanup();
 
 	const VkPipeline* GetPipeline() const;
 	const VkPipelineLayout* GetPipelineLayout();

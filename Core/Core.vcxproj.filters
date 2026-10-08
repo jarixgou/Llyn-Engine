@@ -255,6 +255,9 @@
     <ClInclude Include="Asset\TextureConfig.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Vulkan\VK_RenderGraph.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Utils\Utils.cpp">
@@ -414,6 +417,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Render\Vulkan\VK_Texture.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

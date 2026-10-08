@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\VK_Buffer.obj",
+            "outputs": [
+                "x64\\Release\\VK_Buffer.h_35F28B7DC57D8A52.ifc.dt.module.json",
+                "x64\\Release\\VK_Buffer.h_35F28B7DC57D8A52.ifc.dt.d.json",
+                "x64\\Release\\VK_Buffer.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Users\\Etudiant2\\Llyn-Engine\\Core\\Render\\Vulkan\\VK_Buffer.h",
+                    "source-path": "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_buffer.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

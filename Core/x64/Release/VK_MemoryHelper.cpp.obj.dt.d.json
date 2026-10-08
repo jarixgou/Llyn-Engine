@@ -1,10 +1,10 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "d:\\llyn engine\\core\\utils\\vulkan\\vk_memoryhelper.cpp",
+        "Source": "c:\\users\\etudiant2\\llyn-engine\\core\\utils\\vulkan\\vk_memoryhelper.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "d:\\llyn engine\\core\\utils\\vulkan\\vk_memoryhelper.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\utils\\vulkan\\vk_memoryhelper.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vulkan.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vk_platform.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\stddef.h",
@@ -27,7 +27,7 @@
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_av1std_encode.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std_decode.h",
-            "d:\\llyn engine\\core\\render\\vulkan\\vk_device.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_device.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xkeycheck.h",
@@ -109,7 +109,7 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_memory.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\tuple",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xpolymorphic_allocator.h",
-            "d:\\llyn engine\\core\\llyncore.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\llyncore.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xstring",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_string_view.hpp",

@@ -5,7 +5,6 @@
 #include "PipelineInfo.h"
 #include "VK_Device.h"
 #include "VK_FrameSync.h"
-#include "VK_SwapChain.h"
 #include "VK_Instance.h"
 #include "VK_Pipeline.h"
 #include "VK_DepthResources.h"
@@ -18,7 +17,6 @@
 #include "../MetaData.h"
 
 #include "../../Scene.h"
-#include "../../Utils/Vulkan/VK_MemoryHelper.h"
 
 #include "../../Entities/Entity.h"
 #include "../../Entities/ECS.h"
@@ -33,7 +31,6 @@
 #include "../../Component/Light/LightManager.h"
 #include "../../Math/Math.h"
 
-#include "../../Math/Matrix/Mat3.h"
 #include "../../Vector/Vec3.h"
 
 VK_Render::~VK_Render()
@@ -43,11 +40,11 @@ VK_Render::~VK_Render()
 
 void VK_Render::Cleanup()
 {
-	m_renderWindow->Cleanup(m_device);
+	m_renderWindow->Cleanup();
 	delete m_renderWindow;
 	m_renderWindow = nullptr;
 
-	m_frameSync->Cleanup(m_device);
+	m_frameSync->Cleanup();
 	delete m_frameSync;
 	m_frameSync = nullptr;
 
@@ -55,13 +52,11 @@ void VK_Render::Cleanup()
 	delete m_depthResources;
 	m_depthResources = nullptr;
 
-	m_defaultPipeline->Cleanup(m_device);
+	m_defaultPipeline->Cleanup();
 	delete m_defaultPipeline;
 	m_defaultPipeline = nullptr;
 
-	m_device->Cleanup();
-	delete m_device;
-	m_device = nullptr;
+	VK_Device::Get().Cleanup();
 
 	m_instance->Cleanup();
 	delete m_instance;
@@ -73,27 +68,21 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	AllocateVariable();
 
 	m_instance->Init("Llyn");
-	m_device->Init(m_instance);
+	VK_Device::Get().Init(m_instance);
+	m_renderWindow->Init(m_instance, true);
 
-	VK_Buffer::SetDevice(m_device);
-	VK_MemoryHelper::SetDevice(m_device);
-
-	m_renderWindow->Init(m_device, m_instance, true);
-
-	m_frameSync->Init(m_device, m_renderWindow->GetSwapChain());
+	m_frameSync->Init(m_renderWindow->GetSwapChain());
 
 	VK_Buffer::SetFrameSync(m_frameSync);
 
-	m_defaultPipeline->Init(m_device, m_renderWindow->GetSwapChain(), PipelineInfo{});
+	m_defaultPipeline->Init(m_renderWindow->GetSwapChain(), PipelineInfo{});
 
 	VK_DescriptorManager* descriptorManager = new VK_DescriptorManager;
-	descriptorManager->SetDevice(m_device);
-
 	descriptorManager->Adds(m_defaultPipeline->GetDescriptorLayouts());
 
 	*_uniformManger = descriptorManager;
 
-	m_imgui->Init(m_instance, m_device, m_renderWindow->GetSwapChain(), m_frameSync);
+	m_imgui->Init(m_instance, m_renderWindow->GetSwapChain(), m_frameSync);
 
 	for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 	{
@@ -147,7 +136,7 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 {
 	LLYN_ASSERT(_scene != nullptr && _uniformManager != nullptr);
 
-	auto [imageIndex, cmdBuff] = m_frameSync->Begin(m_device, m_renderWindow->GetSwapChain());
+	auto [imageIndex, cmdBuff] = m_frameSync->Begin(m_renderWindow->GetSwapChain());
 
 	Update(_scene, _camera, _lightManager, _uniformManager);
 
@@ -156,7 +145,7 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 		memcpy(m_indirectDrawBuff[m_frameSync->GetFrameIndex()]->allocationInfo.pMappedData, m_indirectCmds.data(), ARRAY_SIZE_IN_BYTES(m_indirectCmds));
 	}
 
-	m_frameSync->Reset(m_device);
+	m_frameSync->Reset();
 
 	VK_Buffer::BeginCommandBuffer(cmdBuff, 0);
 
@@ -205,13 +194,12 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	std::vector<VkCommandBuffer> cmdBuffList = { cmdBuff, imGuiCmdBuff };;
 
-	m_frameSync->End(m_device, m_renderWindow->GetSwapChain(), imageIndex, cmdBuffList);
+	m_frameSync->End(m_renderWindow->GetSwapChain(), imageIndex, cmdBuffList);
 }
 
 void VK_Render::AllocateVariable()
 {
 	m_instance = new VK_Instance;
-	m_device = new VK_Device;
 	m_renderWindow = new VK_RenderWindow;
 	m_frameSync = new VK_FrameSync;
 	m_defaultPipeline = new VK_Pipeline;

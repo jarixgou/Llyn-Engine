@@ -15,11 +15,6 @@ void VK_DescriptorManager::Cleanup()
 {
 }
 
-void VK_DescriptorManager::SetDevice(VK_Device* _device)
-{
-	m_device = _device;
-}
-
 void VK_DescriptorManager::Add(VK_DescriptorLayoutHandle _layoutHandle)
 {
 	if (m_descriptorPools.contains(_layoutHandle))
@@ -57,7 +52,7 @@ void VK_DescriptorManager::Add(VK_DescriptorLayoutHandle _layoutHandle)
 	descPoolCreateInfo.poolSizeCount = static_cast<uint32_t>(descPoolSizes.size());
 	descPoolCreateInfo.pPoolSizes = descPoolSizes.data();
 
-	VK_CHECK(vkCreateDescriptorPool(*m_device->GetDevice(), &descPoolCreateInfo, VK_NULL_HANDLE, &descHandle.descriptorPools),
+	VK_CHECK(vkCreateDescriptorPool(*VK_Device::Get().GetDevice(), &descPoolCreateInfo, VK_NULL_HANDLE, &descHandle.descriptorPools),
 		"Failed to create descriptor pool !");
 
 	std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, _layoutHandle.layout);
@@ -70,7 +65,7 @@ void VK_DescriptorManager::Add(VK_DescriptorLayoutHandle _layoutHandle)
 	allocInfo.pSetLayouts = layouts.data();
 
 	descHandle.descriptorSet.resize(MAX_FRAMES_IN_FLIGHT);
-	VK_CHECK(vkAllocateDescriptorSets(*m_device->GetDevice(), &allocInfo, descHandle.descriptorSet.data()),
+	VK_CHECK(vkAllocateDescriptorSets(*VK_Device::Get().GetDevice(), &allocInfo, descHandle.descriptorSet.data()),
 		"Failed to allocate descriptor sets !");
 
 	descHandle.shaderBuffer.resize(_layoutHandle.infos.size());
@@ -115,7 +110,7 @@ void VK_DescriptorManager::StoreData(std::string _name, void* _data, size_t _siz
 			{
 				const bool isCreated = descHandle->shaderBuffer[i].IsCreated(_frameIndex);
 
-				descHandle->shaderBuffer[i].StoreData(m_device, _data, _size, layoutInfo.type, _frameIndex);
+				descHandle->shaderBuffer[i].StoreData(&VK_Device::Get(), _data, _size, layoutInfo.type, _frameIndex);
 
 				if (!isCreated || layoutInfo.type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
 				{
@@ -143,40 +138,6 @@ void VK_DescriptorManager::StoreData(std::string _name, void* _data, size_t _siz
 void VK_DescriptorManager::StoreTexture(Texture* _texture, uint32_t _dstArray, uint32_t _frameIndex)
 {
 	LLYN_ASSERT(_texture != nullptr);
-
-	/*VkDescriptorImageInfo imageInfo{};
-	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	imageInfo.imageView = *_texture->GetImageView();
-	imageInfo.sampler = *_texture->GetSampler();
-
-	for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
-	{
-		std::vector<VkWriteDescriptorSet> writes(MAX_FRAMES_IN_FLIGHT);
-
-		writes[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		writes[0].pNext = VK_NULL_HANDLE;
-		writes[0].dstSet = m_descriptors[m_descriptorPools[bindlessLayout]].descriptorSet[i];
-		writes[0].dstBinding = 0;
-		writes[0].dstArrayElement = _dstArray;
-		writes[0].descriptorCount = 1;
-		writes[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		writes[0].pImageInfo = &imageInfo;
-		writes[0].pBufferInfo = VK_NULL_HANDLE;
-		writes[0].pTexelBufferView = VK_NULL_HANDLE;
-
-		writes[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		writes[1].pNext = VK_NULL_HANDLE;
-		writes[1].dstSet = m_descriptors[m_descriptorPools[bindlessLayout]].descriptorSet[i];
-		writes[1].dstBinding = 0;
-		writes[1].dstArrayElement = _dstArray;
-		writes[1].descriptorCount = 1;
-		writes[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		writes[1].pImageInfo = &imageInfo;
-		writes[1].pBufferInfo = VK_NULL_HANDLE;
-		writes[1].pTexelBufferView = VK_NULL_HANDLE;
-
-		vkUpdateDescriptorSets(*m_device->GetDevice(), static_cast<uint32_t>(writes.size()), writes.data(), 0, VK_NULL_HANDLE);
-	}*/
 }
 
 void VK_DescriptorManager::StoreTextures(std::vector<Texture>& _textures, uint32_t _frameIndex)
@@ -215,7 +176,7 @@ void VK_DescriptorManager::PushUniform()
 {
 	if (!m_writes.empty())
 	{
-		vkUpdateDescriptorSets(*m_device->GetDevice(), static_cast<uint32_t>(m_writes.size()),
+		vkUpdateDescriptorSets(*VK_Device::Get().GetDevice(), static_cast<uint32_t>(m_writes.size()),
 		                       m_writes.data(), 0, VK_NULL_HANDLE);
 	}
 

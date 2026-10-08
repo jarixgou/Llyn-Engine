@@ -14,8 +14,8 @@ private:
 	VkRect2D m_area = {0};
 	VkRect2D m_scissor = {0};
 public:
-	void Init(VK_Device* _device, VK_Instance* _instance, bool _useDepth);
-	void Cleanup(VK_Device* _device);
+	void Init(VK_Instance* _instance, bool _useDepth);
+	void Cleanup();
 
 	void Clear(VkCommandBuffer _cmdBuff, uint32_t _imageIndex);
 

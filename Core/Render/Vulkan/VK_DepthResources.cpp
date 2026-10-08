@@ -9,11 +9,9 @@
 
 #include "../../Logger.h"
 
-void VK_DepthResources::Init(const VK_Device* _device, VkExtent2D _extent)
+void VK_DepthResources::Init(VkExtent2D _extent)
 {
-	LLYN_ASSERT(_device != nullptr);
-
-	const VkFormat depthFormat = FinDepthFormat(_device);
+	const VkFormat depthFormat = FinDepthFormat(&VK_Device::Get());
 
 	m_image.Init(depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, IMAGE_TYPE_2D, VK_IMAGE_ASPECT_DEPTH_BIT,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 1, Vec2u(_extent.width, _extent.height));

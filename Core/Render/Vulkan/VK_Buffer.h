@@ -10,14 +10,11 @@
 
 struct VK_Buffer
 {
-	static VK_Device* device;
 	static VK_FrameSync* frameSync;
 
 	VkBuffer buffer = VK_NULL_HANDLE;
 	VmaAllocation allocation = VK_NULL_HANDLE;
 	VmaAllocationInfo allocationInfo;
-
-	static void SetDevice(VK_Device* _device);
 
 	static void SetFrameSync(VK_FrameSync* _frameSync);
 

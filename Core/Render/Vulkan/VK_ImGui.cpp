@@ -35,23 +35,23 @@ static void VkCheckImGui(VkResult _err)
 	}
 }
 
-void VK_ImGui::Init(const VK_Instance* _instance, const VK_Device* _device, const VK_SwapChain* _swapChain, const VK_FrameSync* _frameSync)
+void VK_ImGui::Init(const VK_Instance* _instance, const VK_SwapChain* _swapChain, const VK_FrameSync* _frameSync)
 {
 	const VkExtent2D* extent = _swapChain->GetExtent();
 	m_frameBufferSize = { extent->width, extent->height };
 
-	CreateDescriptorPool(_device);
+	CreateDescriptorPool(&VK_Device::Get());
 
-	InitImGui(_instance, _device, _swapChain, _frameSync);
+	InitImGui(_instance, &VK_Device::Get(), _swapChain, _frameSync);
 }
 
-void VK_ImGui::Cleanup(const VK_Device* _device, VkCommandPool _cmdPool)
+void VK_ImGui::Cleanup(VkCommandPool _cmdPool)
 {
-	vkFreeCommandBuffers(*_device->GetDevice(), _cmdPool, static_cast<uint32_t>(m_cmdBuffs.size()), m_cmdBuffs.data());
+	vkFreeCommandBuffers(*VK_Device::Get().GetDevice(), _cmdPool, static_cast<uint32_t>(m_cmdBuffs.size()), m_cmdBuffs.data());
 
 	ImGui_ImplVulkan_Shutdown();
 
-	vkDestroyDescriptorPool(*_device->GetDevice(), m_desscriptorPool, VK_NULL_HANDLE);
+	vkDestroyDescriptorPool(*VK_Device::Get().GetDevice(), m_desscriptorPool, VK_NULL_HANDLE);
 
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();

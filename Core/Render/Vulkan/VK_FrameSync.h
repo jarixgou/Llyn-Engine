@@ -18,12 +18,12 @@ private:
 
 	uint32_t m_frameIndex = 0;
 public:
-	void Init(const VK_Device* _device, const VK_SwapChain* _swapChain);
-	void Cleanup(const VK_Device* _device);
+	void Init(const VK_SwapChain* _swapChain);
+	void Cleanup();
 
-	std::pair<uint32_t, VkCommandBuffer> Begin(const VK_Device* _device, const VK_SwapChain* _swapChain);
-	void Reset(const VK_Device* _device);
-	void End(const VK_Device* _device, const VK_SwapChain* _swapChain, uint32_t _imageIndex, std::vector<VkCommandBuffer> _cmdBuffs);
+	std::pair<uint32_t, VkCommandBuffer> Begin(const VK_SwapChain* _swapChain);
+	void Reset();
+	void End(const VK_SwapChain* _swapChain, uint32_t _imageIndex, std::vector<VkCommandBuffer> _cmdBuffs);
 
 	const VkCommandPool* GetCommandPool() const;
 	VkCommandBuffer* GetCommandBuffer();

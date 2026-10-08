@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "d:\\llyn engine\\core\\render\\vulkan\\vk_buffer.h",
+        "Source": "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_buffer.h",
         "ProvidedModule": "",
         "Includes": [
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
@@ -106,17 +106,17 @@
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_av1std_encode.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std_decode.h",
-            "d:\\llyn engine\\core\\render\\vulkan\\vk_vmaallocatorwrapper.h",
-            "d:\\llyn engine\\librairies\\include\\vma\\vk_mem_alloc.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_vmaallocatorwrapper.h",
+            "c:\\users\\etudiant2\\llyn-engine\\librairies\\include\\vma\\vk_mem_alloc.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vulkan.h",
-            "d:\\llyn engine\\core\\llyncore.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\llyncore.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xstring",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_string_view.hpp",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iosfwd",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cctype",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\ctype.h",
-            "d:\\llyn engine\\core\\vector\\fwdvec2.h"
+            "c:\\users\\etudiant2\\llyn-engine\\core\\vector\\fwdvec2.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

@@ -235,6 +235,7 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClInclude Include="Render\Vulkan\VK_FrameSync.h" />
     <ClInclude Include="Render\Vulkan\VK_LayoutInfo.h" />
     <ClInclude Include="Render\Vulkan\VK_Pipeline.h" />
+    <ClInclude Include="Render\Vulkan\VK_RenderGraph.h" />
     <ClInclude Include="Render\Vulkan\VK_RenderWindow.h" />
     <ClInclude Include="Render\Vulkan\VK_StageAndAccess.h" />
     <ClInclude Include="Render\Vulkan\VK_SwapChain.h" />
@@ -312,6 +313,7 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClCompile Include="Utils\Utils.cpp" />
     <ClCompile Include="Utils\VK_Utils.cpp" />
     <ClCompile Include="Utils\Vulkan\VK_MemoryHelper.cpp" />
+    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,11 +1,11 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "d:\\llyn engine\\core\\render\\vulkan\\vk_vmaallocatorwrapper.cpp",
+        "Source": "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_vmaallocatorwrapper.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "d:\\llyn engine\\core\\render\\vulkan\\vk_vmaallocatorwrapper.h",
-            "d:\\llyn engine\\librairies\\include\\vma\\vk_mem_alloc.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_vmaallocatorwrapper.h",
+            "c:\\users\\etudiant2\\llyn-engine\\librairies\\include\\vma\\vk_mem_alloc.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vulkan.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vk_platform.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\stddef.h",
@@ -147,13 +147,13 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stop_token",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\shared_mutex",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\condition_variable",
-            "d:\\llyn engine\\core\\llyncore.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\llyncore.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cctype",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\ctype.h",
-            "d:\\llyn engine\\core\\render\\vulkan\\vk_device.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_device.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
-            "d:\\llyn engine\\core\\render\\vulkan\\vk_instance.h"
+            "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_instance.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

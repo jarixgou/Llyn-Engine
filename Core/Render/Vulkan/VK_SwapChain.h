@@ -19,8 +19,8 @@ private:
 	uint32_t m_minImageCount = 0;
 	uint32_t m_imageCount = 0;
 public:	// Public function
-	void Init(const VK_Device* _device, const VK_Instance* _instance);
-	void Cleanup(VK_Device* _device);
+	void Init(const VK_Instance* _instance);
+	void Cleanup();
 
 	void Recreate();
 

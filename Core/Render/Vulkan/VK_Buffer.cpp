@@ -5,15 +5,7 @@
 #include "../../Utils/Vulkan/VK_MemoryHelper.h"
 #include "../../Vector/Vec2.h"
 
-VK_Device* VK_Buffer::device = nullptr;
 VK_FrameSync* VK_Buffer::frameSync = nullptr;
-
-void VK_Buffer::SetDevice(VK_Device* _device)
-{
-	LLYN_ASSERT(_device != nullptr);
-
-	device = _device;
-}
 
 void VK_Buffer::SetFrameSync(VK_FrameSync* _frameSync)
 {
@@ -29,16 +21,14 @@ void VK_Buffer::Cleanup()
 
 VkCommandPool VK_Buffer::CreateCommandPool()
 {
-	LLYN_ASSERT(device != nullptr);
-
 	VkCommandPoolCreateInfo cmdPoolCreateInfo{};
 	cmdPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	cmdPoolCreateInfo.pNext = VK_NULL_HANDLE;
 	cmdPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-	cmdPoolCreateInfo.queueFamilyIndex = device->GetQueueIndex();
+	cmdPoolCreateInfo.queueFamilyIndex = VK_Device::Get().GetQueueIndex();
 
 	VkCommandPool cmdPool = VK_NULL_HANDLE;
-	VK_CHECK(vkCreateCommandPool(*device->GetDevice(), &cmdPoolCreateInfo, VK_NULL_HANDLE, &cmdPool),
+	VK_CHECK(vkCreateCommandPool(*VK_Device::Get().GetDevice(), &cmdPoolCreateInfo, VK_NULL_HANDLE, &cmdPool),
 		"Failed to create command pool");
 
 	return cmdPool;
@@ -47,8 +37,6 @@ VkCommandPool VK_Buffer::CreateCommandPool()
 std::vector<VkCommandBuffer> VK_Buffer::CreateCommandBuffer(VkCommandPool _cmdPool,
 	uint32_t _bufferCount)
 {
-	LLYN_ASSERT(device != nullptr);
-
 	VkCommandBufferAllocateInfo cmdBuffAllocInfo{};
 	cmdBuffAllocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	cmdBuffAllocInfo.pNext = VK_NULL_HANDLE;
@@ -57,7 +45,7 @@ std::vector<VkCommandBuffer> VK_Buffer::CreateCommandBuffer(VkCommandPool _cmdPo
 	cmdBuffAllocInfo.commandBufferCount = _bufferCount;
 
 	std::vector<VkCommandBuffer> cmdBuffs(_bufferCount);
-	VK_CHECK(vkAllocateCommandBuffers(*device->GetDevice(), &cmdBuffAllocInfo, cmdBuffs.data()),
+	VK_CHECK(vkAllocateCommandBuffers(*VK_Device::Get().GetDevice(), &cmdBuffAllocInfo, cmdBuffs.data()),
 		"Failed to allocate command buffers !");
 
 	return cmdBuffs;
@@ -65,8 +53,6 @@ std::vector<VkCommandBuffer> VK_Buffer::CreateCommandBuffer(VkCommandPool _cmdPo
 
 VK_Buffer VK_Buffer::CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage, VmaAllocationCreateFlags _flags)
 {
-	LLYN_ASSERT(device != nullptr);
-
 	VK_Buffer buffer{};
 
 	VkBufferCreateInfo buffCreateInfo{};
@@ -83,8 +69,6 @@ VK_Buffer VK_Buffer::CreateBuffer(VkDeviceSize _size, VkBufferUsageFlags _usage,
 
 VK_Buffer VK_Buffer::CreateStagingBuffer(void* _data, VkDeviceSize _size, VkBufferUsageFlags _usage)
 {
-	LLYN_ASSERT(device != nullptr);
-
 	// Creating staging buffer 
 	VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
@@ -115,8 +99,6 @@ VK_Buffer VK_Buffer::CreateStagingBuffer(void* _data, VkDeviceSize _size, VkBuff
 
 VK_Buffer VK_Buffer::CreateIndirectBuffer(VkDeviceSize _size)
 {
-	LLYN_ASSERT(device != nullptr);
-
 	VkBufferUsageFlags usage = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
 
 	VK_Buffer indirectBuffer = CreateBuffer(_size, usage, 
@@ -127,8 +109,6 @@ VK_Buffer VK_Buffer::CreateIndirectBuffer(VkDeviceSize _size)
 
 VK_Buffer VK_Buffer::CreateUBO(VkDeviceSize _size)
 {
-	LLYN_ASSERT(device != nullptr);
-
 	VK_Buffer buffer = CreateBuffer(_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0);
 
 	return buffer;
@@ -202,10 +182,10 @@ void VK_Buffer::EndSingleTimeCommand(VkCommandBuffer _cmdBuffer)
 	submitInfo.signalSemaphoreCount = 0;
 	submitInfo.pSignalSemaphores = VK_NULL_HANDLE;
 
-	VK_CHECK(vkQueueSubmit(*device->GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE), "Failed to queue submit !");
-	VK_CHECK(vkQueueWaitIdle(*device->GetGraphicsQueue()), "Failed queue wait idle !");
+	VK_CHECK(vkQueueSubmit(*VK_Device::Get().GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE), "Failed to queue submit !");
+	VK_CHECK(vkQueueWaitIdle(*VK_Device::Get().GetGraphicsQueue()), "Failed queue wait idle !");
 
-	vkFreeCommandBuffers(*device->GetDevice(), *frameSync->GetCommandPool(), 1, &_cmdBuffer);
+	vkFreeCommandBuffers(*VK_Device::Get().GetDevice(), *frameSync->GetCommandPool(), 1, &_cmdBuffer);
 }
 
 void VK_Buffer::BeginCommandBuffer(VkCommandBuffer _cmdBuffer, VkCommandBufferUsageFlags _usage)

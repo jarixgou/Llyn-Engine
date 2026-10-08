@@ -15,8 +15,6 @@
 class VK_DescriptorManager : public IUniformManager
 {
 private:
-	VK_Device* m_device = nullptr;
-
 	std::vector<VK_DescriptorHandle> m_descriptors;
 	std::unordered_map<VK_DescriptorLayoutHandle, size_t, VK_DescriptorLayoutHandleHash> m_descriptorPools;
 	VK_DescriptorLayoutHandle bindlessLayout;
@@ -27,8 +25,6 @@ private:
 public:
 	void Init() override;
 	void Cleanup();
-
-	void SetDevice(VK_Device* _device);
 
 	void Add(VK_DescriptorLayoutHandle _layoutHandle);
 	void Adds(std::vector<VK_DescriptorLayoutHandle> _layoutHandles);

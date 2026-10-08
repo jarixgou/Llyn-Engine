@@ -7,55 +7,53 @@
 #include "VK_Buffer.h"
 #include "../../Logger.h"
 
-void VK_FrameSync::Init(const VK_Device* _device, const VK_SwapChain* _swapChain)
+void VK_FrameSync::Init(const VK_SwapChain* _swapChain)
 {
-	LLYN_ASSERT(_device != nullptr || _swapChain != nullptr);
+	LLYN_ASSERT(_swapChain != nullptr);
 
 	m_cmdPool = VK_Buffer::CreateCommandPool();
 	m_cmdBuffers = VK_Buffer::CreateCommandBuffer(m_cmdPool, MAX_FRAMES_IN_FLIGHT);
-	CreateSyncObjects(_device, _swapChain->GetImageCount());
+	CreateSyncObjects(&VK_Device::Get(), _swapChain->GetImageCount());
 }
 
-void VK_FrameSync::Cleanup(const VK_Device* _device)
+void VK_FrameSync::Cleanup()
 {
-	LLYN_ASSERT(_device != nullptr);
-
 	LOGGER_INFO("Destroying VK_FrameSync");
 
-	vkDestroyCommandPool(*_device->GetDevice(), m_cmdPool, nullptr);
+	vkDestroyCommandPool(*VK_Device::Get().GetDevice(), m_cmdPool, nullptr);
 	LOGGER_INFO("VkCommandPool is destroyed");
 
 	for (size_t i = 0; i < m_presentCompleteSemaphores.size(); ++i)
 	{
-		vkDestroySemaphore(*_device->GetDevice(), m_presentCompleteSemaphores[i], nullptr);
+		vkDestroySemaphore(*VK_Device::Get().GetDevice(), m_presentCompleteSemaphores[i], nullptr);
 	}
 	m_presentCompleteSemaphores.clear();
 	LOGGER_INFO("Present complete semaphores is destroyed");
 
 	for (size_t i = 0; i < m_renderFinishedSemaphores.size(); ++i)
 	{
-		vkDestroySemaphore(*_device->GetDevice(), m_renderFinishedSemaphores[i], nullptr);
+		vkDestroySemaphore(*VK_Device::Get().GetDevice(), m_renderFinishedSemaphores[i], nullptr);
 	}
 	m_renderFinishedSemaphores.clear();
 	LOGGER_INFO("Render finished semaphores is destroyed");
 
 	for (size_t i = 0; i < m_inFlightFences.size(); ++i)
 	{
-		vkDestroyFence(*_device->GetDevice(), m_inFlightFences[i], nullptr);
+		vkDestroyFence(*VK_Device::Get().GetDevice(), m_inFlightFences[i], nullptr);
 	}
 	m_inFlightFences.clear();
 	LOGGER_INFO("In flight fences is destroyed !");
 }
 
-std::pair<uint32_t, VkCommandBuffer> VK_FrameSync::Begin(const VK_Device* _device, const VK_SwapChain* _swapChain)
+std::pair<uint32_t, VkCommandBuffer> VK_FrameSync::Begin(const VK_SwapChain* _swapChain)
 {
-	LLYN_ASSERT(_device != nullptr || _swapChain != nullptr);
+	LLYN_ASSERT(_swapChain != nullptr);
 
-	VK_CHECK(vkWaitForFences(*_device->GetDevice(), 1, &m_inFlightFences[m_frameIndex], VK_TRUE, UINT64_MAX),
+	VK_CHECK(vkWaitForFences(*VK_Device::Get().GetDevice(), 1, &m_inFlightFences[m_frameIndex], VK_TRUE, UINT64_MAX),
 		"Failed to wait fence");
 
 	uint32_t imageIndex = 0;
-	const VkResult swapChainResult = vkAcquireNextImageKHR(*_device->GetDevice(), *_swapChain->GetSwapChain(),
+	const VkResult swapChainResult = vkAcquireNextImageKHR(*VK_Device::Get().GetDevice(), *_swapChain->GetSwapChain(),
 		UINT64_MAX, m_presentCompleteSemaphores[m_frameIndex], VK_NULL_HANDLE, &imageIndex);
 
 	if (swapChainResult == VK_ERROR_OUT_OF_DATE_KHR)
@@ -70,16 +68,16 @@ std::pair<uint32_t, VkCommandBuffer> VK_FrameSync::Begin(const VK_Device* _devic
 	return { imageIndex, *GetCommandBuffer() };
 }
 
-void VK_FrameSync::Reset(const VK_Device* _device)
+void VK_FrameSync::Reset()
 {
-	VK_CHECK(vkResetFences(*_device->GetDevice(), 1, &m_inFlightFences[m_frameIndex]), "Failed to reset fences !");
+	VK_CHECK(vkResetFences(*VK_Device::Get().GetDevice(), 1, &m_inFlightFences[m_frameIndex]), "Failed to reset fences !");
 	VK_CHECK(vkResetCommandBuffer(*GetCommandBuffer(), 0),
 		"Failed to reset the command buffer !");
 }
 
-void VK_FrameSync::End(const VK_Device* _device, const VK_SwapChain* _swapChain, uint32_t _imageIndex, std::vector<VkCommandBuffer> _cmdBuffs)
+void VK_FrameSync::End(const VK_SwapChain* _swapChain, uint32_t _imageIndex, std::vector<VkCommandBuffer> _cmdBuffs)
 {
-	LLYN_ASSERT(_device != nullptr || _swapChain != nullptr);
+	LLYN_ASSERT(_swapChain != nullptr);
 
 	const VkPipelineStageFlags waitDstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	VkSubmitInfo submitInfo{};
@@ -93,7 +91,7 @@ void VK_FrameSync::End(const VK_Device* _device, const VK_SwapChain* _swapChain,
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = &m_renderFinishedSemaphores[_imageIndex];
 
-	VK_CHECK(vkQueueSubmit(*_device->GetGraphicsQueue(), 1, &submitInfo, *GetFence()),
+	VK_CHECK(vkQueueSubmit(*VK_Device::Get().GetGraphicsQueue(), 1, &submitInfo, *GetFence()),
 		"Failed to submit graphics queue !");
 
 	VkPresentInfoKHR presentInfo{};
@@ -105,7 +103,7 @@ void VK_FrameSync::End(const VK_Device* _device, const VK_SwapChain* _swapChain,
 	presentInfo.pSwapchains = _swapChain->GetSwapChain();
 	presentInfo.pImageIndices = &_imageIndex;
 
-	const VkResult submitResult = vkQueuePresentKHR(*_device->GetGraphicsQueue(), &presentInfo);
+	const VkResult submitResult = vkQueuePresentKHR(*VK_Device::Get().GetGraphicsQueue(), &presentInfo);
 
 	if (submitResult == VK_SUBOPTIMAL_KHR || submitResult == VK_ERROR_OUT_OF_DATE_KHR)
 	{

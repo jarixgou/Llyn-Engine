@@ -1,11 +1,11 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "d:\\llyn engine\\core\\vertex.cpp",
+        "Source": "c:\\users\\etudiant2\\llyn-engine\\core\\vertex.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "d:\\llyn engine\\core\\vertex.h",
-            "d:\\llyn engine\\core\\llyncore.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\vertex.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\llyncore.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",
@@ -98,8 +98,8 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xpolymorphic_allocator.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cctype",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\ctype.h",
-            "d:\\llyn engine\\core\\vector\\vec2.h",
-            "d:\\llyn engine\\core\\vector\\vec3.h"
+            "c:\\users\\etudiant2\\llyn-engine\\core\\vector\\vec2.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\vector\\vec3.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

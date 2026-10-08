@@ -10,30 +10,28 @@
 #include "../../Utils/Utils.h"
 #include "../../Vertex.h"
 
-void VK_Pipeline::Init(const VK_Device* _device, const VK_SwapChain* _swapChain, const PipelineInfo& _info)
+void VK_Pipeline::Init(const VK_SwapChain* _swapChain, const PipelineInfo& _info)
 {
-	LLYN_ASSERT(_device != nullptr && _swapChain != nullptr);
+	LLYN_ASSERT(_swapChain != nullptr);
 
-	CreateDescriptorSetLayout(_device);
-	CreateGraphicsPipeline(_device, _swapChain, _info);
+	CreateDescriptorSetLayout(&VK_Device::Get());
+	CreateGraphicsPipeline(&VK_Device::Get(), _swapChain, _info);
 }
 
-void VK_Pipeline::Cleanup(const VK_Device* _device)
+void VK_Pipeline::Cleanup()
 {
-	LLYN_ASSERT(_device != nullptr);
-
 	LOGGER_INFO("Destroying VK_Pipeline");
 
 	for (int i = 0; i < m_descriptorLayouts.size(); ++i)
 	{
-		vkDestroyDescriptorSetLayout(*_device->GetDevice(), m_descriptorLayouts[i].layout, VK_NULL_HANDLE);
+		vkDestroyDescriptorSetLayout(*VK_Device::Get().GetDevice(), m_descriptorLayouts[i].layout, VK_NULL_HANDLE);
 	}
 	LOGGER_INFO("VkDescriptorSetLayout is destroyed");
 
-	vkDestroyPipelineLayout(*_device->GetDevice(), m_pipelineLayout, nullptr);
+	vkDestroyPipelineLayout(*VK_Device::Get().GetDevice(), m_pipelineLayout, nullptr);
 	LOGGER_INFO("VkPipelineLayout is destroyed");
 
-	vkDestroyPipeline(*_device->GetDevice(), m_pipeline, nullptr);
+	vkDestroyPipeline(*VK_Device::Get().GetDevice(), m_pipeline, nullptr);
 	LOGGER_INFO("VkPipeline is destroyed");
 }
 

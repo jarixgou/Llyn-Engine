@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "d:\\llyn engine\\core\\render\\vulkan\\vk_pipeline.h",
+        "Source": "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_pipeline.h",
         "ProvidedModule": "",
         "Includes": [
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
@@ -107,7 +107,7 @@
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_av1std_encode.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std_decode.h",
-            "d:\\llyn engine\\core\\llyncore.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\llyncore.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xstring",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_string_view.hpp",
