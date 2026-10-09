@@ -40,11 +40,11 @@ void VK_RenderWindow::Cleanup()
 
 void VK_RenderWindow::Clear(VkCommandBuffer _cmdBuff, uint32_t _imageIndex)
 {
-	m_swapChain->GetImage(_imageIndex)->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 1);
+	m_swapChain->GetImage(_imageIndex)->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
 	if (m_depthResources != nullptr)
 	{
-		m_depthResources->GetImage()->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL, 1);
+		m_depthResources->GetImage()->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 	}
 }
 
@@ -115,7 +115,7 @@ void VK_RenderWindow::EndRendering(VkCommandBuffer _cmdBuff)
 
 void VK_RenderWindow::Display(VkCommandBuffer _cmdBuff, uint32_t _imageIndex)
 {
-	m_swapChain->GetImage(_imageIndex)->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1);
+	m_swapChain->GetImage(_imageIndex)->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 }
 
 const VK_SwapChain* VK_RenderWindow::GetSwapChain()

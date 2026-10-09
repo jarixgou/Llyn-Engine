@@ -110,7 +110,7 @@ void VK_DescriptorManager::StoreData(std::string _name, void* _data, size_t _siz
 			{
 				const bool isCreated = descHandle->shaderBuffer[i].IsCreated(_frameIndex);
 
-				descHandle->shaderBuffer[i].StoreData(&VK_Device::Get(), _data, _size, layoutInfo.type, _frameIndex);
+				descHandle->shaderBuffer[i].StoreData(_data, _size, layoutInfo.type, _frameIndex);
 
 				if (!isCreated || layoutInfo.type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)
 				{

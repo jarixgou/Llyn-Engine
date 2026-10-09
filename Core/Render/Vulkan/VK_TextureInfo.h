@@ -10,7 +10,7 @@ struct VK_TextureInfo
 {
 	TextureConfig config;
 	VkFormat preferredFormat = VK_FORMAT_UNDEFINED;
-	VkImageUsageFlagBits usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	VkImageUsageFlags usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 	VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED;
 	VkImageAspectFlags aspect = VK_IMAGE_ASPECT_NONE;
 	Vec2u textureSize = {0, 0};

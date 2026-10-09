@@ -13,8 +13,10 @@ void VK_DepthResources::Init(VkExtent2D _extent)
 {
 	const VkFormat depthFormat = FinDepthFormat(&VK_Device::Get());
 
+	LOGGER_INFO("Depth resource creation !");
 	m_image.Init(depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, IMAGE_TYPE_2D, VK_IMAGE_ASPECT_DEPTH_BIT,
 		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 1, Vec2u(_extent.width, _extent.height));
+	LOGGER_INFO("Depth resource created !");
 }
 
 void VK_DepthResources::Cleanup()

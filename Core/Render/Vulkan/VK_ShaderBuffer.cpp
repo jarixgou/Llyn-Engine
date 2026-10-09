@@ -25,10 +25,8 @@ void VK_ShaderBuffer::CreateUniform(VK_Device* _device, const VK_LayoutInfo& _la
 	}
 }
 
-void VK_ShaderBuffer::StoreData(const VK_Device* _device, void* _data, size_t _size, VkDescriptorType _type, uint32_t _frameIndex)
+void VK_ShaderBuffer::StoreData(void* _data, size_t _size, VkDescriptorType _type, uint32_t _frameIndex)
 {
-	LLYN_ASSERT(_device != nullptr);
-
 	if (!createdFrame[_frameIndex])
 	{
 		bufferUsage = _type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER ?

@@ -69,6 +69,8 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 
 	m_instance->Init("Llyn");
 	VK_Device::Get().Init(m_instance);
+	VK_VmaAllocatorWrapper::Get().Init(m_instance);
+
 	m_renderWindow->Init(m_instance, true);
 
 	m_frameSync->Init(m_renderWindow->GetSwapChain());

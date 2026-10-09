@@ -1,8 +1,9 @@
 {
-    "FilterMode": 0,
-    "ImageType": 1,
+    "Format": 0,
+    "ImageFilter": 0,
     "Mipmap": true,
     "MipmapFilter": 0,
+    "Type": 1,
     "WrapMode": 0,
     "sRGB": true
 }

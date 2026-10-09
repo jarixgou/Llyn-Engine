@@ -109,7 +109,8 @@ VK_Buffer VK_Buffer::CreateIndirectBuffer(VkDeviceSize _size)
 
 VK_Buffer VK_Buffer::CreateUBO(VkDeviceSize _size)
 {
-	VK_Buffer buffer = CreateBuffer(_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0);
+	VK_Buffer buffer = CreateBuffer(_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
+		VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT);
 
 	return buffer;
 }

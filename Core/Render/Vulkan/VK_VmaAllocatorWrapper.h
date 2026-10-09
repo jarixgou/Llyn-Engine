@@ -1,7 +1,7 @@
 #ifndef VK_VMA_ALLOCATOR_WRAPPER__H
 #define VK_VMA_ALLOCATOR_WRAPPER__H
 
-#include <VMA/vk_mem_alloc.h>
+#include "../../Vma/VmaImpl.h"
 
 #include "../../LlynCore.h"
 

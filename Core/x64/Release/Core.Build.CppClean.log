@@ -1,66 +1,73 @@
-d:\llyn engine\core\x64\release\application.obj
-d:\llyn engine\core\x64\release\llyncore.obj
-d:\llyn engine\core\x64\release\vk_imgui.obj
-d:\llyn engine\core\x64\release\window.obj
-d:\llyn engine\core\x64\release\vk_memoryhelper.obj
-d:\llyn engine\core\x64\release\model.obj
-d:\llyn engine\core\x64\release\ressourcemanager.obj
-d:\llyn engine\core\x64\release\math.obj
-d:\llyn engine\core\x64\release\vk_framesync.obj
-d:\llyn engine\core\x64\release\vk_instance.obj
-d:\llyn engine\core\x64\release\vk_utils.obj
-d:\llyn engine\core\x64\release\clock.obj
-d:\llyn engine\core\x64\release\vk_swapchain.obj
-d:\llyn engine\core\x64\release\transform.obj
-d:\llyn engine\core\x64\release\mat2.obj
-d:\llyn engine\core\x64\release\mat3.obj
-d:\llyn engine\core\x64\release\vk_buffer.obj
-d:\llyn engine\core\x64\release\vk_pipeline.obj
-d:\llyn engine\core\x64\release\scene.obj
-d:\llyn engine\core\x64\release\material.obj
-d:\llyn engine\core\x64\release\meshrender.obj
-d:\llyn engine\core\x64\release\ecs.obj
-d:\llyn engine\core\x64\release\mat4.obj
-d:\llyn engine\core\x64\release\vk_descriptorlayouthandlehash.obj
-d:\llyn engine\core\x64\release\vk_renderwindow.obj
-d:\llyn engine\core\x64\release\meshfilterpooler.obj
-d:\llyn engine\core\x64\release\vk_depthresources.obj
-d:\llyn engine\core\x64\release\texture.obj
-d:\llyn engine\core\x64\release\logger.obj
-d:\llyn engine\core\x64\release\vk_device.obj
-d:\llyn engine\core\x64\release\vk_render.obj
-d:\llyn engine\core\x64\release\lightmanager.obj
-d:\llyn engine\core\x64\release\vk_descriptorlayouthandle.obj
-d:\llyn engine\core\x64\release\vk_shaderbuffer.obj
-d:\llyn engine\core\x64\release\utils.obj
-d:\llyn engine\core\x64\release\camera.obj
-d:\llyn engine\core\x64\release\quaternions.obj
-d:\llyn engine\core\x64\release\vk_descriptormanager.obj
-d:\llyn engine\core\x64\release\engine.obj
-d:\llyn engine\core\x64\release\vk_descriptorhandle.h.ifc
-d:\llyn engine\core\x64\release\vk_descriptorhandle.h.ifc.d.json
-d:\llyn engine\core\x64\release\vk_descriptorhandle.h.obj
-d:\llyn engine\core\x64\release\vk_buffer.h.ifc
-d:\llyn engine\core\x64\release\vk_buffer.h.ifc.d.json
-d:\llyn engine\core\x64\release\vk_buffer.h.obj
-d:\llyn engine\x64\release\core.pdb
-d:\llyn engine\core\x64\release\imgui_tables.obj
-d:\llyn engine\core\x64\release\imgui_impl_glfw.obj
-d:\llyn engine\core\x64\release\imgui_demo.obj
-d:\llyn engine\core\x64\release\imgui_impl_vulkan.obj
-d:\llyn engine\core\x64\release\imgui.obj
-d:\llyn engine\core\x64\release\imgui_draw.obj
-d:\llyn engine\core\x64\release\imgui_widgets.obj
-d:\llyn engine\x64\release\core.lib
-d:\llyn engine\core\x64\release\vk_descriptorhandle.h.module.json
-d:\llyn engine\core\x64\release\vk_buffer.h.module.json
-d:\llyn engine\core\x64\release\core.tlog\cl.command.1.tlog
-d:\llyn engine\core\x64\release\core.tlog\cl.items.tlog
-d:\llyn engine\core\x64\release\core.tlog\cl.read.1.tlog
-d:\llyn engine\core\x64\release\core.tlog\cl.write.1.tlog
-d:\llyn engine\core\x64\release\core.tlog\lib-link.read.1.tlog
-d:\llyn engine\core\x64\release\core.tlog\lib-link.write.1.tlog
-d:\llyn engine\core\x64\release\core.tlog\lib.command.1.tlog
-d:\llyn engine\core\x64\release\core_md.tlog\cl.command.1.tlog
-d:\llyn engine\core\x64\release\core_md.tlog\microsoft.build.cpptasks.cl.read.1.tlog
-d:\llyn engine\core\x64\release\core_md.tlog\microsoft.build.cpptasks.cl.write.1.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_framesync.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_swapchain.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_descriptormanager.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_imgui.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_shaderbuffer.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_vmaallocatorwrapper.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_depthresources.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_image.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_renderwindow.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\texture.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_buffer.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_render.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_pipeline.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_texture.obj
+c:\users\etudiant2\llyn-engine\x64\release\core.pdb
+c:\users\etudiant2\llyn-engine\core\x64\release\spirv_reflect.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\application.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\logger.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\mat2.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\mat3.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\quaternions.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\clock.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\transform.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\ecs.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\imgui.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\imgui_demo.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\imgui_draw.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\imgui_impl_glfw.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\imgui_impl_vulkan.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\imgui_tables.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\imgui_widgets.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\hierarchyinterface.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\inspectorinterface.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\model.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\ressourcemanager.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\llyncore.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\math.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_descriptorlayouthandle.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_device.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\lightmanager.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\meshrender.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\mat4.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_descriptorlayouthandlehash.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_instance.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\material.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\scene.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_utils.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vertex.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\camera.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\meshfilterpooler.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\engine.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\window.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\utils.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_memoryhelper.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_buffer.h.ifc
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_buffer.h.ifc.d.json
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_buffer.h.obj
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_descriptorhandle.h.ifc
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_descriptorhandle.h.ifc.d.json
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_descriptorhandle.h.obj
+c:\users\etudiant2\llyn-engine\x64\release\core.lib
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_descriptorhandle.h.module.json
+c:\users\etudiant2\llyn-engine\core\x64\release\vk_buffer.h.module.json
+c:\users\etudiant2\llyn-engine\core\x64\release\core.tlog\cl.10296.write.1.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\core.tlog\cl.command.1.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\core.tlog\cl.items.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\core.tlog\cl.read.1.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\core.tlog\lib-link.read.1.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\core.tlog\lib-link.write.1.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\core.tlog\lib.command.1.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\core_md.tlog\cl.command.1.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\core_md.tlog\microsoft.build.cpptasks.cl.read.1.tlog
+c:\users\etudiant2\llyn-engine\core\x64\release\core_md.tlog\microsoft.build.cpptasks.cl.write.1.tlog

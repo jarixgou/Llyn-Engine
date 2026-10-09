@@ -19,7 +19,7 @@ struct VK_ShaderBuffer
 	std::vector<bool> createdFrame = {false, false};
 
 	void CreateUniform(VK_Device* _device, const VK_LayoutInfo& _layoutInfo);
-	void StoreData(const VK_Device* _device, void* _data, size_t _size, VkDescriptorType _type, uint32_t _frameIndex);
+	void StoreData(void* _data, size_t _size, VkDescriptorType _type, uint32_t _frameIndex);
 	bool IsCreated(uint32_t _frameIndex) const;
 };
 

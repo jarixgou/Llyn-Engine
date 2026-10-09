@@ -54,7 +54,7 @@ std::vector<VK_DescriptorLayoutHandle> VK_Pipeline::GetDescriptorLayouts()
 
 void VK_Pipeline::CreateDescriptorSetLayout(const VK_Device* _device)
 {
-	SpvReflectShaderModule 
+	//SpvReflectShaderModule 
 
 	std::vector<VK_LayoutInfo> bindlessLayoutInfo =
 	{

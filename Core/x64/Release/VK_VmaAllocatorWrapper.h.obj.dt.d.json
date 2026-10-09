@@ -4,7 +4,8 @@
         "Source": "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_vmaallocatorwrapper.h",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\users\\etudiant2\\llyn-engine\\librairies\\include\\vma\\vk_mem_alloc.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\vma\\vmaimpl.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\vma\\vk_mem_alloc.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vulkan.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vk_platform.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\stddef.h",

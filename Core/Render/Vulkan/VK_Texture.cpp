@@ -24,7 +24,7 @@ void VK_Texture::Init(VK_TextureInfo& _info)
 
 		VkCommandBuffer cmdBuff = VK_Buffer::BeginSingleTimeCommand();
 
-		TransitionLayout(cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_mipLevels);
+		TransitionLayout(cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 		VK_Buffer::CopyBufferToImage(cmdBuff, &stagingBuff, &m_image, _info.textureSize);
 
@@ -34,7 +34,7 @@ void VK_Texture::Init(VK_TextureInfo& _info)
 		}
 		else
 		{
-			TransitionLayout(cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, m_mipLevels);
+			TransitionLayout(cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		}
 
 		VK_Buffer::EndSingleTimeCommand(cmdBuff);
@@ -79,6 +79,8 @@ void VK_Texture::CreateSampler(VkFilter _filter, VkSamplerMipmapMode _mipFilter,
 
 void VK_Texture::GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize)
 {
+	LOGGER_INFO("Generate Mipmap ! ");
+
 	VkFormatProperties2 formatProps{};
 	formatProps.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
 	vkGetPhysicalDeviceFormatProperties2(*VK_Device::Get().GetPhycicalDevice(), m_format, &formatProps);
@@ -92,7 +94,9 @@ void VK_Texture::GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize)
 
 	for (uint32_t i = 1; i < m_mipLevels; ++i)
 	{
-		TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, i - 1);
+		LOGGER_INFO("First barrier before ! ");
+		TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, i - 1, 1);
+		LOGGER_INFO("First barrier after ! ");
 
 		VkImageSubresourceLayers srcSubresourceLayers{};
 		srcSubresourceLayers.aspectMask = m_aspect;
@@ -128,12 +132,15 @@ void VK_Texture::GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize)
 		blitInfo.srcImageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 		blitInfo.dstImage = m_image;
 		blitInfo.dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		blitInfo.regionCount = 1;
 		blitInfo.pRegions = &blit;
 		blitInfo.filter = VK_FILTER_LINEAR;
 
 		vkCmdBlitImage2(_cmdBuff, &blitInfo);
 
-		TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, i - 1);
+		LOGGER_INFO("Second barrier before ! ");
+		TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, i - 1, 1);
+		LOGGER_INFO("Second barrier after ! ");
 
 		if (1 < mipSize.x)
 		{
@@ -145,7 +152,9 @@ void VK_Texture::GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize)
 		}
 	}
 
-	TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, m_mipLevels - 1);
+	TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, m_mipLevels - 1, 1);
+
+	LOGGER_INFO("Mipmap generated ! ");
 }
 
 VkFormat VK_Texture::GetFormat(ImageFormat _format, bool _sRGB)

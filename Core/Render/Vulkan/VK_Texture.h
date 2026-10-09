@@ -2,7 +2,7 @@
 #define VK_TEXTURE__H
 #include "VK_Image.h"
 
-#include <VMA/vk_mem_alloc.h>
+#include "../../Vma/VmaImpl.h"
 
 #include "../../Vector/FwdVec2.h"
 #include "../../LlynCore.h"

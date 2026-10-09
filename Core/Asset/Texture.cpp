@@ -34,7 +34,7 @@ bool Texture::Load(const std::string& _filePath)
 
 	VK_TextureInfo textureInfo{};
 	textureInfo.config = m_config;
-	textureInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	textureInfo.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 	textureInfo.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
 	textureInfo.textureSize = { static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight) };
 	textureInfo.data = pixels;

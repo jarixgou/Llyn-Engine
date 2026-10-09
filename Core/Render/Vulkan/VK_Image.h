@@ -30,8 +30,11 @@ public:
 
 	void CreateView();
 
-	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout, uint32_t _baseMipLevel);
-	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout, uint32_t _baseMipLevel);
+	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout);
+	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout);
+	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout, uint32_t _baseMipLevel, uint32_t _levelCount);
+	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout, uint32_t _baseMipLevel, uint32_t
+	                      _levelCount);
 
 	bool HasStencilComponent(VkFormat _format);
 private:
@@ -39,7 +42,7 @@ private:
 	static VkImageViewType GetViewType(ImageType _type);
 
 	void ImageBarrier(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout,
-	                  VkImageLayout _newLayout, uint32_t _layerCount, uint32_t _baseMipsLevel);
+	                  VkImageLayout _newLayout, uint32_t _layerCount, uint32_t _baseMipsLevel, uint32_t _levelCount);
 
 	VkImageAspectFlags GetImageAspect(VkImageLayout _layout);
 	VK_StageAndAccess GetStageAndAccess(VkImageLayout _oldLayout, VkImageLayout _newLayout);

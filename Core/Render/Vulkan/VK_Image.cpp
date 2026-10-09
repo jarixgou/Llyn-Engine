@@ -14,9 +14,14 @@ void VK_Image::Init(VkFormat _format, VkImageLayout _layout, const ImageType& _t
 	m_format = _format;
 	m_layout = _layout;
 
+
+	LOGGER_INFO("Image type " + std::to_string(_type));
+
 	m_type = GetType(_type);
 	m_viewType = GetViewType(_type);
 	m_mipLevels = _mipsLevel;
+	m_aspect = _aspect;
+	m_usage = _usage;
 
 	m_swapChain = _swapChain;
 
@@ -25,13 +30,15 @@ void VK_Image::Init(VkFormat _format, VkImageLayout _layout, const ImageType& _t
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageInfo.pNext = VK_NULL_HANDLE;
-		imageInfo.format = _format;
+		imageInfo.format = m_format;
+		imageInfo.imageType = m_type;
 		imageInfo.extent = { _textureSize.x, _textureSize.y, 1 };
-		imageInfo.mipLevels = _mipsLevel;
+		imageInfo.mipLevels = m_mipLevels;
 		imageInfo.arrayLayers = 1;
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 		imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-		imageInfo.usage = _usage;
+		imageInfo.usage = m_usage;
+
 		VK_VmaAllocatorWrapper::Get().CreateImage(imageInfo, VMA_MEMORY_USAGE_AUTO, 0, m_image, m_allocation);
 	}
 	CreateView();
@@ -71,15 +78,26 @@ void VK_Image::CreateView()
 		"Failed to create image view ! ");
 }
 
-void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout, uint32_t _baseMipLevel)
+void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout)
 {
-	TransitionLayout(_cmdBuff, m_layout, _newLayout, _baseMipLevel);
+	TransitionLayout(_cmdBuff, m_layout, _newLayout, 0, m_mipLevels);
+}
+
+void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout)
+{
+	TransitionLayout(_cmdBuff, _oldLayout, _newLayout, 0, m_mipLevels);
+}
+
+void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout, uint32_t _baseMipLevel,
+                                uint32_t _levelCount)
+{
+	TransitionLayout(_cmdBuff, m_layout, _newLayout, _baseMipLevel, _levelCount);
 }
 
 void VK_Image::TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout,
-	uint32_t _baseMipLevel)
+                                uint32_t _baseMipLevel, uint32_t _levelCount)
 {
-	ImageBarrier(_cmdBuff, _oldLayout, _newLayout, 1, _baseMipLevel);
+	ImageBarrier(_cmdBuff, _oldLayout, _newLayout, 1, _baseMipLevel, _levelCount);
 	m_layout = _newLayout;
 }
 
@@ -140,16 +158,16 @@ VkImageViewType VK_Image::GetViewType(ImageType _type)
 }
 
 void VK_Image::ImageBarrier(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout,
-                            uint32_t _layerCount, uint32_t _baseMipsLevel)
+                            uint32_t _layerCount, uint32_t _baseMipsLevel, uint32_t _levelCount)
 {
 	assert(_layerCount > 0);
 
 	VK_StageAndAccess stageAndAccess = GetStageAndAccess(_oldLayout, _newLayout);
 
 	VkImageSubresourceRange subresource{};
-	subresource.aspectMask = GetImageAspect(_newLayout);
+	subresource.aspectMask = m_aspect;
 	subresource.baseMipLevel = _baseMipsLevel;
-	subresource.levelCount = m_mipLevels;
+	subresource.levelCount = _levelCount;
 	subresource.baseArrayLayer = 0;
 	subresource.layerCount = _layerCount;
 
@@ -242,9 +260,13 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 			stageAndAccess.dstStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
 			stageAndAccess.dstAccess = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
 		}
+		else if (_newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+		{
+			
+		}
 		else
 		{
-			LOGGER_CRITICAL("Unknow barrier case 1 !");
+			LOGGER_CRITICAL("Unknow barrier case 1 !" + std::to_string(_oldLayout) + " | " + std::to_string(_newLayout));
 		}
 	}
 	else if (_oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
