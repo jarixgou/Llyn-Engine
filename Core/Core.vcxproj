@@ -134,13 +134,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;$(SolutionDIr)Librairies\Lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;shaderc_combined.lib
-;spirv-cross-core.lib
-;spirv-cross-glsl.lib
-;spirv-cross-hlsl.lib
-;spirv-cross-msl.lib
-;spirv-reflect-static.lib;
-glfw3.lib;fastgltf-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;shaderc_combined.lib;spirv-cross-core.lib;spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-msl.lib;spirv-reflect-static-d.lib;glfw3.lib;fastgltf-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -167,13 +161,7 @@ glfw3.lib;fastgltf-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(VK_SDK_PATH)\Lib;$(SolutionDIr)Librairies\Lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;shaderc_combined.lib
-;spirv-cross-core.lib
-;spirv-cross-glsl.lib
-;spirv-cross-hlsl.lib
-;spirv-cross-msl.lib
-;spirv-reflect-static.lib;
-glfw3.lib;fastgltf.lib</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;shaderc_combined.lib;spirv-cross-core.lib;spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-msl.lib;spirv-reflect-static.lib;glfw3.lib;fastgltf.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -248,6 +236,8 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClInclude Include="Render\Window.h" />
     <ClInclude Include="Asset\Material.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SPIRV-Reflect\include\spirv\unified1\spirv.h" />
+    <ClInclude Include="SPIRV-Reflect\spirv_reflect.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Utils\VK_Utils.h" />
     <ClInclude Include="Utils\Vulkan\VK_MemoryHelper.h" />
@@ -310,6 +300,7 @@ glfw3.lib;fastgltf.lib</AdditionalDependencies>
     <ClCompile Include="Render\Vulkan\VK_VmaAllocatorWrapper.cpp" />
     <ClCompile Include="Render\Window.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SPIRV-Reflect\spirv_reflect.c" />
     <ClCompile Include="Utils\Utils.cpp" />
     <ClCompile Include="Utils\VK_Utils.cpp" />
     <ClCompile Include="Utils\Vulkan\VK_MemoryHelper.cpp" />

@@ -258,6 +258,12 @@
     <ClInclude Include="Render\Vulkan\VK_RenderGraph.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="SPIRV-Reflect\spirv_reflect.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="SPIRV-Reflect\include\spirv\unified1\spirv.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Utils\Utils.cpp">
@@ -420,6 +426,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Vertex.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="SPIRV-Reflect\spirv_reflect.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

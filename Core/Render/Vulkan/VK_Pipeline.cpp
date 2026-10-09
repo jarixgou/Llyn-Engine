@@ -1,5 +1,7 @@
 #include "VK_Pipeline.h"
 
+#include "../../SPIRV-Reflect/spirv_reflect.h"
+
 #include "VK_Device.h"
 #include "VK_DescriptorLayoutHandle.h"
 #include "VK_LayoutInfo.h"
@@ -52,6 +54,8 @@ std::vector<VK_DescriptorLayoutHandle> VK_Pipeline::GetDescriptorLayouts()
 
 void VK_Pipeline::CreateDescriptorSetLayout(const VK_Device* _device)
 {
+	SpvReflectShaderModule 
+
 	std::vector<VK_LayoutInfo> bindlessLayoutInfo =
 	{
 		{"textures", 0, 0, 1024,
