@@ -44,7 +44,7 @@ void VK_RenderWindow::Clear(VkCommandBuffer _cmdBuff, uint32_t _imageIndex)
 
 	if (m_depthResources != nullptr)
 	{
-		m_depthResources->GetImage()->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+		m_depthResources->GetImage()->TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 	}
 }
 

@@ -23,7 +23,7 @@ public:
 	
 	std::vector<VK_DescriptorLayoutHandle> GetDescriptorLayouts();
 private:
-	void CreateDescriptorSetLayout(const VK_Device* _device);
+	void CreateDescriptorSetLayout(const VK_Device* _device, const std::string& _filepath);
 
 	void CreateGraphicsPipeline(const VK_Device* _device, const VK_SwapChain* _swapChain, const PipelineInfo& _info);
 

@@ -31,14 +31,14 @@ struct PipelineInfo
 	BlendMode blendMode = BlendMode::ALPHA;
 	RenderFace renderFace = RenderFace::FRONT;
 
-	std::string shader = "Core/Shaders/slang.spv";
+	std::string shaderPath = "Core/Shaders/slang.spv";
 
 	bool operator==(const PipelineInfo& _info) const
 	{
 		return surfaceType == _info.surfaceType &&
 			blendMode == _info.blendMode &&
 			renderFace == _info.renderFace &&
-			shader == _info.shader;
+			shaderPath == _info.shaderPath;
 	}
 };
 
@@ -49,7 +49,7 @@ struct PipelineInfoHash
 		const size_t h1 = std::hash<uint8_t>()(static_cast<uint8_t>(_info.surfaceType));
 		const size_t h2 = std::hash<uint8_t>()(static_cast<uint8_t>(_info.blendMode));
 		const size_t h3 = std::hash<uint8_t>()(static_cast<uint8_t>(_info.renderFace));
-		const size_t h4 = std::hash<std::string>()(_info.shader);
+		const size_t h4 = std::hash<std::string>()(_info.shaderPath);
 
 		return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3);
 	}

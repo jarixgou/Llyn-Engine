@@ -1,6 +1,7 @@
 #include "VK_Pipeline.h"
 
-#include "../../SPIRV-Reflect/spirv_reflect.h"
+#include <filesystem>
+#include <JSON/simdjson.h>
 
 #include "VK_Device.h"
 #include "VK_DescriptorLayoutHandle.h"
@@ -16,7 +17,7 @@ void VK_Pipeline::Init(const VK_SwapChain* _swapChain, const PipelineInfo& _info
 {
 	LLYN_ASSERT(_swapChain != nullptr);
 
-	CreateDescriptorSetLayout(&VK_Device::Get());
+	CreateDescriptorSetLayout(&VK_Device::Get(), _info.shaderPath);
 	CreateGraphicsPipeline(&VK_Device::Get(), _swapChain, _info);
 }
 
@@ -52,10 +53,8 @@ std::vector<VK_DescriptorLayoutHandle> VK_Pipeline::GetDescriptorLayouts()
 	return m_descriptorLayouts;
 }
 
-void VK_Pipeline::CreateDescriptorSetLayout(const VK_Device* _device)
+void VK_Pipeline::CreateDescriptorSetLayout(const VK_Device* _device, const std::string& _filepath)
 {
-	//SpvReflectShaderModule 
-
 	std::vector<VK_LayoutInfo> bindlessLayoutInfo =
 	{
 		{"textures", 0, 0, 1024,

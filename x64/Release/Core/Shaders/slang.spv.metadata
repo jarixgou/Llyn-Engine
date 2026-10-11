@@ -1,0 +1,82 @@
+{
+	"Sets": [
+		"BindingInfos": [
+			"Uniform": {
+				"Name": "textures",
+				"Binding": 0,
+				"UniformType": 2,
+				"ShaderStage": 1,
+				"Bindless" : true
+			}
+		],
+		"BindingInfos": [
+			"Uniform": {
+				"Name": "vertices",
+				"Binding": 0,
+				"UniformType": 1,
+				"ShaderStage": 0,
+				"Bindless": false
+			},
+			"Uniform": {
+				"Name": "indices",
+				"Binding": 1,
+				"UniformType": 1,
+				"ShaderStage": 0,
+				"Bindless": false
+			},
+			"Uniform": {
+				"Name": "materials",
+				"Binding": 2,
+				"UniformType": 1,
+				"ShaderStage": 1,
+				"Bindless": false
+			}
+		],
+		"BindingInfos": [
+			"Uniform": {
+				"Name": "matrices",
+				"Binding": 0,
+				"UniformType": 1,
+				"ShaderStage": 0,
+				"Bindless": false
+			},
+			"Uniform": {
+				"Name": "metaDatas",
+				"Binding": 1,
+				"UniformType": 1,
+				"ShaderStage": 0,
+				"Bindless": false
+			}
+		]
+		"BindingInfos": [
+			"Uniform": {
+				"Name": "dirLights",
+				"Binding": 0,
+				"UniformType": 1,
+				"ShaderStage": 1,
+				"Bindless": false
+			},
+			"Uniform": {
+				"Name": "pointLights",
+				"Binding": 1,
+				"UniformType": 1,
+				"ShaderStage": 1,
+				"Bindless": false
+			},
+			"Uniform" : {
+				"Name": "spotLights",
+				"Binding": 2,
+				"UniformType": 1,
+				"ShaderStage": 1,
+				"Bindless": false
+			},
+			"Uniform": {
+				"Name": "lightData",
+				"Binding": 3,
+				"UniformType": 0,
+				"ShaderStage": 1,
+				"Bindless": false
+			}
+		]
+	]
+}

@@ -51,15 +51,16 @@ bool Model::Load(const std::string& _filePath)
 		lastSlash = 0;
 	}
 
-	size_t lastDot = _filePath.find_last_of('.');
+	m_rootDir = _filePath.substr(0, lastSlash + 1);
+	m_name = _filePath.substr(lastSlash + 1);
+
+	size_t lastDot = m_name.find_last_of('.');
 	if (lastDot == std::string::npos)
 	{
 		// TODO: print error with logger
 		return false;
 	}
-
-	m_rootDir = _filePath.substr(0, lastSlash + 1);
-	m_name = _filePath.substr(lastSlash, lastDot);
+	m_name = m_name.substr(0, lastDot);
 
 	auto asset = parser.loadGltf(gltfFile.get(), m_rootDir, gltfOptions);
 	if (asset.error() != fastgltf::Error::None)
@@ -70,18 +71,18 @@ bool Model::Load(const std::string& _filePath)
 
 	fastgltf::Asset gltfAsset = std::move(asset.get());
 
-	m_checkedID.reserve(gltfAsset.nodes.size());
-
 	const size_t sceneIndex = gltfAsset.defaultScene.value_or(0);
 	for (size_t i = 0; i < gltfAsset.scenes[sceneIndex].nodeIndices.size(); i++)
 	{
 		Mesh rootModel;
 
 		Transform transform;
-		ParseNode(&rootModel, gltfAsset, i, transform);
+		ParseNode(&rootModel, gltfAsset, gltfAsset.scenes[sceneIndex].nodeIndices[i], transform);
 
 		m_rootModels.emplace_back(rootModel);
 	}
+
+	return true;
 }
 
 void Model::Unload()
@@ -151,31 +152,27 @@ void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_
 		return;
 	}
 
-	bool checked = false;
-	for (size_t i = 0; i < m_checkedID.size(); i++)
-	{
-		if (_nodeIndex == m_checkedID[i])
-		{
-			checked = true;
-		}
-	}
-
 	const std::string nodeName = m_name + "_" + std::string(_gltfAsset.nodes[_nodeIndex].name);
 
-	if (_gltfAsset.nodes[_nodeIndex].meshIndex.has_value() && !checked)
-	{
-		MeshFilter* meshFilter = new MeshFilter;
-		*meshFilter = MeshFilterPooler::Get().GetMesh(nodeName);
-		RessourceID materialID = TOMBSTONE_RESOURCE;
+	size_t primitiveCount = 0;
 
+	if (_gltfAsset.nodes[_nodeIndex].meshIndex.has_value())
+	{
 		const size_t meshIndex = _gltfAsset.nodes[_nodeIndex].meshIndex.value();
 
-		std::vector<Vertex> verticies;
-		std::vector<Index> indices;
+		primitiveCount = _gltfAsset.meshes[meshIndex].primitives.size();
 
-		for (size_t i = 0; i < _gltfAsset.meshes[meshIndex].primitives.size(); i++)
+		_rootModel->subMeshes.resize(primitiveCount + _gltfAsset.nodes[_nodeIndex].children.size());
+
+		for (size_t i = 0; i < primitiveCount; i++)
 		{
-			auto& primitives = _gltfAsset.meshes[meshIndex].primitives[i];
+			const fastgltf::Primitive& primitives = _gltfAsset.meshes[meshIndex].primitives[i];
+
+			Mesh& sub = _rootModel->subMeshes[i];
+			sub.name = nodeName + "_" + std::to_string(i);
+			sub.transform = new Transform;
+
+			RessourceID materialID = RessourceManager::Get().GetRessourceID<Material>("Core/Materials/Lit.mat");;
 
 			size_t gltfUVIndex = 0;
 
@@ -196,109 +193,34 @@ void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_
 					}
 				}
 
-				materialID = GetMaterial(_gltfAsset, gltfMaterial);
+				materialID = GetMaterial(_gltfAsset, gltfMaterial, primitives.materialIndex.value());
 			}
-			else
-			{
-				materialID = RessourceManager::Get().GetRessourceID<Material>("Core/Materials/Lit.mat");
-			}
+
+			std::string meshFilterName = m_rootDir + m_name + "_mesh" + std::to_string(meshIndex) +
+				"_prim" + std::to_string(i);
+
+			MeshFilter* meshFilter = new MeshFilter;
+			*meshFilter = MeshFilterPooler::Get().GetMesh(meshFilterName);
 
 			// Create a mesh filter 
 			if (meshFilter->name == "None")
 			{
-				size_t startVertices = verticies.size();
-				size_t startIndices = indices.size();
-
-				// Create vertex data
-				// Position
-				const fastgltf::Attribute* positionAttribute = primitives.findAttribute("POSITION");
-				if (positionAttribute != nullptr)
-				{
-					const fastgltf::Accessor& positionAccessor = _gltfAsset.accessors[positionAttribute->accessorIndex];
-
-					if (positionAccessor.bufferViewIndex.has_value())
-					{
-						verticies.resize(startVertices + positionAccessor.count);
-
-						fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_gltfAsset, positionAccessor,
-							[&](fastgltf::math::fvec3 _pos, size_t _idx)
-							{
-								verticies[startVertices + _idx].pos = { _pos.x(), _pos.y(), _pos.z() };
-							});
-					}
-				}
-
-				// Normal
-				const fastgltf::Attribute* normalAttribute = primitives.findAttribute("NORMAL");
-				if (normalAttribute != nullptr)
-				{
-					const fastgltf::Accessor& normalAccessor = _gltfAsset.accessors[normalAttribute->accessorIndex];
-
-					if (normalAccessor.bufferViewIndex.has_value())
-					{
-						if (verticies.size() != normalAccessor.count)
-						{
-							verticies.resize(normalAccessor.count);
-						}
-
-						fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_gltfAsset, normalAccessor,
-							[&](fastgltf::math::fvec3 _normal, size_t _idx)
-							{
-								verticies[_idx].normal = { _normal.x(), _normal.y(), _normal.z() };
-							});
-					}
-				}
-
-				// UV coordinate
-				std::string UVAttributeName = "TEXCOORD_" + std::to_string(gltfUVIndex);
-				const fastgltf::Attribute* UVAttribute = primitives.findAttribute(UVAttributeName);
-				if (UVAttribute != nullptr)
-				{
-					const fastgltf::Accessor& UVAccessor = _gltfAsset.accessors[UVAttribute->accessorIndex];
-
-					if (UVAccessor.bufferViewIndex.has_value())
-					{
-						if (verticies.size() != UVAccessor.count)
-						{
-							verticies.resize(UVAccessor.count);
-						}
-
-						fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec2>(_gltfAsset, UVAccessor,
-							[&](fastgltf::math::fvec2 _uv, size_t _idx)
-							{
-								verticies[_idx].uv0 = { _uv.x(), _uv.y() };
-							});
-					}
-				}
-
-				// Create indicies
-				assert(primitives.indicesAccessor.has_value());
-				const fastgltf::Accessor& indexAccesor = _gltfAsset.accessors[primitives.indicesAccessor.value()];
-				if (indexAccesor.componentType == fastgltf::ComponentType::UnsignedByte ||
-					indexAccesor.componentType == fastgltf::ComponentType::UnsignedShort ||
-					indexAccesor.componentType == fastgltf::ComponentType::UnsignedInt)
-				{
-					indices.resize(startIndices + indexAccesor.count);
-
-					fastgltf::iterateAccessorWithIndex<Index>(_gltfAsset, indexAccesor,
-						[&](Index _index, size_t _idx)
-						{
-							indices[startIndices + _idx] = _index;
-						});
-				}
+				std::vector<Vertex> verticies;
+				std::vector<Index> indices;
+				LoadPrimitive(_gltfAsset, primitives, gltfUVIndex, verticies, indices);
+				*meshFilter = MeshFilterPooler::Get().Add(meshFilterName, verticies, indices);
 			}
+
+			MeshRender* meshRender = new MeshRender;
+			meshRender->SetMaterial(materialID);
+
+			sub.meshFilter = meshFilter;
+			sub.meshRender = meshRender;
 		}
-
-		if (meshFilter->name == "None")
-		{
-			*meshFilter = MeshFilterPooler::Get().Add(nodeName, verticies, indices);
-		}
-
-		MeshRender* meshRender = new MeshRender;
-		meshRender->SetMaterial(materialID);
-
-		_rootModel->meshFilter = meshFilter;
-		_rootModel->meshRender = meshRender;
+	}
+	else
+	{
+		_rootModel->subMeshes.resize(_gltfAsset.nodes[_nodeIndex].children.size());
 	}
 
 	_rootModel->name = nodeName;
@@ -319,25 +241,92 @@ void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_
 		[&](const fastgltf::math::fmat4x4& _mat)
 		{
 			// Implement
-		}}, _gltfAsset.nodes[_nodeIndex].transform);
+		} }, _gltfAsset.nodes[_nodeIndex].transform);
 
 	_rootModel->transform = transform;
 
-	m_checkedID.emplace_back(_nodeIndex);
-
-	if (_rootModel->subMeshes.size() != _gltfAsset.nodes[_nodeIndex].children.size())
+	for (size_t i = 0; i < _gltfAsset.nodes[_nodeIndex].children.size(); i++)
 	{
-		_rootModel->subMeshes.resize(_gltfAsset.nodes[_nodeIndex].children.size());
-		for (size_t i = 0; i < _gltfAsset.nodes[_nodeIndex].children.size(); i++)
-		{
-			ParseNode(&_rootModel->subMeshes[i], _gltfAsset, _gltfAsset.nodes[_nodeIndex].children[i], *transform);
-		}
+		ParseNode(&_rootModel->subMeshes[primitiveCount + i], _gltfAsset, _gltfAsset.nodes[_nodeIndex].children[i], *transform);
 	}
 }
 
-RessourceID Model::GetMaterial(const fastgltf::Asset& _gltfAsset, const fastgltf::Material& _material)
+void Model::LoadPrimitive(const fastgltf::Asset& _asset, const fastgltf::Primitive& _primitive,
+	const size_t& _uvIndex, std::vector<Vertex>& _outVertices, std::vector<Index>& _outIndices)
 {
-	const std::string materialPath = m_rootDir + m_name + "_" + std::string(_material.name) + ".mat";
+	const fastgltf::Attribute* positionAttrib = _primitive.findAttribute("POSITION");
+	if (positionAttrib == nullptr)
+	{
+		return;
+	}
+
+	// Get position
+	const fastgltf::Accessor& positionAccessor = _asset.accessors[positionAttrib->accessorIndex];
+	if (positionAccessor.bufferViewIndex.has_value())
+	{
+		_outVertices.resize(positionAccessor.count);
+
+		fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_asset, positionAccessor,
+			[&](fastgltf::math::fvec3 _pos, size_t _idx)
+			{
+				_outVertices[_idx].pos = { _pos.x(), _pos.y(), _pos.z() };
+			});
+	}
+
+	// Get normal
+	const fastgltf::Attribute* normalAttrib = _primitive.findAttribute("NORMAL");
+	if (normalAttrib != nullptr)
+	{
+		const fastgltf::Accessor& accessor = _asset.accessors[normalAttrib->accessorIndex];
+
+		if (accessor.bufferViewIndex.has_value())
+		{
+			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_asset, accessor,
+				[&](fastgltf::math::fvec3 _normal, size_t _idx)
+				{
+					_outVertices[_idx].normal = { _normal.x(), _normal.y(), _normal.z() };
+				});
+		}
+	}
+
+	// Get UV
+	std::string uvAttributeName = "TEXCOORD_" + std::to_string(_uvIndex);
+	const fastgltf::Attribute* uvAttrib = _primitive.findAttribute(uvAttributeName);
+	if (uvAttrib != nullptr)
+	{
+		const fastgltf::Accessor& accessor = _asset.accessors[uvAttrib->accessorIndex];
+
+		if (accessor.bufferViewIndex.has_value())
+		{
+			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec2>(_asset, accessor,
+				[&](fastgltf::math::fvec2 _uv, size_t _idx)
+				{
+					_outVertices[_idx].uv0 = { _uv.x(), _uv.y() };
+				});
+		}
+	}
+
+	// Get indices
+	assert(_primitive.indicesAccessor.has_value());
+	const fastgltf::Accessor& indexAccessor = _asset.accessors[_primitive.indicesAccessor.value()];
+	if (indexAccessor.componentType == fastgltf::ComponentType::UnsignedByte ||
+		indexAccessor.componentType == fastgltf::ComponentType::UnsignedShort ||
+		indexAccessor.componentType == fastgltf::ComponentType::UnsignedInt)
+	{
+		_outIndices.resize(indexAccessor.count);
+
+		fastgltf::iterateAccessorWithIndex<Index>(_asset, indexAccessor,
+			[&](Index _index, size_t _idx)
+			{
+				_outIndices[_idx] = _index;
+			});
+	}
+}
+
+RessourceID Model::GetMaterial(const fastgltf::Asset& _gltfAsset, const fastgltf::Material& _material, const uint32_t _materialIndex)
+{
+	const std::string materialPath = m_rootDir + m_name + "_" +
+		std::string(_material.name) + std::to_string(_materialIndex) + ".mat";
 
 	RessourceID materialID = RessourceManager::Get().GetRessourceID<Material>(materialPath);
 	if (materialID == TOMBSTONE_RESOURCE)

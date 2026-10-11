@@ -1,5 +1,44 @@
 ﻿  Analyse des sources à la recherche des dépendances de module...
-  VK_Texture.cpp
+  Model.cpp
+D:\Llyn Engine\Core\Asset\Model.cpp(196,86): warning C4267: 'argument' : conversion de 'size_t' en 'uint32_t', perte possible de données
+D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'uint32_t', perte possible de données
+  (compiler le fichier source 'Asset/Model.cpp')
+      D:\Llyn Engine\Core\Entities\ECS.h(83,24):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          D:\Llyn Engine\Core\Asset\Model.cpp(110,8):
+          voir la référence à l'instanciation de la fonction modèle 'void ECS::AddComponents<Transform>(const EntityID &,const Transform &)' en cours de compilation
+          D:\Llyn Engine\Core\Entities\ECS.h(112,3):
+          voir la référence à l'instanciation de la fonction modèle 'SparseSet<Transform> *ECS::GetPool<Transform>(void)' en cours de compilation
+  
+D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'const uint32_t', perte possible de données
+  (compiler le fichier source 'Asset/Model.cpp')
+  
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267: '=' : conversion de 'size_t' en '_Ty', perte possible de données
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267:         with
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267:         [
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267:             _Ty=Index
+D:\Llyn Engine\Core\Entities\SparseSet.h(40,25): warning C4267:         ]
+  (compiler le fichier source 'Asset/Model.cpp')
+      D:\Llyn Engine\Core\Entities\SparseSet.h(40,25):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          D:\Llyn Engine\Core\Entities\ECS.h(112,17):
+          voir la référence à l'instanciation classe modèle 'SparseSet<Transform>' en cours de compilation
+          D:\Llyn Engine\Core\Entities\SparseSet.h(33,1):
+          pendant la compilation de la fonction membre classe modèle 'void SparseSet<Transform>::Insert(const size_t &,const T &)'
+          with
+          [
+              T=Transform
+          ]
+              D:\Llyn Engine\Core\Entities\ECS.h(112,23):
+              voir la première référence à « SparseSet<Transform>::Insert » dans « ECS::AddComponents »
+  
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267: '=' : conversion de 'size_t' en '_Ty', perte possible de données
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         with
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         [
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267:             _Ty=Index
+D:\Llyn Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         ]
+  (compiler le fichier source 'Asset/Model.cpp')
+  
 spirv_reflect.obj : warning LNK4006: spvReflectBlockVariableTypeName déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée
 spirv_reflect.obj : warning LNK4006: spvReflectSourceLanguage déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée
 spirv_reflect.obj : warning LNK4006: spvReflectChangeOutputVariableLocation déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée
@@ -46,4 +85,4 @@ spirv_reflect.obj : warning LNK4006: spvReflectGetShaderModule déjà défini da
 spirv_reflect.obj : warning LNK4006: spvReflectCreateShaderModule2 déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée
 spirv_reflect.obj : warning LNK4006: spvReflectCreateShaderModule déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée
 spirv_reflect.obj : warning LNK4006: IsPointerToPointer déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée
-  Core.vcxproj -> C:\Users\Etudiant2\Llyn-Engine\x64\Release\Core.lib
+  Core.vcxproj -> D:\Llyn Engine\x64\Release\Core.lib

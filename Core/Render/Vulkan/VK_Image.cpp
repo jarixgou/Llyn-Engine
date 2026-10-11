@@ -14,9 +14,6 @@ void VK_Image::Init(VkFormat _format, VkImageLayout _layout, const ImageType& _t
 	m_format = _format;
 	m_layout = _layout;
 
-
-	LOGGER_INFO("Image type " + std::to_string(_type));
-
 	m_type = GetType(_type);
 	m_viewType = GetViewType(_type);
 	m_mipLevels = _mipsLevel;
@@ -262,7 +259,10 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 		}
 		else if (_newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 		{
-			
+			stageAndAccess.dstStage = VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT |
+				VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT;
+			stageAndAccess.dstAccess = VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
+				VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 		}
 		else
 		{
