@@ -15,6 +15,7 @@
 	}
 
 #define VK_CHECK(x, y) VkCheck(x, y)
+#define SPV_CHECK(x, y) SpvCheck(x, y)
 
 #define GET_TYPE_SIGNATURE(T) GetTypeSignature<T>()
 
@@ -113,6 +114,7 @@ StringHash GetTypeSignature()
 	return hash;
 }
 
-void VkCheck(int _result, std::string _message);
+void VkCheck(int _result, const std::string& _message);
+void SpvCheck(int _result, const std::string& _message);
 
 #endif

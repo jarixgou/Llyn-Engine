@@ -211,7 +211,7 @@
     <ClInclude Include="Render\MatricesData.h" />
     <ClInclude Include="Render\MetaData.h" />
     <ClInclude Include="Render\ShaderStage.h" />
-    <ClInclude Include="Render\SpvReflectWrapper.h" />
+    <ClInclude Include="Render\SpirvReflectWrapper.h" />
     <ClInclude Include="Render\UniformManager.h" />
     <ClInclude Include="Render\UniformType.h" />
     <ClInclude Include="Render\Vulkan\VK_DepthResources.h" />
@@ -284,7 +284,7 @@
     <ClCompile Include="Math\Matrix\Mat3.cpp" />
     <ClCompile Include="Math\Matrix\Mat4.cpp" />
     <ClCompile Include="Math\Quaternions.cpp" />
-    <ClCompile Include="Render\SpvReflectWrapper.cpp" />
+    <ClCompile Include="Render\SpirvReflectWrapper.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Buffer.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Buffer.h" />
     <ClCompile Include="Render\Vulkan\VK_DepthResources.cpp" />

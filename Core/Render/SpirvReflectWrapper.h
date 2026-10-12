@@ -9,9 +9,9 @@
 struct ShaderInfo
 {
 	std::string name = "Unknow";
+	uint32_t binding = 0;
 	UniformType uniformType = UNIFORM_TYPE_CONSTANT;
 	ShaderStage shaderStage = SHADER_STAGE_VERTEX;
-	uint32_t binding = 0;
 	bool bindless = false;
 };
 
@@ -23,6 +23,7 @@ public:
 	void LoadShader(const std::string& _filePath);
 private:
 	void ParseJson(const std::string& _filePath);
+	void LoadReflect(const std::string& _filePath);
 };
 
 #endif

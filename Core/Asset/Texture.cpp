@@ -6,6 +6,7 @@
 #include <JSON/simdjson.h>
 #include <JSON/json.hpp>
 
+#include "../Logger.h"
 #include "../Render/Vulkan/VK_Texture.h"
 #include "../Render/Vulkan/VK_TextureInfo.h"
 #include "../Vector/Vec2.h"
@@ -72,14 +73,19 @@ void Texture::LoadConfig(const std::string& _filePath)
 		simdjson::padded_string json;
 		if (simdjson::padded_string::load(metaDataPath).get(json))
 		{
-			simdjson::ondemand::parser parser;
-			simdjson::ondemand::document data;
+			LOGGER_ERROR("Failed to load texture json ! ");
+		}
 
-			if (parser.iterate(json).get(data))
-			{
-				// print error with logger
-			}
+		simdjson::ondemand::parser parser;
+		simdjson::ondemand::document data;
 
+		if (parser.iterate(json).get(data))
+		{
+			LOGGER_ERROR("Failed to parse texture json ! ");
+		}
+
+		try
+		{
 			simdjson::ondemand::object root = data.get_object();
 			for (auto field : root)
 			{
@@ -90,7 +96,7 @@ void Texture::LoadConfig(const std::string& _filePath)
 				}
 				if (key == "Type" && field.value().is_integer())
 				{
-					m_config.type  = static_cast<ImageType>(field.value().get_int32().value());
+					m_config.type = static_cast<ImageType>(field.value().get_int32().value());
 				}
 				else if (key == "sRGB" && field.value().is_integer())
 				{
@@ -113,6 +119,10 @@ void Texture::LoadConfig(const std::string& _filePath)
 					m_config.mipMapFilter = static_cast<MipMapFilter>(field.value().get_int32().value());
 				}
 			}
+		}
+		catch (const simdjson::simdjson_error& e)
+		{
+			LOGGER_ERROR("Invalid texture json : " + std::string(e.what()));
 		}
 	}
 	else
