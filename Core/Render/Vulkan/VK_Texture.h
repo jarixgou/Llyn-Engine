@@ -18,10 +18,10 @@ private:
 	void CreateSampler(VkFilter _filter, VkSamplerMipmapMode _mipFilter, VkSamplerAddressMode _wrapMode);
 	void GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize);
 
-	static VkFormat GetFormat(ImageFormat _format, bool _sRGB);
-	static VkFilter GetFilter(ImageFilter _filter);
-	VkSamplerMipmapMode GetMipFilter(MipMapFilter _filter);
-	VkSamplerAddressMode GetWrapMode(WrapMode _wrapMode);
+	static VkFormat GetFormat(const ImageFormat& _format, const bool& _sRGB);
+	static VkFilter GetFilter(const ImageFilter& _filter);
+	VkSamplerMipmapMode GetMipFilter(const MipMapFilter& _filter);
+	VkSamplerAddressMode GetWrapMode(const WrapMode& _wrapMode);
 };
 
 #endif

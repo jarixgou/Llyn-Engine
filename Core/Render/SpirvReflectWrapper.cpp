@@ -9,6 +9,8 @@
 #include "../SPIRV-Reflect/spirv_reflect.h"
 #include "../Utils/Utils.h"
 
+Format GetFormat(SpvReflectFormat _format);
+
 void SpirvReflectWrapper::LoadShader(const std::string& _filePath)
 {
 	const std::string shaderFileCache = _filePath + ".metadata";
@@ -114,13 +116,151 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 	SPV_CHECK(spvReflectCreateShaderModule(fileContent.size(), fileContent.data(), &module), 
 		"Failed to create spv reflect shader module ! ");
 
-	uint32_t count = 0;
+	for (uint32_t i = 0; i < module.entry_point_count; ++i)
+	{
+		const SpvReflectEntryPoint entryPoint = module.entry_points[i];
 
-	SPV_CHECK(spvReflectEnumerateDescriptorSets(&module, &count, nullptr),
-		"Failed to enumerate descriptor sets !");
-	std::vector<SpvReflectDescriptorSet*> sets(count);
-	SPV_CHECK(spvReflectEnumerateDescriptorSets(&module, &count, sets.data()),
-		"Failed to enumerate descriptor sets !");
+		// Get and fin Vertex Entry
+		if (entryPoint.shader_stage == SPV_REFLECT_SHADER_STAGE_VERTEX_BIT)
+		{
+			uint32_t count = 0;
 
+			SPV_CHECK(spvReflectEnumerateEntryPointInputVariables(&module, entryPoint.name, &count, nullptr),
+				"Failed to enumerate entry point input variable !");
+			std::vector<SpvReflectInterfaceVariable*> vertexInput(count);
+			SPV_CHECK(spvReflectEnumerateEntryPointInputVariables(&module, entryPoint.name, &count, vertexInput.data()),
+				"Failed to enumerate entry point input variable");
 
+			m_inputAttribute.resize(count);
+			for (uint32_t j = 0; j < count; ++j)
+			{
+				m_inputAttribute[j].location = vertexInput[j]->location;
+				m_inputAttribute[j].binding = 0;
+				m_inputAttribute[j].format = GetFormat(vertexInput[j]->format);
+			}
+
+			// Bubble sort to calculate the offset
+			for (uint32_t j = 0; j < count - 1; ++j)
+			{
+				bool swapped = false;
+				for (uint32_t k = 0; k < count - j - 1; ++k)
+				{
+					if (m_inputAttribute[k].location > m_inputAttribute[k + 1].location)
+					{
+						InputAttribute inputAttributeCopy = m_inputAttribute[k];
+						m_inputAttribute[k] = m_inputAttribute[k + 1];
+						m_inputAttribute[k + 1] = inputAttributeCopy;
+
+						swapped = true;
+					}
+				}
+
+				if (!swapped)
+				{
+					j = count;
+				}
+			}
+
+			// Calculate the offset
+			uint32_t offset = 0;
+			for (int j = 0; j < count; ++j)
+			{
+				m_inputAttribute[j].offset = offset;
+
+				offset += CalculateOffset(m_inputAttribute[j].format);
+			}
+		}
+
+		// Get and set output image 
+		if (entryPoint.shader_stage == SPV_REFLECT_SHADER_STAGE_FRAGMENT_BIT)
+		{
+			uint32_t count = 0;
+
+			SPV_CHECK(spvReflectEnumerateEntryPointOutputVariables(&module, entryPoint.name, &count, nullptr),
+				"Failed to enumerate entry point output variables ! ");
+			std::vector<SpvReflectInterfaceVariable*> outputImage(count);
+			SPV_CHECK(spvReflectEnumerateEntryPointOutputVariables(&module, entryPoint.name, &count, outputImage.data()),
+				"Failed to enumerate entry point output variables ! ");
+
+			for (uint32_t j = 0; j < count; ++j)
+			{
+				
+			}
+		}
+	}
+}
+
+uint32_t SpirvReflectWrapper::CalculateOffset(Format _format)
+{
+	switch (_format)
+	{
+	case FORMAT_R8_SINT:				return sizeof(int8_t);
+	case FORMAT_R8G8_SINT:				return sizeof(int8_t) * 2;
+	case FORMAT_R8G8B8_SINT:			return sizeof(int8_t) * 3;
+	case FORMAT_R8G8B8A8_SINT:			return sizeof(int8_t) * 4;
+	case FORMAT_R8_UINT:				return sizeof(uint8_t);
+	case FORMAT_R8G8_UINT:				return sizeof(uint8_t) * 2;
+	case FORMAT_R8G8B8_UINT:			return sizeof(uint8_t) * 3;
+	case FORMAT_R8G8B8A8_UINT:			return sizeof(uint8_t) * 4;
+	case FORMAT_R16_SINT:				return sizeof(int16_t);
+	case FORMAT_R16G16_SINT:			return sizeof(int16_t) * 2;
+	case FORMAT_R16G16B16_SINT:			return sizeof(int16_t) * 3;
+	case FORMAT_R16G16B16A16_SINT:		return sizeof(int16_t) * 4;
+	case FORMAT_R16_UINT:				return sizeof(uint16_t);
+	case FORMAT_R16G16_UINT:			return sizeof(uint16_t) * 2;
+	case FORMAT_R16G16B16_UINT:			return sizeof(uint16_t) * 3;
+	case FORMAT_R16G16B16A16_UINT:		return sizeof(uint16_t) * 4;
+	case FORMAT_R32_SINT:				return sizeof(int32_t);
+	case FORMAT_R32G32_SINT:			return sizeof(int32_t) * 2;
+	case FORMAT_R32G32B32_SINT:			return sizeof(int32_t) * 3;
+	case FORMAT_R32G32B32A32_SINT:		return sizeof(int32_t) * 4;
+	case FORMAT_R32_UINT:				return sizeof(uint32_t);
+	case FORMAT_R32G32_UINT:			return sizeof(uint32_t) * 2;
+	case FORMAT_R32G32B32_UINT:			return sizeof(uint32_t) * 3;
+	case FORMAT_R32G32B32A32_UINT:		return sizeof(uint32_t) * 4;
+	case FORMAT_R32_SFLOAT:				return sizeof(float);
+	case FORMAT_R32G32_SFLOAT:			return sizeof(float) * 2;
+	case FORMAT_R32G32B32_SFLOAT:		return sizeof(float) * 3;
+	case FORMAT_R32G32B32A32_SFLOAT:	return sizeof(float) * 4;
+	case FORMAT_MAX:
+		LOGGER_ERROR("Invalid format to calculate offset ! ");
+		break;
+	}
+
+	LOGGER_ERROR("Can't find the right enum to calculate the offset ! ");
+	return sizeof(float) * 4;
+}
+
+Format GetFormat(SpvReflectFormat _format)
+{
+	switch (_format)
+	{
+	case SPV_REFLECT_FORMAT_UNDEFINED:				return FORMAT_R32G32B32A32_SFLOAT;
+	case SPV_REFLECT_FORMAT_R16_UINT:				return FORMAT_R16_UINT;
+	case SPV_REFLECT_FORMAT_R16_SINT:				return FORMAT_R16_SINT;
+	case SPV_REFLECT_FORMAT_R16_SFLOAT:				return FORMAT_R16_SFLOAT;
+	case SPV_REFLECT_FORMAT_R16G16_UINT:			return FORMAT_R16G16_UINT;
+	case SPV_REFLECT_FORMAT_R16G16_SINT:			return FORMAT_R16G16_SINT;
+	case SPV_REFLECT_FORMAT_R16G16_SFLOAT:			return FORMAT_R16G16_SFLOAT;
+	case SPV_REFLECT_FORMAT_R16G16B16_UINT:			return FORMAT_R16G16B16_UINT;
+	case SPV_REFLECT_FORMAT_R16G16B16_SINT:			return FORMAT_R16G16B16_SINT;
+	case SPV_REFLECT_FORMAT_R16G16B16_SFLOAT:		return FORMAT_R16G16B16_SFLOAT;
+	case SPV_REFLECT_FORMAT_R16G16B16A16_UINT:		return FORMAT_R16G16B16A16_UINT;
+	case SPV_REFLECT_FORMAT_R16G16B16A16_SINT:		return FORMAT_R16G16B16A16_SINT;
+	case SPV_REFLECT_FORMAT_R16G16B16A16_SFLOAT:	return FORMAT_R16G16B16A16_SFLOAT;
+	case SPV_REFLECT_FORMAT_R32_UINT:				return FORMAT_R32_UINT;
+	case SPV_REFLECT_FORMAT_R32_SINT:				return FORMAT_R32_SINT;
+	case SPV_REFLECT_FORMAT_R32_SFLOAT:				return FORMAT_R32_SFLOAT;
+	case SPV_REFLECT_FORMAT_R32G32_UINT:			return FORMAT_R32G32_UINT;
+	case SPV_REFLECT_FORMAT_R32G32_SINT:			return FORMAT_R32G32_SINT;
+	case SPV_REFLECT_FORMAT_R32G32_SFLOAT:			return FORMAT_R32G32_SFLOAT;
+	case SPV_REFLECT_FORMAT_R32G32B32_UINT:			return FORMAT_R32G32B32_UINT;
+	case SPV_REFLECT_FORMAT_R32G32B32_SINT:			return FORMAT_R32G32B32_SINT;
+	case SPV_REFLECT_FORMAT_R32G32B32_SFLOAT:		return FORMAT_R32G32B32_SFLOAT;
+	case SPV_REFLECT_FORMAT_R32G32B32A32_UINT:		return FORMAT_R32G32B32A32_UINT;
+	case SPV_REFLECT_FORMAT_R32G32B32A32_SINT:		return FORMAT_R32G32B32A32_SINT;
+	case SPV_REFLECT_FORMAT_R32G32B32A32_SFLOAT:	return FORMAT_R32G32B32A32_SFLOAT;
+	}
+
+	return FORMAT_R32G32B32A32_SFLOAT;
 }

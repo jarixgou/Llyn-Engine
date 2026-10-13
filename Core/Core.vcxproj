@@ -204,6 +204,7 @@
     <ClInclude Include="Math\Matrix\Mat3.h" />
     <ClInclude Include="Math\Matrix\Mat4.h" />
     <ClInclude Include="Math\Quaternions.h" />
+    <ClInclude Include="Render\Format.h" />
     <ClInclude Include="Render\GPUDirLight.h" />
     <ClInclude Include="Render\GPUMaterial.h" />
     <ClInclude Include="Render\GPUPointLight.h" />

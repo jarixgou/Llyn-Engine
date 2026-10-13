@@ -149,7 +149,7 @@ void VK_Texture::GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize)
 	TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, m_mipLevels - 1, 1);
 }
 
-VkFormat VK_Texture::GetFormat(ImageFormat _format, bool _sRGB)
+VkFormat VK_Texture::GetFormat(const ImageFormat& _format, const bool& _sRGB)
 {
 	if (_sRGB)
 	{
@@ -200,7 +200,7 @@ VkFormat VK_Texture::GetFormat(ImageFormat _format, bool _sRGB)
 	return VK_FORMAT_R8G8B8A8_SRGB;
 }
 
-VkFilter VK_Texture::GetFilter(ImageFilter _filter)
+VkFilter VK_Texture::GetFilter(const ImageFilter& _filter)
 {
 	switch (_filter)
 	{
@@ -223,7 +223,7 @@ VkFilter VK_Texture::GetFilter(ImageFilter _filter)
 	return VK_FILTER_NEAREST;
 }
 
-VkSamplerMipmapMode VK_Texture::GetMipFilter(MipMapFilter _filter)
+VkSamplerMipmapMode VK_Texture::GetMipFilter(const MipMapFilter& _filter)
 {
 	switch (_filter)
 	{
@@ -243,7 +243,7 @@ VkSamplerMipmapMode VK_Texture::GetMipFilter(MipMapFilter _filter)
 	return VK_SAMPLER_MIPMAP_MODE_NEAREST;
 }
 
-VkSamplerAddressMode VK_Texture::GetWrapMode(WrapMode _wrapMode)
+VkSamplerAddressMode VK_Texture::GetWrapMode(const WrapMode& _wrapMode)
 {
 	switch (_wrapMode) {
 	case WRAP_MODE_REPEAT:

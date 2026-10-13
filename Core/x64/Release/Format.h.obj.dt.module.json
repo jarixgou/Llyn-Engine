@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\Format.obj",
+            "outputs": [
+                "x64\\Release\\Format.h.obj.dt.module.json",
+                "x64\\Release\\Format.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

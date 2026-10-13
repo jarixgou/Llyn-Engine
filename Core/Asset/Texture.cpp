@@ -98,7 +98,7 @@ void Texture::LoadConfig(const std::string& _filePath)
 				{
 					m_config.type = static_cast<ImageType>(field.value().get_int32().value());
 				}
-				else if (key == "sRGB" && field.value().is_integer())
+				else if (key == "sRGB")
 				{
 					m_config.sRGB = field.value().get_bool();
 				}
@@ -110,7 +110,7 @@ void Texture::LoadConfig(const std::string& _filePath)
 				{
 					m_config.filter = static_cast<ImageFilter>(field.value().get_int32().value());
 				}
-				else if (key == "Mipmap" && field.value().is_integer())
+				else if (key == "Mipmap")
 				{
 					m_config.mipmap = field.value().get_bool();
 				}
