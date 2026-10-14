@@ -10,6 +10,8 @@
 #include "../Utils/Utils.h"
 
 Format GetFormat(SpvReflectFormat _format);
+UniformType GetUniformType(const SpvReflectDescriptorType& _type);
+ShaderStage GetShaderStage(const SpvReflectShaderStageFlagBits& _type);
 
 void SpirvReflectWrapper::LoadShader(const std::string& _filePath)
 {
@@ -95,7 +97,7 @@ void SpirvReflectWrapper::ParseJson(const std::string& _filePath)
 								shaderInfos.emplace_back(std::move(shaderInfo));
 							}
 
-							m_shaderInfos.emplace_back(std::move(shaderInfos));
+							//m_shaderInfos.emplace_back(std::move(shaderInfos));
 						}
 					}
 				}
@@ -169,25 +171,94 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 
 				offset += CalculateOffset(m_inputAttribute[j].format);
 			}
-		}
 
-		// Get and set output image 
-		if (entryPoint.shader_stage == SPV_REFLECT_SHADER_STAGE_FRAGMENT_BIT)
-		{
-			uint32_t count = 0;
-
-			SPV_CHECK(spvReflectEnumerateEntryPointOutputVariables(&module, entryPoint.name, &count, nullptr),
-				"Failed to enumerate entry point output variables ! ");
-			std::vector<SpvReflectInterfaceVariable*> outputImage(count);
-			SPV_CHECK(spvReflectEnumerateEntryPointOutputVariables(&module, entryPoint.name, &count, outputImage.data()),
-				"Failed to enumerate entry point output variables ! ");
+			count = 0;
+			SPV_CHECK(spvReflectEnumerateDescriptorSets(&module, &count, nullptr),
+				"Failed to enumerate descriptor sets ! ");
+			std::vector<SpvReflectDescriptorSet*> descriptorSets(count);
+			SPV_CHECK(spvReflectEnumerateEntryPointDescriptorSets(&module, entryPoint.name, &count, descriptorSets.data()),
+				"Failed to enumerate descriptor sets ! ");
 
 			for (uint32_t j = 0; j < count; ++j)
 			{
-				
+				SetInfo* setInfo = nullptr;
+
+				for (size_t k = 0; k < m_setInfos.size(); ++k)
+				{
+					if (m_setInfos[k].set == descriptorSets[j]->set)
+					{
+						setInfo = &m_setInfos[k];
+						k = m_setInfos.size();
+					}
+				}
+
+				if (setInfo == nullptr)
+				{
+					setInfo = &m_setInfos.emplace_back();
+					setInfo->set = descriptorSets[j]->set;
+				}
+
+				for (uint32_t k = 0; k < descriptorSets[j]->binding_count; ++k)
+				{
+					ShaderInfo shaderInfo;
+
+					shaderInfo.name = descriptorSets[j]->bindings[k]->name;
+					shaderInfo.binding = descriptorSets[j]->bindings[k]->binding;
+					shaderInfo.uniformType = GetUniformType(descriptorSets[j]->bindings[k]->descriptor_type);
+					shaderInfo.shaderStage = GetShaderStage(entryPoint.shader_stage);
+
+					setInfo->shaderInfos.emplace_back(std::move(shaderInfo));
+				}
+			}
+		}
+
+		// Get the number of output image
+		if (entryPoint.shader_stage == SPV_REFLECT_SHADER_STAGE_FRAGMENT_BIT)
+		{
+			SPV_CHECK(spvReflectEnumerateEntryPointOutputVariables(&module, entryPoint.name, &m_imageOutputCount, nullptr),
+				"Failed to enumerate entry point output variables ! ");
+
+			uint32_t count = 0;
+			SPV_CHECK(spvReflectEnumerateDescriptorSets(&module, &count, nullptr),
+				"Failed to enumerate descriptor sets ! ");
+			std::vector<SpvReflectDescriptorSet*> descriptorSets(count);
+			SPV_CHECK(spvReflectEnumerateEntryPointDescriptorSets(&module, entryPoint.name, &count, descriptorSets.data()),
+				"Failed to enumerate descriptor sets ! ");
+
+			for (uint32_t j = 0; j < count; ++j)
+			{
+				SetInfo* setInfo = nullptr;
+
+				for (size_t k = 0; k < m_setInfos.size(); ++k)
+				{
+					if (m_setInfos[k].set == descriptorSets[j]->set)
+					{
+						setInfo = &m_setInfos[k];
+						k = m_setInfos.size();
+					}	
+				}
+
+				if (setInfo == nullptr)
+				{
+					setInfo = &m_setInfos.emplace_back();
+					setInfo->set = descriptorSets[j]->set;
+				}
+
+				for (uint32_t k = 0; k < descriptorSets[j]->binding_count; ++k)
+				{
+					ShaderInfo shaderInfo;
+
+					shaderInfo.name = descriptorSets[j]->bindings[k]->name;
+					shaderInfo.binding = descriptorSets[j]->bindings[k]->binding;
+					shaderInfo.uniformType = GetUniformType(descriptorSets[j]->bindings[k]->descriptor_type);
+					shaderInfo.shaderStage = GetShaderStage(entryPoint.shader_stage);
+
+					setInfo->shaderInfos.emplace_back(std::move(shaderInfo));
+				}
 			}
 		}
 	}
+
 }
 
 uint32_t SpirvReflectWrapper::CalculateOffset(Format _format)
@@ -260,7 +331,34 @@ Format GetFormat(SpvReflectFormat _format)
 	case SPV_REFLECT_FORMAT_R32G32B32A32_UINT:		return FORMAT_R32G32B32A32_UINT;
 	case SPV_REFLECT_FORMAT_R32G32B32A32_SINT:		return FORMAT_R32G32B32A32_SINT;
 	case SPV_REFLECT_FORMAT_R32G32B32A32_SFLOAT:	return FORMAT_R32G32B32A32_SFLOAT;
+	default: LOGGER_ERROR("Unsupported format ! ");
 	}
 
 	return FORMAT_R32G32B32A32_SFLOAT;
+}
+
+UniformType GetUniformType(const SpvReflectDescriptorType& _type)
+{
+	switch (_type) 
+	{
+	case SPV_REFLECT_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:	return UNIFORM_TYPE_SAMPLED_IMAGE;
+	case SPV_REFLECT_DESCRIPTOR_TYPE_UNIFORM_BUFFER:			return UNIFORM_TYPE_CONSTANT;
+	case SPV_REFLECT_DESCRIPTOR_TYPE_STORAGE_BUFFER:			return UNIFORM_TYPE_STORAGE;
+	default: LOGGER_ERROR("Unsupported uniform type ! ");
+	}
+
+	return UNIFORM_TYPE_CONSTANT;
+}
+
+ShaderStage GetShaderStage(const SpvReflectShaderStageFlagBits& _type)
+{
+	switch (_type)
+	{
+	case SPV_REFLECT_SHADER_STAGE_VERTEX_BIT:		return SHADER_STAGE_VERTEX;
+	case SPV_REFLECT_SHADER_STAGE_FRAGMENT_BIT:		return SHADER_STAGE_FRAGMENT;
+	case SPV_REFLECT_SHADER_STAGE_COMPUTE_BIT:		return SHADER_STAGE_COMPUTE;
+	default: LOGGER_ERROR("Unsupported shader stage ! ");
+	}
+
+	return SHADER_STAGE_VERTEX;
 }

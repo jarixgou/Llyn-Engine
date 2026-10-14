@@ -16,6 +16,12 @@ struct ShaderInfo
 	bool bindless = false;
 };
 
+struct SetInfo
+{
+	uint32_t set = 0;
+	std::vector<ShaderInfo> shaderInfos;
+};
+
 struct InputAttribute
 {
 	uint32_t location = 0;
@@ -24,11 +30,25 @@ struct InputAttribute
 	Format format = FORMAT_R32G32B32A32_SFLOAT;
 };
 
+struct SpecializationConstant
+{
+	uint32_t size = 0;
+	void* defaultValue = nullptr;
+};
+
+struct PushConstant
+{
+	
+};
+
 class SpirvReflectWrapper
 {
 public: 
-	std::vector<std::vector<ShaderInfo>> m_shaderInfos;
+	std::vector<SetInfo> m_setInfos;
 	std::vector<InputAttribute> m_inputAttribute;
+	SpecializationConstant specializationConstant;
+
+	uint32_t m_imageOutputCount = 0;
 public:
 	void LoadShader(const std::string& _filePath);
 private:
