@@ -115,7 +115,7 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 	std::vector<char> fileContent = Utils::ReadFile(_filePath);
 
 	SpvReflectShaderModule module{};
-	SPV_CHECK(spvReflectCreateShaderModule(fileContent.size(), fileContent.data(), &module), 
+	SPV_CHECK(spvReflectCreateShaderModule(fileContent.size(), fileContent.data(), &module),
 		"Failed to create spv reflect shader module ! ");
 
 	for (uint32_t i = 0; i < module.entry_point_count; ++i)
@@ -210,6 +210,22 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 					setInfo->shaderInfos.emplace_back(std::move(shaderInfo));
 				}
 			}
+
+			count = 0;
+			SPV_CHECK(spvReflectEnumerateEntryPointPushConstantBlocks(&module, entryPoint.name, &count, nullptr),
+				"Failed to enumerate push constant blocks ! ");
+			std::vector<SpvReflectBlockVariable*> pushConstants(count);
+			SPV_CHECK(spvReflectEnumerateEntryPointPushConstantBlocks(&module, entryPoint.name, &count, pushConstants.data()),
+				"Failed to enumerate push constant blocks ! ");
+
+			for (uint32_t j = 0; j < count; ++j)
+			{
+				PushConstant pushConstant;
+				pushConstant.name = pushConstants[j]->name;
+				pushConstant.shaderStage = GetShaderStage(entryPoint.shader_stage);
+				pushConstant.size = pushConstants[j]->size;
+				pushConstant.offset = pushConstants[j]->offset;
+			}
 		}
 
 		// Get the number of output image
@@ -235,7 +251,7 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 					{
 						setInfo = &m_setInfos[k];
 						k = m_setInfos.size();
-					}	
+					}
 				}
 
 				if (setInfo == nullptr)
@@ -256,9 +272,80 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 					setInfo->shaderInfos.emplace_back(std::move(shaderInfo));
 				}
 			}
+
+			count = 0;
+			SPV_CHECK(spvReflectEnumerateEntryPointPushConstantBlocks(&module, entryPoint.name, &count, nullptr),
+				"Failed to enumerate push constant blocks ! ");
+			std::vector<SpvReflectBlockVariable*> pushConstants(count);
+			SPV_CHECK(spvReflectEnumerateEntryPointPushConstantBlocks(&module, entryPoint.name, &count, pushConstants.data()),
+				"Failed to enumerate push constant blocks ! ");
+
+			for (uint32_t j = 0; j < count; ++j)
+			{
+				PushConstant pushConstant;
+				pushConstant.name = pushConstants[j]->name;
+				pushConstant.shaderStage = GetShaderStage(entryPoint.shader_stage);
+				pushConstant.size = pushConstants[j]->size;
+				pushConstant.offset = pushConstants[j]->offset;
+
+				m_pushConstants.emplace_back(std::move(pushConstant));
+			}
 		}
 	}
 
+	uint32_t count = 0;
+	SPV_CHECK(spvReflectEnumerateSpecializationConstants(&module, &count, nullptr),
+		"Failed to enumerate specialization constants ! ");
+	std::vector<SpvReflectSpecializationConstant*> specializationConstants(count);
+	SPV_CHECK(spvReflectEnumerateSpecializationConstants(&module, &count, specializationConstants.data()),
+		"Failed to enumerate specialization constants ! ");
+
+	m_specializationConstants.resize(count);
+	for (uint32_t i = 0; i < count; ++i)
+	{
+		m_specializationConstants[i].constantId = specializationConstants[i]->constant_id;
+		m_specializationConstants[i].size = specializationConstants[i]->default_value_size;
+		m_specializationConstants[i].defaultValue = specializationConstants[i]->default_value;
+	}
+
+	// Bubble sort specialization constant to calculate the offset
+	for (int i = 0; i < m_specializationConstants.size() - 1; ++i)
+	{
+		bool swapped = false;
+
+		for (int j = 0; j < m_specializationConstants.size() - i - 1; ++j)
+		{
+			
+		}
+
+		if (!swapped)
+		{
+			
+		}
+	}
+
+	// Bubble sort set info
+	for (int i = 0; i < m_setInfos.size() - 1; ++i)
+	{
+		bool swapped = false;
+
+		for (int j = 0; j < m_setInfos.size() - i - 1; ++j)
+		{
+			if (m_setInfos[j].set > m_setInfos[j + 1].set)
+			{
+				SetInfo setInfo = m_setInfos[j];
+				m_setInfos[j] = m_setInfos[j + 1];
+				m_setInfos[j + 1] = m_setInfos[j];
+
+				swapped = true;
+			}
+		}
+
+		if (!swapped)
+		{
+			i = m_setInfos.size();
+		}
+	}
 }
 
 uint32_t SpirvReflectWrapper::CalculateOffset(Format _format)
@@ -339,7 +426,7 @@ Format GetFormat(SpvReflectFormat _format)
 
 UniformType GetUniformType(const SpvReflectDescriptorType& _type)
 {
-	switch (_type) 
+	switch (_type)
 	{
 	case SPV_REFLECT_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:	return UNIFORM_TYPE_SAMPLED_IMAGE;
 	case SPV_REFLECT_DESCRIPTOR_TYPE_UNIFORM_BUFFER:			return UNIFORM_TYPE_CONSTANT;

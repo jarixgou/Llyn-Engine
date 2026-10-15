@@ -32,13 +32,17 @@ struct InputAttribute
 
 struct SpecializationConstant
 {
+	uint32_t constantId = 0;
 	uint32_t size = 0;
 	void* defaultValue = nullptr;
 };
 
 struct PushConstant
 {
-	
+	std::string name = "Unknow";
+	uint32_t size = 0;
+	uint32_t offset = 0;
+	ShaderStage shaderStage;
 };
 
 class SpirvReflectWrapper
@@ -46,7 +50,8 @@ class SpirvReflectWrapper
 public: 
 	std::vector<SetInfo> m_setInfos;
 	std::vector<InputAttribute> m_inputAttribute;
-	SpecializationConstant specializationConstant;
+	std::vector<SpecializationConstant> m_specializationConstants;
+	std::vector<PushConstant> m_pushConstants;
 
 	uint32_t m_imageOutputCount = 0;
 public:
