@@ -9,6 +9,7 @@
 #include "PipelineInfo.h"
 #include "VK_SwapChain.h"
 #include "VK_DepthResources.h"
+#include "../SpirvReflectWrapper.h"
 #include "../../Logger.h"
 #include "../../Utils/Utils.h"
 #include "../../Vertex.h"
@@ -17,8 +18,11 @@ void VK_Pipeline::Init(const VK_SwapChain* _swapChain, const PipelineInfo& _info
 {
 	LLYN_ASSERT(_swapChain != nullptr);
 
-	CreateDescriptorSetLayout(&VK_Device::Get(), _info.shaderPath);
-	CreateGraphicsPipeline(&VK_Device::Get(), _swapChain, _info);
+	SpirvReflectWrapper reflect;
+	reflect.LoadShader(_info.shaderPath);
+
+	CreateDescriptorSetLayout(&VK_Device::Get(), reflect);
+	CreateGraphicsPipeline(&VK_Device::Get(), _swapChain, _info, reflect);
 }
 
 void VK_Pipeline::Cleanup()
@@ -53,7 +57,7 @@ std::vector<VK_DescriptorLayoutHandle> VK_Pipeline::GetDescriptorLayouts()
 	return m_descriptorLayouts;
 }
 
-void VK_Pipeline::CreateDescriptorSetLayout(const VK_Device* _device, const std::string& _filepath)
+void VK_Pipeline::CreateDescriptorSetLayout(const VK_Device* _device, const SpirvReflectWrapper& _reflect)
 {
 	std::vector<VK_LayoutInfo> bindlessLayoutInfo =
 	{
@@ -104,7 +108,8 @@ void VK_Pipeline::CreateDescriptorSetLayout(const VK_Device* _device, const std:
 	m_descriptorLayouts.emplace_back(lightDescriptor);
 }
 
-void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_SwapChain* _swapChain, const PipelineInfo& _info)
+void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_SwapChain* _swapChain, const PipelineInfo& _info, const SpirvReflectWrapper&
+                                         _reflect)
 {
 	LLYN_ASSERT(_device != nullptr && _swapChain != nullptr);
 
@@ -197,7 +202,7 @@ void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_Swap
 	colorBlendfCreateInfo.attachmentCount = 1;
 	colorBlendfCreateInfo.pAttachments = &colorBlendAttachment;
 
-	uint32_t lightingModeValue = 4;
+	uint32_t lightingModeValue = 2;
 
 	VkSpecializationMapEntry specMapEntry{};
 	specMapEntry.constantID = 0;

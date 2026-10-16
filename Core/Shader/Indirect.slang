@@ -335,12 +335,12 @@ float4 CalcSpotLight(SpotLight _light, VSOutput _vertIn)
 
 float4 CalcWireframe(float3 _bary, float4 _color, float4 _wireframeColor)
 {
-    const float minBary = min(min(_bary.x, _bary.y), _bary.z);
-    const float edgeDelta = fwidth(minBary);
-    const float thickness = 1.5f * edgeDelta;
-    const float edgeFactor = smoothstep(thickness - edgeDelta, thickness + edgeDelta, minBary);
+    float3 dPerPixel = fwidth(_bary);
+    float3 pixelDistance = _bary / dPerPixel;
+    float minDistance = min(min(pixelDistance.x, pixelDistance.y), pixelDistance.z);
+    float edgeAlpha = smoothstep(1.5f, 1.5f - 1.0f, minDistance);
 
-    return lerp(_color, _wireframeColor, 1.0f);
+    return lerp(_color, _wireframeColor, edgeAlpha);
 }
 
 [shader("fragment")]
@@ -359,7 +359,7 @@ float4 fragMain(VSOutput _vertIn) : SV_Target
         color = float4(_vertIn.normal, 1.0f);
         break;
     case LIGHTING_MODE_WIREFRAME:
-        color = CalcWireframe(_vertIn.barycentric, float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 1.0f));
+        color = CalcWireframe(_vertIn.barycentric, float4(1.0f, 1.0f, 1.0f, 1.0f), float4(0.0f, 0.0f, 0.0f, 1.0f));
         break;
     case LIGHTING_MODE_WIREFRAME_LIT:
         for (uint i = 0; i < lightData.nbDirLight; i++)
@@ -377,7 +377,7 @@ float4 fragMain(VSOutput _vertIn) : SV_Target
             color += CalcSpotLight(spotLights[i], _vertIn);
         }
 
-        color = color = CalcWireframe(_vertIn.barycentric, color, float4(0.0f, 0.0f, 0.0f, 1.0f));
+        color = CalcWireframe(_vertIn.barycentric, color, float4(0.52f, 0.0f, 0.52f, 1.0f));
         break;
     case LIGHTING_MODE_UNLIT:
         color = GetTexture(materials[_vertIn.materialID].albedoID, _vertIn.uv0) * float4(materials[_vertIn.materialID].albedoColor, 1.0f);

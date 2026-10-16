@@ -23,9 +23,10 @@ public:
 	
 	std::vector<VK_DescriptorLayoutHandle> GetDescriptorLayouts();
 private:
-	void CreateDescriptorSetLayout(const VK_Device* _device, const std::string& _filepath);
+	void CreateDescriptorSetLayout(const VK_Device* _device, const SpirvReflectWrapper& _reflect);
 
-	void CreateGraphicsPipeline(const VK_Device* _device, const VK_SwapChain* _swapChain, const PipelineInfo& _info);
+	void CreateGraphicsPipeline(const VK_Device* _device, const VK_SwapChain* _swapChain, const PipelineInfo& _info, const SpirvReflectWrapper&
+	                            _reflect);
 
 	VkCullModeFlags GetCullMode(RenderFace _renderFace);
 

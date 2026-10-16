@@ -173,7 +173,7 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 			}
 
 			count = 0;
-			SPV_CHECK(spvReflectEnumerateDescriptorSets(&module, &count, nullptr),
+			SPV_CHECK(spvReflectEnumerateEntryPointDescriptorSets(&module, entryPoint.name,&count, nullptr),
 				"Failed to enumerate descriptor sets ! ");
 			std::vector<SpvReflectDescriptorSet*> descriptorSets(count);
 			SPV_CHECK(spvReflectEnumerateEntryPointDescriptorSets(&module, entryPoint.name, &count, descriptorSets.data()),
@@ -235,7 +235,7 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 				"Failed to enumerate entry point output variables ! ");
 
 			uint32_t count = 0;
-			SPV_CHECK(spvReflectEnumerateDescriptorSets(&module, &count, nullptr),
+			SPV_CHECK(spvReflectEnumerateEntryPointDescriptorSets(&module, entryPoint.name, &count, nullptr),
 				"Failed to enumerate descriptor sets ! ");
 			std::vector<SpvReflectDescriptorSet*> descriptorSets(count);
 			SPV_CHECK(spvReflectEnumerateEntryPointDescriptorSets(&module, entryPoint.name, &count, descriptorSets.data()),
@@ -309,23 +309,45 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 	}
 
 	// Bubble sort specialization constant to calculate the offset
-	for (int i = 0; i < m_specializationConstants.size() - 1; ++i)
+	for (size_t i = 0; i < m_specializationConstants.size() - 1; ++i)
 	{
 		bool swapped = false;
 
 		for (int j = 0; j < m_specializationConstants.size() - i - 1; ++j)
 		{
-			
+			if (m_specializationConstants[j].constantId > m_specializationConstants[j + 1].constantId)
+			{
+				SpecializationConstant specConstant = m_specializationConstants[j];
+				m_specializationConstants[j] = m_specializationConstants[j + 1];
+				m_specializationConstants[j + 1] = specConstant;
+
+				swapped = true;
+			}
 		}
 
 		if (!swapped)
 		{
-			
+			i = m_specializationConstants.size();
 		}
 	}
 
+	for (size_t i = 0; i < m_specializationConstants.size(); ++i)
+	{
+		uint32_t offset = 0;
+
+		if (i >= 1)
+		{
+			for (size_t j = i - 1; j >= 0; --j)
+			{
+				offset += m_specializationConstants[j].size;
+			}
+		}
+
+		m_specializationConstants[i].offset = offset;
+	}
+
 	// Bubble sort set info
-	for (int i = 0; i < m_setInfos.size() - 1; ++i)
+	for (size_t i = 0; i < m_setInfos.size() - 1; ++i)
 	{
 		bool swapped = false;
 

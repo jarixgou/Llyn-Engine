@@ -34,6 +34,7 @@ struct SpecializationConstant
 {
 	uint32_t constantId = 0;
 	uint32_t size = 0;
+	uint32_t offset = 0;
 	void* defaultValue = nullptr;
 };
 

@@ -243,6 +243,7 @@ void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_
 			// Implement
 		} }, _gltfAsset.nodes[_nodeIndex].transform);
 
+	*transform = *transform * _parentTransform;
 	_rootModel->transform = transform;
 
 	for (size_t i = 0; i < _gltfAsset.nodes[_nodeIndex].children.size(); i++)

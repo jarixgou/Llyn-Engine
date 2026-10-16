@@ -1,10 +1,93 @@
 ﻿  Analyse des sources à la recherche des dépendances de module...
+  VK_Buffer.h
+  VK_DescriptorHandle.h
+  Compilation...
+  VK_Buffer.h
+  VK_DescriptorHandle.h
+  Application.cpp
+  Material.cpp
+  Model.cpp
+  RessourceManager.cpp
+  Texture.cpp
+  Camera.cpp
+  LightManager.cpp
+  MeshFilterPooler.cpp
+C:\Users\Etudiant2\Llyn-Engine\Core\Math\Math.h(12,7): warning C4099: 'Quaternions' : nom de type déjà rencontré avec 'struct' et utilisant maintenant 'class'
+  (compiler le fichier source 'Component/Camera.cpp')
+      C:\Users\Etudiant2\Llyn-Engine\Core\Math\Quaternions.h(8,8):
+      voir la déclaration de 'Quaternions'
+  
+C:\Users\Etudiant2\Llyn-Engine\Core\Component\Camera.cpp(70,14): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\Etudiant2\Llyn-Engine\Core\Component\Camera.cpp(71,14): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'uint32_t', perte possible de données
+  (compiler le fichier source 'Component/Light/LightManager.cpp')
+      C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          C:\Users\Etudiant2\Llyn-Engine\Core\Component\Light\LightManager.cpp(21,12):
+          voir la référence à l'instanciation de la fonction modèle 'bool ECS::GetComponentIsDirty<DirLight>(void)' en cours de compilation
+          C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(167,9):
+          voir la référence à l'instanciation de la fonction modèle 'SparseSet<DirLight> *ECS::GetPool<DirLight>(void)' en cours de compilation
+  
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'const uint32_t', perte possible de données
+  (compiler le fichier source 'Component/Light/LightManager.cpp')
+  
+  MeshRender.cpp
+  Transform.cpp
   Engine.cpp
+C:\Users\Etudiant2\Llyn-Engine\Core\Math\Math.h(12,7): warning C4099: 'Quaternions' : nom de type déjà rencontré avec 'struct' et utilisant maintenant 'class'
+  (compiler le fichier source 'Component/Transform.cpp')
+      C:\Users\Etudiant2\Llyn-Engine\Core\Math\Quaternions.h(8,8):
+      voir la déclaration de 'Quaternions'
+  
+  ECS.cpp
+  HierarchyInterface.cpp
+  InspectorInterface.cpp
+C:\Users\Etudiant2\Llyn-Engine\Core\Asset\Model.cpp(196,86): warning C4267: 'argument' : conversion de 'size_t' en 'uint32_t', perte possible de données
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'uint32_t', perte possible de données
+  (compiler le fichier source 'Asset/Model.cpp')
+      C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          C:\Users\Etudiant2\Llyn-Engine\Core\Asset\Model.cpp(110,8):
+          voir la référence à l'instanciation de la fonction modèle 'void ECS::AddComponents<Transform>(const EntityID &,const Transform &)' en cours de compilation
+          C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(112,3):
+          voir la référence à l'instanciation de la fonction modèle 'SparseSet<Transform> *ECS::GetPool<Transform>(void)' en cours de compilation
+  
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'const uint32_t', perte possible de données
+  (compiler le fichier source 'Asset/Model.cpp')
+  
+  LlynCore.cpp
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(40,25): warning C4267: '=' : conversion de 'size_t' en '_Ty', perte possible de données
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(40,25): warning C4267:         with
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(40,25): warning C4267:         [
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(40,25): warning C4267:             _Ty=Index
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(40,25): warning C4267:         ]
+  (compiler le fichier source 'Asset/Model.cpp')
+      C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(40,25):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(112,17):
+          voir la référence à l'instanciation classe modèle 'SparseSet<Transform>' en cours de compilation
+          C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(33,1):
+          pendant la compilation de la fonction membre classe modèle 'void SparseSet<Transform>::Insert(const size_t &,const T &)'
+          with
+          [
+              T=Transform
+          ]
+              C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(112,23):
+              voir la première référence à « SparseSet<Transform>::Insert » dans « ECS::AddComponents »
+  
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(44,25): warning C4267: '=' : conversion de 'size_t' en '_Ty', perte possible de données
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         with
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         [
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(44,25): warning C4267:             _Ty=Index
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         ]
+  (compiler le fichier source 'Asset/Model.cpp')
+  
 C:\Users\Etudiant2\Llyn-Engine\Core\Math\Math.h(12,7): warning C4099: 'Quaternions' : nom de type déjà rencontré avec 'struct' et utilisant maintenant 'class'
   (compiler le fichier source 'Engine.cpp')
       C:\Users\Etudiant2\Llyn-Engine\Core\Math\Quaternions.h(8,8):
       voir la déclaration de 'Quaternions'
   
+  SpirvReflectWrapper.cpp
 C:\Users\Etudiant2\Llyn-Engine\Core\Asset\RessourceManager.h(190,27): warning C4267: 'initialisation' : conversion de 'size_t' en 'RessourceID', perte possible de données
   (compiler le fichier source 'Engine.cpp')
       C:\Users\Etudiant2\Llyn-Engine\Core\Asset\RessourceManager.h(190,27):
@@ -56,6 +139,71 @@ C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(44,25): warning C4267: 
 C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(44,25): warning C4267:             _Ty=std::_Vbase
 C:\Users\Etudiant2\Llyn-Engine\Core\Entities\SparseSet.h(44,25): warning C4267:         ]
   (compiler le fichier source 'Engine.cpp')
+  
+  VK_Buffer.cpp
+  VK_DepthResources.cpp
+  VK_DescriptorLayoutHandle.cpp
+C:\Users\Etudiant2\Llyn-Engine\Core\Math\Math.h(12,7): warning C4099: 'Quaternions' : nom de type déjà rencontré avec 'struct' et utilisant maintenant 'class'
+  (compiler le fichier source 'Interface/InspectorInterface.cpp')
+      C:\Users\Etudiant2\Llyn-Engine\Core\Math\Quaternions.h(8,8):
+      voir la déclaration de 'Quaternions'
+  
+  VK_DescriptorLayoutHandleHash.cpp
+  VK_DescriptorManager.cpp
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'uint32_t', perte possible de données
+  (compiler le fichier source 'Interface/InspectorInterface.cpp')
+      C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          C:\Users\Etudiant2\Llyn-Engine\Core\Interface\InspectorInterface.cpp(38,35):
+          voir la référence à l'instanciation de la fonction modèle 'T *ECS::GetComponent<Transform>(const EntityID &)' en cours de compilation
+          with
+          [
+              T=Transform
+          ]
+          C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(129,9):
+          voir la référence à l'instanciation de la fonction modèle 'SparseSet<Transform> *ECS::GetPool<Transform>(void)' en cours de compilation
+  
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'const uint32_t', perte possible de données
+  (compiler le fichier source 'Interface/InspectorInterface.cpp')
+  
+  VK_Device.cpp
+C:\Users\Etudiant2\Llyn-Engine\Core\Render\SpirvReflectWrapper.cpp(168,22): warning C4018: « < » : incompatibilité signé/non signé
+  VK_FrameSync.cpp
+  VK_ImGui.cpp
+  VK_Image.cpp
+  VK_Instance.cpp
+  VK_Pipeline.cpp
+  VK_Render.cpp
+  VK_RenderWindow.cpp
+  VK_ShaderBuffer.cpp
+  VK_SwapChain.cpp
+C:\Users\Etudiant2\Llyn-Engine\Core\Render\Vulkan\VK_Instance.cpp(91,59): warning C4267: '=' : conversion de 'size_t' en 'uint32_t', perte possible de données
+  VK_Texture.cpp
+  VK_VmaAllocatorWrapper.cpp
+  Scene.cpp
+  VK_Utils.cpp
+  VK_MemoryHelper.cpp
+  Vertex.cpp
+C:\Users\Etudiant2\Llyn-Engine\Core\Math\Math.h(12,7): warning C4099: 'Quaternions' : nom de type déjà rencontré avec 'struct' et utilisant maintenant 'class'
+  (compiler le fichier source 'Render/Vulkan/VK_Render.cpp')
+      C:\Users\Etudiant2\Llyn-Engine\Core\Math\Quaternions.h(8,8):
+      voir la déclaration de 'Quaternions'
+  
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'uint32_t', perte possible de données
+  (compiler le fichier source 'Render/Vulkan/VK_Render.cpp')
+      C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24):
+      le contexte d’instanciation du modèle (le plus ancien) est
+          C:\Users\Etudiant2\Llyn-Engine\Core\Render\Vulkan\VK_Render.cpp(239,41):
+          voir la référence à l'instanciation de la fonction modèle 'T *ECS::GetComponent<Transform>(const EntityID &)' en cours de compilation
+          with
+          [
+              T=Transform
+          ]
+          C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(129,9):
+          voir la référence à l'instanciation de la fonction modèle 'SparseSet<Transform> *ECS::GetPool<Transform>(void)' en cours de compilation
+  
+C:\Users\Etudiant2\Llyn-Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'const uint32_t', perte possible de données
+  (compiler le fichier source 'Render/Vulkan/VK_Render.cpp')
   
 spirv_reflect.obj : warning LNK4006: spvReflectBlockVariableTypeName déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée
 spirv_reflect.obj : warning LNK4006: spvReflectSourceLanguage déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée

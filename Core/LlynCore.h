@@ -71,6 +71,8 @@ struct MatricesData;
 
 enum class RenderFace : uint8_t;
 
+class SpirvReflectWrapper;
+
 class IRender;
 class IUniformManager;
 struct Scene;
