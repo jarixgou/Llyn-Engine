@@ -98,10 +98,6 @@ void Texture::LoadConfig(const std::string& _filePath)
 				{
 					m_config.type = static_cast<ImageType>(field.value().get_int32().value());
 				}
-				else if (key == "sRGB")
-				{
-					m_config.sRGB = field.value().get_bool();
-				}
 				else if (key == "WrapMode" && field.value().is_integer())
 				{
 					m_config.wrapMode = static_cast<WrapMode>(field.value().get_int32().value());
@@ -132,7 +128,6 @@ void Texture::LoadConfig(const std::string& _filePath)
 
 		json["Format"] = m_config.format;
 		json["Type"] = m_config.type;
-		json["sRGB"] = m_config.sRGB;
 		json["WrapMode"] = m_config.wrapMode;
 		json["ImageFilter"] = m_config.filter;
 		json["Mipmap"] = m_config.mipmap;

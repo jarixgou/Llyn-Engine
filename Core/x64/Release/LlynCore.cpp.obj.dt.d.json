@@ -1,10 +1,10 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\users\\etudiant2\\llyn-engine\\core\\llyncore.cpp",
+        "Source": "d:\\llyn engine\\core\\llyncore.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\users\\etudiant2\\llyn-engine\\core\\llyncore.h",
+            "d:\\llyn engine\\core\\llyncore.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",
@@ -144,11 +144,11 @@
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_av1std_encode.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std_decode.h",
-            "c:\\users\\etudiant2\\llyn-engine\\core\\logger.h",
+            "d:\\llyn engine\\core\\logger.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_bit_utils.hpp",
-            "c:\\users\\etudiant2\\llyn-engine\\core\\spirv-reflect\\spirv_reflect.h",
-            "c:\\users\\etudiant2\\llyn-engine\\core\\spirv-reflect\\include\\spirv\\unified1\\spirv.h"
+            "d:\\llyn engine\\core\\spirv-reflect\\spirv_reflect.h",
+            "d:\\llyn engine\\core\\spirv-reflect\\include\\spirv\\unified1\\spirv.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

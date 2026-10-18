@@ -27,6 +27,7 @@ enum class RenderFace : uint8_t
 
 struct PipelineInfo
 {
+	std::vector<ImageFormat> imageFormats;
 	SurfaceType surfaceType = SurfaceType::OPAQUE;
 	BlendMode blendMode = BlendMode::ALPHA;
 	RenderFace renderFace = RenderFace::FRONT;

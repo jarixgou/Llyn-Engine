@@ -9,7 +9,7 @@
 
 struct ShaderInfo
 {
-	std::string name = "Unknow";
+	std::string name = "Unknown";
 	uint32_t binding = 0;
 	UniformType uniformType = UNIFORM_TYPE_CONSTANT;
 	ShaderStage shaderStage = SHADER_STAGE_VERTEX;
@@ -30,17 +30,9 @@ struct InputAttribute
 	Format format = FORMAT_R32G32B32A32_SFLOAT;
 };
 
-struct SpecializationConstant
-{
-	uint32_t constantId = 0;
-	uint32_t size = 0;
-	uint32_t offset = 0;
-	void* defaultValue = nullptr;
-};
-
 struct PushConstant
 {
-	std::string name = "Unknow";
+	std::string name = "Unknown";
 	uint32_t size = 0;
 	uint32_t offset = 0;
 	ShaderStage shaderStage;
@@ -51,9 +43,9 @@ class SpirvReflectWrapper
 public: 
 	std::vector<SetInfo> m_setInfos;
 	std::vector<InputAttribute> m_inputAttribute;
-	std::vector<SpecializationConstant> m_specializationConstants;
 	std::vector<PushConstant> m_pushConstants;
 
+	uint32_t m_attributeInputSizeByte = 0;
 	uint32_t m_imageOutputCount = 0;
 public:
 	void LoadShader(const std::string& _filePath);

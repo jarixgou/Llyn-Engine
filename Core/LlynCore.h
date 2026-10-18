@@ -3,6 +3,7 @@
 
 #include <string>
 
+#define BINDLESS_COUNT 1024
 #define GPU_ALIGN alignas(16)
 #define ARRAY_SIZE_IN_BYTES(a) (sizeof((a)[0]) * (a).size())
 
@@ -84,6 +85,10 @@ typedef uint32_t StringHash;
 typedef uint16_t RessourceID;
 typedef uint32_t EntityID;
 typedef uint32_t ComponentID;
+
+enum UniformType;
+enum ShaderStage;
+enum Format;
 
 // ImGui Interface forward declaration
 class HierarchyInterface;

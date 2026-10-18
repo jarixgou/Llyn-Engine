@@ -1,17 +1,3 @@
-struct VSInput
-{
-    float3 pos;
-
-    float3 normal;
-    float3 tangent;
-    float3 bitangent;
-
-    float3 color;
-
-    float2 uv0;
-    float2 uv1;
-}
-
 struct VSOutput
 {
     float4 pos : SV_Position;
@@ -21,17 +7,27 @@ struct VSOutput
 [vk::push_constant]
 float4x4 VP;
 
+static const float3 vertices[4] = 
+{
+    { -0.5, 0.0, 0.5 },
+    { 0.5, 0.0, 0.5 },
+    { 0.5, 0.0, -0.5 },
+    { -0.5, 0.0, -0.5 },
+};
+
 static const float gridSize = 1.0f;
 
 [shader("vertex")]
-VSOutput vertMain(VSInput _vsInput)
+VSOutput vertMain(uint32_t _vertexID : SV_VertexID)
 {
     VSOutput output;
 
-    const float3 scaledPos = mul(_vsInput.pos, gridSize);
+    const float3 vertex = vertices[_vertexID];
+
+    const float3 scaledPos = mul(vertex, gridSize);
 
     output.pos = mul(float4(scaledPos, 1.0f), VP);
-    output.uv = { scaledPos.x, scaledPos.y };
+    output.uv = { scaledPos.x, scaledPos.z };
 
     return output;
 }

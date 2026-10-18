@@ -32,6 +32,9 @@ private:
 
 	static VkShaderModule CreateShaderModule(const VK_Device* _device, const std::vector<char>& _code);
 	VkPipelineColorBlendAttachmentState CreateBlendMode(const PipelineInfo& _info);
+
+	static VkDescriptorType GetDescriptorType(const UniformType& _uniformType);
+	static VkShaderStageFlags GetShaderStageFlags(const ShaderStage& _shaderStage);
 };
 
 #endif

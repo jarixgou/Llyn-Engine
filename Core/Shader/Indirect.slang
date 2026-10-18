@@ -177,7 +177,7 @@ StructuredBuffer<SpotLight> spotLights;
 ConstantBuffer<LightData> lightData;
 
 [vk::constant_id(0)]
-const uint lightingMode = LIGHTING_MODE_NORMALS;
+const uint lightingMode = LIGHTING_MODE_LIT;
 
 [vk::push_constant]
 float3 camPos;

@@ -455,5 +455,8 @@
     <ClCompile Include="Render\SpirvReflectWrapper.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Render\Vulkan\VK_RenderGraph.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

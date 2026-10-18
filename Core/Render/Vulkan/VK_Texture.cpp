@@ -13,7 +13,7 @@ void VK_Texture::Init(VK_TextureInfo& _info)
 	const uint32_t actualMipLevels = _info.config.mipmap ? mipLevels : 1;
 
 	const VkFormat actualFormat = _info.preferredFormat != VK_FORMAT_UNDEFINED ?
-		_info.preferredFormat : GetFormat(_info.config.format, _info.config.sRGB);
+		_info.preferredFormat : GetFormat(_info.config.format);
 
 	VK_Image::Init(actualFormat, _info.layout, _info.config.type, _info.aspect, _info.usage, actualMipLevels, _info.textureSize);
 
@@ -149,54 +149,24 @@ void VK_Texture::GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize)
 	TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, m_mipLevels - 1, 1);
 }
 
-VkFormat VK_Texture::GetFormat(const ImageFormat& _format, const bool& _sRGB)
+VkFormat VK_Texture::GetFormat(const ImageFormat& _format)
 {
-	if (_sRGB)
+	switch (_format)
 	{
-		switch (_format)
-		{
-		case IMAGE_FORMAT_R8G8B8A8:
-			return VK_FORMAT_R8G8B8A8_SRGB;
-			break;
-		case IMAGE_FORMAT_R8G8B8:
-			return VK_FORMAT_R8G8B8_SRGB;
-			break;
-		case IMAGE_FORMAT_R8G8:
-			return VK_FORMAT_R8G8_SRGB;
-			break;
-		case IMAGE_FORMAT_R8:
-			return VK_FORMAT_R8_SRGB;
-			break;
-		case IMAGE_FORMAT_MAX_ENUM:
-			LOGGER_WARNING("Wrong image format !");
-			return VK_FORMAT_R8G8B8A8_SRGB;
-			break;
-		}
-	}
-	else
-	{
-		switch (_format)
-		{
-		case IMAGE_FORMAT_R8G8B8A8:
-			return VK_FORMAT_R8G8B8A8_UNORM;
-			break;
-		case IMAGE_FORMAT_R8G8B8:
-			return VK_FORMAT_R8G8B8_UNORM;
-			break;
-		case IMAGE_FORMAT_R8G8:
-			return VK_FORMAT_R8G8_UNORM;
-			break;
-		case IMAGE_FORMAT_R8:
-			return VK_FORMAT_R8_UNORM;
-			break;
-		case IMAGE_FORMAT_MAX_ENUM:
-			LOGGER_WARNING("Wrong image format !");
-			return VK_FORMAT_R8G8B8A8_UNORM;
-			break;
-		}
+	case IMAGE_FORMAT_R8G8B8A8:				return VK_FORMAT_R8G8B8A8_UNORM;
+	case IMAGE_FORMAT_R8G8B8:				return VK_FORMAT_R8G8B8_UNORM;
+	case IMAGE_FORMAT_R8G8:					return VK_FORMAT_R8G8_UNORM;
+	case IMAGE_FORMAT_R8:					return VK_FORMAT_R8_UNORM;
+	case IMAGE_FORMAT_R8G8B8A8_SRGB:		return VK_FORMAT_R8G8B8A8_SRGB;
+	case IMAGE_FORMAT_R8G8B8_SRGB:			return VK_FORMAT_R8G8B8_SRGB;
+	case IMAGE_FORMAT_R8G8_SRGB:			return VK_FORMAT_R8G8_SRGB;
+	case IMAGE_FORMAT_R8_SRGB:				return VK_FORMAT_R8_SRGB;
+	case IMAGE_FORMAT_MAX_ENUM:
+		LOGGER_WARNING("Invalid image format !");
+		return VK_FORMAT_R8G8B8A8_UNORM;
 	}
 
-	LOGGER_WARNING("Don't find the right format");
+	LOGGER_WARNING("Unsupported image format ! ");
 	return VK_FORMAT_R8G8B8A8_SRGB;
 }
 

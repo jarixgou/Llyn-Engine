@@ -133,19 +133,23 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 			SPV_CHECK(spvReflectEnumerateEntryPointInputVariables(&module, entryPoint.name, &count, vertexInput.data()),
 				"Failed to enumerate entry point input variable");
 
-			m_inputAttribute.resize(count);
 			for (uint32_t j = 0; j < count; ++j)
 			{
-				m_inputAttribute[j].location = vertexInput[j]->location;
-				m_inputAttribute[j].binding = 0;
-				m_inputAttribute[j].format = GetFormat(vertexInput[j]->format);
+				if (!(vertexInput[j]->decoration_flags & SPV_REFLECT_DECORATION_BUILT_IN))
+				{
+					InputAttribute inputAttribute;
+					inputAttribute.location = vertexInput[j]->location;
+					inputAttribute.binding = 0;
+					inputAttribute.format = GetFormat(vertexInput[j]->format);
+					m_inputAttribute.emplace_back(inputAttribute);
+				}
 			}
 
 			// Bubble sort to calculate the offset
-			for (uint32_t j = 0; j < count - 1; ++j)
+			for (int j = 0; j < static_cast<int>(m_inputAttribute.size()) - 1; ++j)
 			{
 				bool swapped = false;
-				for (uint32_t k = 0; k < count - j - 1; ++k)
+				for (int k = 0; k < static_cast<int>(m_inputAttribute.size()) - j - 1; ++k)
 				{
 					if (m_inputAttribute[k].location > m_inputAttribute[k + 1].location)
 					{
@@ -159,21 +163,22 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 
 				if (!swapped)
 				{
-					j = count;
+					j = m_inputAttribute.size();
 				}
 			}
 
 			// Calculate the offset
 			uint32_t offset = 0;
-			for (int j = 0; j < count; ++j)
+			for (size_t j = 0; j < m_inputAttribute.size(); ++j)
 			{
 				m_inputAttribute[j].offset = offset;
 
 				offset += CalculateOffset(m_inputAttribute[j].format);
+				m_attributeInputSizeByte += CalculateOffset(m_inputAttribute[j].format);
 			}
 
 			count = 0;
-			SPV_CHECK(spvReflectEnumerateEntryPointDescriptorSets(&module, entryPoint.name,&count, nullptr),
+			SPV_CHECK(spvReflectEnumerateEntryPointDescriptorSets(&module, entryPoint.name, &count, nullptr),
 				"Failed to enumerate descriptor sets ! ");
 			std::vector<SpvReflectDescriptorSet*> descriptorSets(count);
 			SPV_CHECK(spvReflectEnumerateEntryPointDescriptorSets(&module, entryPoint.name, &count, descriptorSets.data()),
@@ -206,6 +211,12 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 					shaderInfo.binding = descriptorSets[j]->bindings[k]->binding;
 					shaderInfo.uniformType = GetUniformType(descriptorSets[j]->bindings[k]->descriptor_type);
 					shaderInfo.shaderStage = GetShaderStage(entryPoint.shader_stage);
+
+					if (descriptorSets[j]->bindings[k]->array.dims_count > 0 &&
+						descriptorSets[j]->bindings[k]->array.dims[0] == SPV_REFLECT_ARRAY_DIM_RUNTIME)
+					{
+						shaderInfo.bindless = true;
+					}
 
 					setInfo->shaderInfos.emplace_back(std::move(shaderInfo));
 				}
@@ -269,6 +280,12 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 					shaderInfo.uniformType = GetUniformType(descriptorSets[j]->bindings[k]->descriptor_type);
 					shaderInfo.shaderStage = GetShaderStage(entryPoint.shader_stage);
 
+					if (descriptorSets[j]->bindings[k]->array.dims_count > 0 &&
+						descriptorSets[j]->bindings[k]->array.dims[0] == SPV_REFLECT_ARRAY_DIM_RUNTIME)
+					{
+						shaderInfo.bindless = true;
+					}
+
 					setInfo->shaderInfos.emplace_back(std::move(shaderInfo));
 				}
 			}
@@ -293,71 +310,19 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 		}
 	}
 
-	uint32_t count = 0;
-	SPV_CHECK(spvReflectEnumerateSpecializationConstants(&module, &count, nullptr),
-		"Failed to enumerate specialization constants ! ");
-	std::vector<SpvReflectSpecializationConstant*> specializationConstants(count);
-	SPV_CHECK(spvReflectEnumerateSpecializationConstants(&module, &count, specializationConstants.data()),
-		"Failed to enumerate specialization constants ! ");
-
-	m_specializationConstants.resize(count);
-	for (uint32_t i = 0; i < count; ++i)
-	{
-		m_specializationConstants[i].constantId = specializationConstants[i]->constant_id;
-		m_specializationConstants[i].size = specializationConstants[i]->default_value_size;
-		m_specializationConstants[i].defaultValue = specializationConstants[i]->default_value;
-	}
-
-	// Bubble sort specialization constant to calculate the offset
-	for (size_t i = 0; i < m_specializationConstants.size() - 1; ++i)
-	{
-		bool swapped = false;
-
-		for (int j = 0; j < m_specializationConstants.size() - i - 1; ++j)
-		{
-			if (m_specializationConstants[j].constantId > m_specializationConstants[j + 1].constantId)
-			{
-				SpecializationConstant specConstant = m_specializationConstants[j];
-				m_specializationConstants[j] = m_specializationConstants[j + 1];
-				m_specializationConstants[j + 1] = specConstant;
-
-				swapped = true;
-			}
-		}
-
-		if (!swapped)
-		{
-			i = m_specializationConstants.size();
-		}
-	}
-
-	for (size_t i = 0; i < m_specializationConstants.size(); ++i)
-	{
-		uint32_t offset = 0;
-
-		if (i >= 1)
-		{
-			for (size_t j = i - 1; j >= 0; --j)
-			{
-				offset += m_specializationConstants[j].size;
-			}
-		}
-
-		m_specializationConstants[i].offset = offset;
-	}
 
 	// Bubble sort set info
 	for (size_t i = 0; i < m_setInfos.size() - 1; ++i)
 	{
 		bool swapped = false;
 
-		for (int j = 0; j < m_setInfos.size() - i - 1; ++j)
+		for (size_t j = 0; j < m_setInfos.size() - i - 1; ++j)
 		{
 			if (m_setInfos[j].set > m_setInfos[j + 1].set)
 			{
 				SetInfo setInfo = m_setInfos[j];
 				m_setInfos[j] = m_setInfos[j + 1];
-				m_setInfos[j + 1] = m_setInfos[j];
+				m_setInfos[j + 1] = setInfo;
 
 				swapped = true;
 			}
@@ -368,6 +333,8 @@ void SpirvReflectWrapper::LoadReflect(const std::string& _filePath)
 			i = m_setInfos.size();
 		}
 	}
+
+	spvReflectDestroyShaderModule(&module);
 }
 
 uint32_t SpirvReflectWrapper::CalculateOffset(Format _format)
@@ -450,7 +417,7 @@ UniformType GetUniformType(const SpvReflectDescriptorType& _type)
 {
 	switch (_type)
 	{
-	case SPV_REFLECT_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:	return UNIFORM_TYPE_SAMPLED_IMAGE;
+	case SPV_REFLECT_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:	return UNIFORM_TYPE_COMBINED_IMAGE_SAMPLER;
 	case SPV_REFLECT_DESCRIPTOR_TYPE_UNIFORM_BUFFER:			return UNIFORM_TYPE_CONSTANT;
 	case SPV_REFLECT_DESCRIPTOR_TYPE_STORAGE_BUFFER:			return UNIFORM_TYPE_STORAGE;
 	default: LOGGER_ERROR("Unsupported uniform type ! ");

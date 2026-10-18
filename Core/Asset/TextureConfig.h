@@ -41,17 +41,20 @@ enum ImageFormat
 	IMAGE_FORMAT_R8G8B8,
 	IMAGE_FORMAT_R8G8,
 	IMAGE_FORMAT_R8,
+	IMAGE_FORMAT_R8G8B8A8_SRGB,
+	IMAGE_FORMAT_R8G8B8_SRGB,
+	IMAGE_FORMAT_R8G8_SRGB,
+	IMAGE_FORMAT_R8_SRGB,
 	IMAGE_FORMAT_MAX_ENUM
 };
 
 struct TextureConfig
 {
-	ImageFormat format = IMAGE_FORMAT_R8G8B8A8;
+	ImageFormat format = IMAGE_FORMAT_R8G8B8A8_SRGB;
 	ImageType type = IMAGE_TYPE_2D;
 	WrapMode wrapMode = WRAP_MODE_REPEAT;
 	ImageFilter filter = FILTER_NEAREST;
 	MipMapFilter mipMapFilter = MIPMAP_FILTER_NEAREST;
-	bool sRGB = true;
 	bool mipmap = true;
 };
 

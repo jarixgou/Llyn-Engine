@@ -12,6 +12,7 @@
 #include "VK_Buffer.h"
 #include "VK_ImGui.h"
 #include "VK_RenderWindow.h"
+#include "VK_SwapChain.h"
 
 #include "../MatricesData.h"
 #include "../MetaData.h"
@@ -77,7 +78,9 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 
 	VK_Buffer::SetFrameSync(m_frameSync);
 
-	m_defaultPipeline->Init(m_renderWindow->GetSwapChain(), PipelineInfo{});
+	PipelineInfo pipelineInfo;
+	pipelineInfo.imageFormats.emplace_back(IMAGE_FORMAT_R8G8B8A8_SRGB);
+	m_defaultPipeline->Init(m_renderWindow->GetSwapChain(), pipelineInfo);
 
 	VK_DescriptorManager* descriptorManager = new VK_DescriptorManager;
 	descriptorManager->Adds(m_defaultPipeline->GetDescriptorLayouts());
@@ -194,7 +197,7 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	vkEndCommandBuffer(imGuiCmdBuff);
 
-	std::vector<VkCommandBuffer> cmdBuffList = { cmdBuff, imGuiCmdBuff };;
+	std::vector<VkCommandBuffer> cmdBuffList = { cmdBuff, imGuiCmdBuff };
 
 	m_frameSync->End(m_renderWindow->GetSwapChain(), imageIndex, cmdBuffList);
 }

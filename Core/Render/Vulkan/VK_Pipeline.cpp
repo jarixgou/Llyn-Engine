@@ -9,10 +9,14 @@
 #include "PipelineInfo.h"
 #include "VK_SwapChain.h"
 #include "VK_DepthResources.h"
+#include "VK_Texture.h"
 #include "../SpirvReflectWrapper.h"
 #include "../../Logger.h"
 #include "../../Utils/Utils.h"
 #include "../../Vertex.h"
+
+#include "../UniformType.h"
+#include "../ShaderStage.h"
 
 void VK_Pipeline::Init(const VK_SwapChain* _swapChain, const PipelineInfo& _info)
 {
@@ -59,53 +63,24 @@ std::vector<VK_DescriptorLayoutHandle> VK_Pipeline::GetDescriptorLayouts()
 
 void VK_Pipeline::CreateDescriptorSetLayout(const VK_Device* _device, const SpirvReflectWrapper& _reflect)
 {
-	std::vector<VK_LayoutInfo> bindlessLayoutInfo =
+	m_descriptorLayouts.resize(_reflect.m_setInfos.size());
+	for (size_t i = 0; i < _reflect.m_setInfos.size(); ++i)
 	{
-		{"textures", 0, 0, 1024,
-			VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, true }
-	};
-	VK_DescriptorLayoutHandle bindlessDescriptor;
-	bindlessDescriptor.CreateLayout(_device, bindlessLayoutInfo);
-	m_descriptorLayouts.emplace_back(bindlessDescriptor);
-
-	std::vector<VK_LayoutInfo> coreLayoutInfo =
-	{
-		{"vertices", 0, 0, 1,
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, false},
-		{"indices", 1, 0, 1,
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, false},
-		{"materials", 2, 0, 1,
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, false}
-	};
-	VK_DescriptorLayoutHandle coreDescriptor;
-	coreDescriptor.CreateLayout(_device, coreLayoutInfo);
-	m_descriptorLayouts.emplace_back(coreDescriptor);
-
-	std::vector<VK_LayoutInfo> sceneLayoutInfo =
-	{
-		{"matrices", 0, 0, 1,
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, false},
-		{"metaDatas", 1, 0, 1,
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, false}
-	};
-	VK_DescriptorLayoutHandle sceneDescriptor;
-	sceneDescriptor.CreateLayout(_device, sceneLayoutInfo);
-	m_descriptorLayouts.emplace_back(sceneDescriptor);
-
-	std::vector<VK_LayoutInfo> lightLayoutInfo =
-	{
-		{"dirLights", 0, 0, 1,
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, false},
-		{"pointLights", 1, 0, 1,
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, false},
-		{"spotLights", 2, 0, 1,
-			VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, false},
-		{"lightData", 3, 0, 1,
-			VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, false}
-	};
-	VK_DescriptorLayoutHandle lightDescriptor;
-	lightDescriptor.CreateLayout(_device, lightLayoutInfo);
-	m_descriptorLayouts.emplace_back(lightDescriptor);
+		std::vector<VK_LayoutInfo> layoutInfos(_reflect.m_setInfos[i].shaderInfos.size());
+		for (size_t j = 0; j < _reflect.m_setInfos[i].shaderInfos.size(); ++j)
+		{
+			layoutInfos[j].name = _reflect.m_setInfos[i].shaderInfos[j].name;
+			layoutInfos[j].binding = _reflect.m_setInfos[i].shaderInfos[j].binding;
+			layoutInfos[j].offset = 0;
+			layoutInfos[j].count = _reflect.m_setInfos[i].shaderInfos[j].bindless ? BINDLESS_COUNT : 1;
+			layoutInfos[j].type = GetDescriptorType(_reflect.m_setInfos[i].shaderInfos[j].uniformType);
+			layoutInfos[j].stageFlags = GetShaderStageFlags(_reflect.m_setInfos[i].shaderInfos[j].shaderStage);
+			layoutInfos[j].bindless = _reflect.m_setInfos[i].shaderInfos[j].bindless;
+		}
+		VK_DescriptorLayoutHandle layoutHandle;
+		layoutHandle.CreateLayout(_device, layoutInfos);
+		m_descriptorLayouts[i] = layoutHandle;
+	}
 }
 
 void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_SwapChain* _swapChain, const PipelineInfo& _info, const SpirvReflectWrapper&
@@ -134,13 +109,27 @@ void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_Swap
 	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
 	// If I want to enable the direct drawing
+	std::vector<VkVertexInputAttributeDescription> vertexAttribute(_reflect.m_inputAttribute.size());
+	for (size_t i = 0; i < _reflect.m_inputAttribute.size(); ++i)
+	{
+		vertexAttribute[i].binding = _reflect.m_inputAttribute[i].binding;
+		vertexAttribute[i].location = _reflect.m_inputAttribute[i].location;
+		vertexAttribute[i].format = Utils::GetVkFormat(_reflect.m_inputAttribute[i].format);
+		vertexAttribute[i].offset = _reflect.m_inputAttribute[i].offset;
+	}
+
+	VkVertexInputBindingDescription bindingDescription;
+	bindingDescription.binding = 0;
+	bindingDescription.stride = _reflect.m_attributeInputSizeByte;
+	bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
 	VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
 	vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputCreateInfo.pNext = VK_NULL_HANDLE;
-	vertexInputCreateInfo.vertexBindingDescriptionCount = 0;
-	vertexInputCreateInfo.pVertexBindingDescriptions = VK_NULL_HANDLE;
-	vertexInputCreateInfo.vertexAttributeDescriptionCount = 0;
-	vertexInputCreateInfo.pVertexAttributeDescriptions = VK_NULL_HANDLE;
+	vertexInputCreateInfo.vertexBindingDescriptionCount = 1;
+	vertexInputCreateInfo.pVertexBindingDescriptions = &bindingDescription;
+	vertexInputCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexAttribute.size());
+	vertexInputCreateInfo.pVertexAttributeDescriptions = vertexAttribute.data();
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyCreateInfo{};
 	inputAssemblyCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -202,25 +191,13 @@ void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_Swap
 	colorBlendfCreateInfo.attachmentCount = 1;
 	colorBlendfCreateInfo.pAttachments = &colorBlendAttachment;
 
-	uint32_t lightingModeValue = 2;
-
-	VkSpecializationMapEntry specMapEntry{};
-	specMapEntry.constantID = 0;
-	specMapEntry.offset = 0;
-	specMapEntry.size = sizeof(uint32_t);
-
-	VkSpecializationInfo specInfo{};
-	specInfo.mapEntryCount = 1;
-	specInfo.pMapEntries = &specMapEntry;
-	specInfo.dataSize = sizeof(uint32_t);
-	specInfo.pData = &lightingModeValue;
-
-	shaderStages[1].pSpecializationInfo = &specInfo;
-
-	VkPushConstantRange pushConstantRange{};
-	pushConstantRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-	pushConstantRange.offset = 0;
-	pushConstantRange.size = sizeof(Vec3f);
+	std::vector<VkPushConstantRange> pushConstants(_reflect.m_pushConstants.size());
+	for (size_t i = 0; i < _reflect.m_pushConstants.size(); ++i)
+	{
+		pushConstants[i].stageFlags = GetShaderStageFlags(_reflect.m_pushConstants[i].shaderStage);
+		pushConstants[i].offset = _reflect.m_pushConstants[i].offset;
+		pushConstants[i].size = _reflect.m_pushConstants[i].size;
+	}
 
 	std::vector<VkDescriptorSetLayout> setLayouts(4);
 	for (int i = 0; i < 4; ++i)
@@ -233,8 +210,8 @@ void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_Swap
 	pipeLayoutCreateInfo.pNext = VK_NULL_HANDLE;
 	pipeLayoutCreateInfo.setLayoutCount = static_cast<uint32_t>(setLayouts.size());
 	pipeLayoutCreateInfo.pSetLayouts = setLayouts.data();
-	pipeLayoutCreateInfo.pushConstantRangeCount = 1;
-	pipeLayoutCreateInfo.pPushConstantRanges = &pushConstantRange;
+	pipeLayoutCreateInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstants.size());
+	pipeLayoutCreateInfo.pPushConstantRanges = pushConstants.data();
 
 	VK_CHECK(vkCreatePipelineLayout(*_device->GetDevice(), &pipeLayoutCreateInfo, nullptr, &m_pipelineLayout), "Failed to create Pipeline Layout");
 
@@ -249,11 +226,22 @@ void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_Swap
 
 	const VkFormat surfaceFormat = _swapChain->GetSwapChainSurface()->format;
 
+	if (_info.imageFormats.size() != _reflect.m_imageOutputCount)
+	{
+		LOGGER_CRITICAL("The formats you passed are not the same on the shader ! ");
+	}
+
+	std::vector<VkFormat> formats(_reflect.m_imageOutputCount);
+	for (int i = 0; i < _reflect.m_imageOutputCount; ++i)
+	{
+		formats[i] = VK_Texture::GetFormat(_info.imageFormats[i]);
+	}
+
 	VkPipelineRenderingCreateInfo pipelineRenderingCreateInfo{};
 	pipelineRenderingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
 	pipelineRenderingCreateInfo.pNext = VK_NULL_HANDLE;
-	pipelineRenderingCreateInfo.colorAttachmentCount = 1;
-	pipelineRenderingCreateInfo.pColorAttachmentFormats = &surfaceFormat;
+	pipelineRenderingCreateInfo.colorAttachmentCount = static_cast<uint32_t>(formats.size());
+	pipelineRenderingCreateInfo.pColorAttachmentFormats = formats.data();
 	pipelineRenderingCreateInfo.depthAttachmentFormat = VK_DepthResources::FinDepthFormat(_device);
 
 	VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo{};
@@ -352,4 +340,36 @@ VkPipelineColorBlendAttachmentState VK_Pipeline::CreateBlendMode(const PipelineI
 	}
 
 	return blendAttachment;
+}
+
+VkDescriptorType VK_Pipeline::GetDescriptorType(const UniformType& _uniformType)
+{
+	switch (_uniformType)
+	{
+	case UNIFORM_TYPE_CONSTANT:					return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	case UNIFORM_TYPE_STORAGE:					return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	case UNIFORM_TYPE_COMBINED_IMAGE_SAMPLER:	return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	case UNIFORM_TYPE_MAX:
+		LOGGER_ERROR("Invalid uniform type ! ");
+		return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	}
+
+	LOGGER_ERROR("Unsupported uniform type ! ");
+	return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+}
+
+VkShaderStageFlags VK_Pipeline::GetShaderStageFlags(const ShaderStage& _shaderStage)
+{
+	switch (_shaderStage)
+	{
+	case SHADER_STAGE_VERTEX:		return VK_SHADER_STAGE_VERTEX_BIT;
+	case SHADER_STAGE_FRAGMENT:		return VK_SHADER_STAGE_FRAGMENT_BIT;
+	case SHADER_STAGE_COMPUTE:		return VK_SHADER_STAGE_COMPUTE_BIT;
+	case SHADER_STAGE_MAX:
+		LOGGER_ERROR("Invalid shader stage !");
+		return VK_SHADER_STAGE_VERTEX_BIT;
+	}
+
+	LOGGER_ERROR("Unsupported shader stage ! ");
+	return VK_SHADER_STAGE_VERTEX_BIT;
 }

@@ -298,6 +298,7 @@
     <ClCompile Include="Render\Vulkan\VK_Image.cpp" />
     <ClCompile Include="Render\Vulkan\VK_ImGui.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Pipeline.cpp" />
+    <ClCompile Include="Render\Vulkan\VK_RenderGraph.cpp" />
     <ClCompile Include="Render\Vulkan\VK_RenderWindow.cpp" />
     <ClCompile Include="Render\Vulkan\VK_SwapChain.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Instance.cpp" />

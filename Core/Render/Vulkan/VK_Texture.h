@@ -14,12 +14,12 @@ public:
 public:
 	void Init(VK_TextureInfo& _info);
 	void Cleanup();
+	static VkFormat GetFormat(const ImageFormat& _format);
 private:
 	void CreateSampler(VkFilter _filter, VkSamplerMipmapMode _mipFilter, VkSamplerAddressMode _wrapMode);
 	void GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize);
-
-	static VkFormat GetFormat(const ImageFormat& _format, const bool& _sRGB);
 	static VkFilter GetFilter(const ImageFilter& _filter);
+
 	VkSamplerMipmapMode GetMipFilter(const MipMapFilter& _filter);
 	VkSamplerAddressMode GetWrapMode(const WrapMode& _wrapMode);
 };
