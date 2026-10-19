@@ -15,9 +15,9 @@ public:
 
 	virtual void Init() = 0;
 
-	virtual void StoreData(std::string _name, void* _data, size_t _size, uint32_t _frameIndex) = 0;
-	virtual void StoreTexture(Texture* _texture, uint32_t _dstArray, uint32_t _frameIndex) = 0;
-	virtual void StoreTextures(std::vector<Texture>& _textures, uint32_t _frameIndex) = 0;
+	virtual void StoreData(const std::string& _pipelineName, const std::string& _uniformName, void* _data, size_t _size, uint32_t _frameIndex) = 0;
+	virtual void StoreTexture(const std::string& _pipelineName, const std::string& _name, Texture* _texture, uint32_t _dstArray, uint32_t _frameIndex) = 0;
+	virtual void StoreTextures(const std::string& _pipelineName, const std::string& _name, std::vector<Texture>& _textures, uint32_t _frameIndex) = 0;
 
 	virtual void PushUniform() = 0;
 };

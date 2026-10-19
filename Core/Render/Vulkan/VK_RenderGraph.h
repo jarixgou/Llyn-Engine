@@ -22,8 +22,8 @@ struct VK_RenderPass
 	std::vector<std::string> inputs;
 	std::vector<std::string> outputs;
 
-	std::function<void(const uint32_t&)> updateFunc;
-	std::function<void(VkCommandBuffer&)> executeFunc;
+	std::function<void(IUniformManager*, const uint32_t&)> updateFunc;
+	std::function<void(VkCommandBuffer&, IUniformManager*, const uint32_t&)> executeFunc;
 };
 
 
@@ -39,10 +39,11 @@ private:
 public:
 	void AddResource(const std::string& _name, VkFormat _format, VkImageLayout _initialLayout, VkImageLayout _finalLayout, VkImageAspectFlags _imageAspect, VkImageUsageFlags _usage, const Vec2u& _size);
 	void AddPass(const std::string& _name, const std::vector<std::string>& _inputs,
-	             const std::vector<std::string>& _outputs, std::function<void(const uint32_t&)> _updateFunc, std::function<void(VkCommandBuffer&)> _executeFunc);
+	             const std::vector<std::string>& _outputs, std::function<void(IUniformManager*, const uint32_t&)> _updateFunc, std::
+	             function<void(VkCommandBuffer&, IUniformManager*, const uint32_t&)> _executeFunc);
 
 	void Compile();
-	void Execute(VkCommandBuffer& _cmdBuff, VkQueue& _queue, const uint32_t& _frameIndex);
+	void Execute(VkCommandBuffer& _cmdBuff, VkQueue& _queue, IUniformManager* _uniformManager, const uint32_t& _frameIndex);
 
 	VK_Resource* GetResource(const std::string& _name);
 };

@@ -134,7 +134,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;$(SolutionDIr)Librairies\Lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;shaderc_combined.lib;spirv-cross-core.lib;spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-msl.lib;spirv-reflect-static.lib;glfw3.lib;fastgltf-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;shaderc_combined.lib;spirv-cross-core.lib;spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-msl.lib;spirv-reflect-static.lib;glfw3.lib;fastgltf-d.lib;slang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -161,7 +161,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(VK_SDK_PATH)\Lib;$(SolutionDIr)Librairies\Lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;shaderc_combined.lib;spirv-cross-core.lib;spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-msl.lib;spirv-reflect-static.lib;glfw3.lib;fastgltf.lib</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;shaderc_combined.lib;spirv-cross-core.lib;spirv-cross-glsl.lib;spirv-cross-hlsl.lib;spirv-cross-msl.lib;spirv-reflect-static.lib;glfw3.lib;fastgltf.lib;slang.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

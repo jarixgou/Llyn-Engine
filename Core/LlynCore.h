@@ -41,6 +41,7 @@ class VK_Image;
 class VK_Texture;
 struct VK_TextureInfo;
 struct VK_StageAndAccess;
+class VK_RenderGraph;
 
 // Asset forward declaration
 enum ImageType;

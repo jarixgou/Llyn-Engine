@@ -62,15 +62,15 @@ void RessourceManager::UpdateRessources(IUniformManager* _uniformManager, uint32
 
 	if (!m_frameSendsTexture[_framIndex])
 	{
-		_uniformManager->StoreTextures(m_textureCaches, _framIndex);
+		_uniformManager->StoreTextures(TODO, TODO, m_textureCaches, _framIndex);
 
 		m_frameSendsTexture[_framIndex] = true;
 	}
 
 	if (!m_frameSendsMaterial[_framIndex])
 	{
-		_uniformManager->StoreData("materials", m_materialCaches.data(),
-			ARRAY_SIZE_IN_BYTES(m_materialCaches), _framIndex);
+		_uniformManager->StoreData(TODO, "materials",
+		                           m_materialCaches.data(), ARRAY_SIZE_IN_BYTES(m_materialCaches), _framIndex);
 
 		m_frameSendsMaterial[_framIndex] = true;
 	}

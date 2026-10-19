@@ -46,7 +46,7 @@ const VkDevice* VK_Device::GetDevice() const
 	return &m_device;
 }
 
-const VkQueue* VK_Device::GetGraphicsQueue() const
+VkQueue* VK_Device::GetGraphicsQueue()
 {
 	return &m_graphicsQueue;
 }

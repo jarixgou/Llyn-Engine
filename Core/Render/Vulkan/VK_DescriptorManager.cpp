@@ -15,7 +15,7 @@ void VK_DescriptorManager::Cleanup()
 {
 }
 
-void VK_DescriptorManager::Add(VK_DescriptorLayoutHandle _layoutHandle)
+void VK_DescriptorManager::Add(const std::string& _pipelineName, VK_DescriptorLayoutHandle _layoutHandle)
 {
 	if (m_descriptorPools.contains(_layoutHandle))
 	{
@@ -78,11 +78,11 @@ void VK_DescriptorManager::Add(VK_DescriptorLayoutHandle _layoutHandle)
 	}
 }
 
-void VK_DescriptorManager::Adds(std::vector<VK_DescriptorLayoutHandle> _layoutHandles)
+void VK_DescriptorManager::Adds(const std::string& _pipelineName, std::vector<VK_DescriptorLayoutHandle> _layoutHandles)
 {
 	for (int i = 0; i < _layoutHandles.size(); ++i)
 	{
-		Add(_layoutHandles[i]);
+		Add(TODO, _layoutHandles[i]);
 	}
 }
 
@@ -97,7 +97,7 @@ std::vector<VkDescriptorSet> VK_DescriptorManager::GetDescriptorSets(uint32_t _i
 	return descSets;
 }
 
-void VK_DescriptorManager::StoreData(std::string _name, void* _data, size_t _size, uint32_t _frameIndex)
+void VK_DescriptorManager::StoreData(const std::string& _pipelineName, const std::string& _uniformName, void* _data, size_t _size, uint32_t _frameIndex)
 {
 	for (auto& descriptorPool : m_descriptorPools)
 	{
@@ -106,7 +106,7 @@ void VK_DescriptorManager::StoreData(std::string _name, void* _data, size_t _siz
 			const VK_LayoutInfo layoutInfo = descriptorPool.first.infos[i];
 			VK_DescriptorHandle* descHandle = &m_descriptors[descriptorPool.second];
 
-			if (layoutInfo.name == _name)
+			if (layoutInfo.name == _uniformName)
 			{
 				const bool isCreated = descHandle->shaderBuffer[i].IsCreated(_frameIndex);
 
@@ -135,12 +135,12 @@ void VK_DescriptorManager::StoreData(std::string _name, void* _data, size_t _siz
 	}
 }
 
-void VK_DescriptorManager::StoreTexture(Texture* _texture, uint32_t _dstArray, uint32_t _frameIndex)
+void VK_DescriptorManager::StoreTexture(const std::string& _pipelineName, const std::string& _name, Texture* _texture, uint32_t _dstArray, uint32_t _frameIndex)
 {
 	LLYN_ASSERT(_texture != nullptr);
 }
 
-void VK_DescriptorManager::StoreTextures(std::vector<Texture>& _textures, uint32_t _frameIndex)
+void VK_DescriptorManager::StoreTextures(const std::string& _pipelineName, const std::string& _name, std::vector<Texture>& _textures, uint32_t _frameIndex)
 {
 	if (!m_descriptorPools.contains(bindlessLayout))
 	{

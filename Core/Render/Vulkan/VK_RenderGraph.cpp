@@ -18,7 +18,8 @@ void VK_RenderGraph::AddResource(const std::string& _name, VkFormat _format, VkI
 }
 
 void VK_RenderGraph::AddPass(const std::string& _name, const std::vector<std::string>& _inputs,
-                             const std::vector<std::string>& _outputs, std::function<void(const uint32_t&)> _updateFunc, std::function<void(VkCommandBuffer&)> _executeFunc)
+                             const std::vector<std::string>& _outputs, std::function<void(IUniformManager*, const uint32_t&)> _updateFunc, std::
+                             function<void(VkCommandBuffer&, IUniformManager*, const uint32_t&)> _executeFunc)
 {
 	VK_RenderPass pass;
 	pass.name = _name;
@@ -110,7 +111,7 @@ void VK_RenderGraph::Compile()
 	}
 }
 
-void VK_RenderGraph::Execute(VkCommandBuffer& _cmdBuff, VkQueue& _queue, const uint32_t& _frameIndex)
+void VK_RenderGraph::Execute(VkCommandBuffer& _cmdBuff, VkQueue& _queue, IUniformManager* _uniformManager, const uint32_t& _frameIndex)
 {
 	std::vector<VkSemaphore> waitSemaphores;
 	std::vector<VkPipelineStageFlags> waitStages;
@@ -157,10 +158,10 @@ void VK_RenderGraph::Execute(VkCommandBuffer& _cmdBuff, VkQueue& _queue, const u
 
 		if (m_passes[m_executionOrder[i]].updateFunc)
 		{
-			m_passes[m_executionOrder[i]].updateFunc(_frameIndex);
+			m_passes[m_executionOrder[i]].updateFunc(_uniformManager, _frameIndex);
 		}
 
-		m_passes[m_executionOrder[i]].executeFunc(_cmdBuff);
+		m_passes[m_executionOrder[i]].executeFunc(_cmdBuff, _uniformManager, _frameIndex);
 
 		for (size_t j = 0; j < m_passes[i].outputs.size(); ++j)
 		{

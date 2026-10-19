@@ -28,7 +28,7 @@ void Engine::Init()
 	m_scene->Init();
 
 	m_render = new VK_Render;
-	m_render->Init(&m_uniformManager);
+	m_render->Init(&m_uniformManager, TODO);
 
 	m_lightManager = new LightManager;
 	m_lightManager->Init();

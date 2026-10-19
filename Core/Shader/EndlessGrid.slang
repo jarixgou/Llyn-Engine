@@ -35,5 +35,5 @@ VSOutput vertMain(uint32_t _vertexID : SV_VertexID)
 [shader("fragment")]
 float4 fragMain(float4 _pos) : SV_Target
 {
-
+    return float4(0.0);
 }

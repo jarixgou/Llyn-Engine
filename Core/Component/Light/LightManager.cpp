@@ -121,29 +121,29 @@ void LightManager::UpdateLights(ECS* _ecs, IUniformManager* _uniformManager, uin
 
 	if (!m_frameSendsDirLight[_frameIndex])
 	{
-		_uniformManager->StoreData("dirLights", m_dirLightsCache.data(), 
-			ARRAY_SIZE_IN_BYTES(m_dirLightsCache), _frameIndex);
+		_uniformManager->StoreData(TODO, "dirLights",
+		                           m_dirLightsCache.data(), ARRAY_SIZE_IN_BYTES(m_dirLightsCache), _frameIndex);
 
 		m_frameSendsDirLight[_frameIndex] = true;
 	}
 
 	if (!m_frameSendsPointLight[_frameIndex])
 	{
-		_uniformManager->StoreData("pointLights", m_pointLightsCache.data(),
-			ARRAY_SIZE_IN_BYTES(m_pointLightsCache), _frameIndex);
+		_uniformManager->StoreData(TODO, "pointLights",
+		                           m_pointLightsCache.data(), ARRAY_SIZE_IN_BYTES(m_pointLightsCache), _frameIndex);
 
 		m_frameSendsPointLight[_frameIndex] = true;
 	}
 
 	if (!m_frameSendsSpotLight[_frameIndex])
 	{
-		_uniformManager->StoreData("spotLights", m_spotLightsCache.data(),
-			ARRAY_SIZE_IN_BYTES(m_spotLightsCache), _frameIndex);
+		_uniformManager->StoreData(TODO, "spotLights",
+		                           m_spotLightsCache.data(), ARRAY_SIZE_IN_BYTES(m_spotLightsCache), _frameIndex);
 
 		m_frameSendsSpotLight[_frameIndex] = true;
 	}
 
-	_uniformManager->StoreData("lightData", &m_lightData, sizeof(LightData), _frameIndex);
+	_uniformManager->StoreData(TODO, "lightData", &m_lightData, sizeof(LightData), _frameIndex);
 
 	m_init = true;
 }

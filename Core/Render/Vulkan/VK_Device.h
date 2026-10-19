@@ -25,7 +25,7 @@ public:
 	const VkPhysicalDevice* GetPhycicalDevice() const;
 	const VkDevice* GetDevice() const;
 
-	const VkQueue* GetGraphicsQueue() const;
+	VkQueue* GetGraphicsQueue();
 
 	uint32_t GetQueueIndex() const;
 private:

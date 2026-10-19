@@ -10,6 +10,12 @@ struct VSOutput
     float2 uv;
 }
 
+struct FGOutput
+{
+    float4 albedo : SV_Target0;
+    float3 normal : SV_Target1;
+}
+
 struct DirLight
 {
     float3 dir;
@@ -111,8 +117,6 @@ VSOutput vertMain(VSInput _vsInput)
     return output;
 }
 
-
-
 [shader("fragment")]
 float4 fragMain(VSOutput _vsOutput) : SV_Target0
 {
@@ -122,4 +126,6 @@ float4 fragMain(VSOutput _vsOutput) : SV_Target0
     {
 
     }
+
+    return finalColor;
 }

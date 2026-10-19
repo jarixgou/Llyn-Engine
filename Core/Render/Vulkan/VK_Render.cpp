@@ -13,6 +13,7 @@
 #include "VK_ImGui.h"
 #include "VK_RenderWindow.h"
 #include "VK_SwapChain.h"
+#include "VK_RenderGraph.h"
 
 #include "../MatricesData.h"
 #include "../MetaData.h"
@@ -64,7 +65,7 @@ void VK_Render::Cleanup()
 	m_instance = nullptr;
 }
 
-void VK_Render::Init(IUniformManager** _uniformManger)
+void VK_Render::Init(IUniformManager** _uniformManger, Transform* _cameraTransform)
 {
 	AllocateVariable();
 
@@ -82,8 +83,13 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	pipelineInfo.imageFormats.emplace_back(IMAGE_FORMAT_R8G8B8A8_SRGB);
 	m_defaultPipeline->Init(m_renderWindow->GetSwapChain(), pipelineInfo);
 
+	PipelineInfo frameBufferInfo;
+	frameBufferInfo.shaderPath = "FrameBuffer.slang.spv";
+	frameBufferInfo.imageFormats = { IMAGE_FORMAT_R8G8B8A8_SRGB };
+	m_frameBufferPipeline->Init(m_renderWindow->GetSwapChain(), frameBufferInfo);
+
 	VK_DescriptorManager* descriptorManager = new VK_DescriptorManager;
-	descriptorManager->Adds(m_defaultPipeline->GetDescriptorLayouts());
+	descriptorManager->Adds(TODO, m_defaultPipeline->GetDescriptorLayouts());
 
 	*_uniformManger = descriptorManager;
 
@@ -93,6 +99,77 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	{
 		*m_indirectDrawBuff[i] = VK_Buffer::CreateIndirectBuffer(1000 * sizeof(VkDrawIndirectCommand));
 	}
+
+	m_renderGraph->AddResource("FinalImage", VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, { 1920, 1080 });
+	m_renderGraph->AddResource("Depth", VK_FORMAT_D32_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_ASPECT_DEPTH_BIT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+		{1920, 1080});
+
+	m_renderGraph->AddPass("Indirect", {}, { "FinalColor", "Depth" }, nullptr,
+		[&](VkCommandBuffer _cmdBuff, IUniformManager* _manager, const uint32_t& _frameIndex)
+		{
+			VK_Resource* resourceFinal = m_renderGraph->GetResource("FinalImage");
+			VK_Resource* resourceDepth = m_renderGraph->GetResource("Depth");
+
+			VkRenderingAttachmentInfo colorAttachment{};
+			colorAttachment.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+			colorAttachment.pNext = VK_NULL_HANDLE;
+			colorAttachment.imageView = resourceFinal->image.m_imageView;
+			colorAttachment.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			colorAttachment.resolveMode = VK_RESOLVE_MODE_NONE;
+			colorAttachment.resolveImageView = VK_NULL_HANDLE;
+			colorAttachment.resolveImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+
+			VkRenderingAttachmentInfo depthAttachment;
+			depthAttachment.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+			depthAttachment.pNext = VK_NULL_HANDLE;
+			depthAttachment.imageView = resourceDepth->image.m_imageView;
+			depthAttachment.imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
+			depthAttachment.resolveMode = VK_RESOLVE_MODE_NONE;
+			depthAttachment.resolveImageView = VK_NULL_HANDLE;
+			depthAttachment.resolveImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+
+			VkRenderingInfo renderingInfo;
+			renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
+			renderingInfo.pNext = VK_NULL_HANDLE;
+			renderingInfo.renderArea = { {0, 0}, *m_renderWindow->GetSwapChain()->GetExtent() };
+			renderingInfo.layerCount = 1;
+			renderingInfo.viewMask = 0;
+			renderingInfo.colorAttachmentCount = 1;
+			renderingInfo.pColorAttachments = &colorAttachment;
+			renderingInfo.pDepthAttachment = &depthAttachment;
+
+			std::vector<VkDescriptorSet> descSets =
+				static_cast<VK_DescriptorManager*>(_manager)->GetDescriptorSets(_frameIndex);
+
+			vkCmdBeginRendering(_cmdBuff, &renderingInfo);
+			vkCmdBindPipeline(_cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_defaultPipeline->GetPipeline());
+			vkCmdSetViewport(_cmdBuff, 0, 1, m_renderWindow->GetWiewport());
+			vkCmdSetScissor(_cmdBuff, 0, 1, m_renderWindow->GetScissor());
+			vkCmdBindDescriptorSets(_cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_defaultPipeline->GetPipelineLayout(),
+				0, descSets.size(), descSets.data(), 
+				0, VK_NULL_HANDLE);
+
+			VkPushConstantsInfo constantInfo{};
+			constantInfo.sType = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO;
+			constantInfo.pNext = VK_NULL_HANDLE;
+			constantInfo.layout = *m_defaultPipeline->GetPipelineLayout();
+			constantInfo.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+			constantInfo.offset = 0;
+			constantInfo.size = sizeof(Vec3f);
+			constantInfo.pValues = &_cameraTransform->pos;
+
+			vkCmdPushConstants2(_cmdBuff, &constantInfo);
+			vkCmdDrawIndirect(_cmdBuff, m_indirectDrawBuff[_frameIndex]->buffer, 0,
+				m_indirectCmds.size(), sizeof(VkDrawIndirectCommand));
+
+			vkCmdEndRendering(_cmdBuff);
+		});
 }
 
 void VK_Render::Update(Scene* _scene, Camera* _camera, LightManager* _lightManager, IUniformManager* _uniformManager)
@@ -129,10 +206,10 @@ void VK_Render::Update(Scene* _scene, Camera* _camera, LightManager* _lightManag
 		m_metaDatas.emplace_back();
 	}
 
-	_uniformManager->StoreData("matrices", m_matricesDatas.data(),
-		ARRAY_SIZE_IN_BYTES(m_matricesDatas), m_frameSync->GetFrameIndex());
-	_uniformManager->StoreData("metaDatas", m_metaDatas.data(),
-		ARRAY_SIZE_IN_BYTES(m_metaDatas), m_frameSync->GetFrameIndex());
+	_uniformManager->StoreData(TODO, "matrices",
+	                           m_matricesDatas.data(), ARRAY_SIZE_IN_BYTES(m_matricesDatas), m_frameSync->GetFrameIndex());
+	_uniformManager->StoreData(TODO, "metaDatas",
+	                           m_metaDatas.data(), ARRAY_SIZE_IN_BYTES(m_metaDatas), m_frameSync->GetFrameIndex());
 
 	_uniformManager->PushUniform();
 }
@@ -152,6 +229,8 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	m_frameSync->Reset();
 
+	m_renderGraph->Execute(cmdBuff, *VK_Device::Get().GetGraphicsQueue(), _uniformManager, m_frameSync->GetFrameIndex());
+
 	VK_Buffer::BeginCommandBuffer(cmdBuff, 0);
 
 	m_renderWindow->Clear(cmdBuff, imageIndex);
@@ -163,7 +242,9 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	m_renderWindow->BeginRendering(cmdBuff, imageIndex, &colorClear, &depthValue);
 
-	std::vector<VkDescriptorSet> descSets =
+
+
+/*	std::vector<VkDescriptorSet> descSets =
 		static_cast<VK_DescriptorManager*>(_uniformManager)->GetDescriptorSets(m_frameSync->GetFrameIndex());
 
 	vkCmdBindPipeline(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_defaultPipeline->GetPipeline());
@@ -186,7 +267,7 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 	{
 		vkCmdDrawIndirect(cmdBuff, m_indirectDrawBuff[m_frameSync->GetFrameIndex()]->buffer, 0,
 			static_cast<uint32_t>(m_indirectCmds.size()), sizeof(VkDrawIndirectCommand));
-	}
+	}*/
 
 	m_renderWindow->EndRendering(cmdBuff);
 	vkEndCommandBuffer(cmdBuff);
@@ -208,7 +289,9 @@ void VK_Render::AllocateVariable()
 	m_renderWindow = new VK_RenderWindow;
 	m_frameSync = new VK_FrameSync;
 	m_defaultPipeline = new VK_Pipeline;
+	m_frameBufferPipeline = new VK_Pipeline;
 	m_depthResources = new VK_DepthResources;
+	m_renderGraph = new VK_RenderGraph;
 
 	m_imgui = new VK_ImGui;
 
@@ -230,7 +313,7 @@ void VK_Render::DisplayWindow(uint32_t _imageIndex)
 }
 
 void VK_Render::ParseEntites(ECS* _ecs, const Entity* _entity, Mat4 _transformMat,
-                             uint32_t& _instance, const Camera* _camera)
+	uint32_t& _instance, const Camera* _camera)
 {
 	LLYN_ASSERT(_ecs != nullptr || _entity != nullptr);
 

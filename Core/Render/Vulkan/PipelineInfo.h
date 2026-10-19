@@ -32,7 +32,7 @@ struct PipelineInfo
 	BlendMode blendMode = BlendMode::ALPHA;
 	RenderFace renderFace = RenderFace::FRONT;
 
-	std::string shaderPath = "Core/Shaders/slang.spv";
+	std::string shaderPath = "Core/Shaders/Indirect.slang.spv";
 
 	bool operator==(const PipelineInfo& _info) const
 	{

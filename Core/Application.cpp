@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "CompileShader.h"
 #include "Render/Window.h"
 #include "Engine.h"
 
@@ -15,6 +16,8 @@ void Application::Run()
 void Application::Init()
 {
 	Window::Get().Init({ 1920, 1080 }, "Llyn");
+
+	CompileShaders();
 
 	m_engine = new Engine;
 	m_engine->Init();

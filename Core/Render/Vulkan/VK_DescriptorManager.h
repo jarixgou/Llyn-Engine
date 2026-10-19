@@ -11,13 +11,17 @@
 #include "VK_DescriptorHandle.h"
 #include "VK_DescriptorLayoutHandleHash.h"
 
+struct VK_PipelineHandle
+{
+	std::vector<VK_DescriptorHandle> m_descriptors;
+	std::unordered_map<VK_DescriptorLayoutHandle, size_t, VK_DescriptorLayoutHandleHash> m_descriptorPools;
+	VK_DescriptorLayoutHandle bindlessLayout;
+};
 
 class VK_DescriptorManager : public IUniformManager
 {
 private:
-	std::vector<VK_DescriptorHandle> m_descriptors;
-	std::unordered_map<VK_DescriptorLayoutHandle, size_t, VK_DescriptorLayoutHandleHash> m_descriptorPools;
-	VK_DescriptorLayoutHandle bindlessLayout;
+	std::unordered_map<std::string, VK_PipelineHandle> m_pipelineHandle;
 
 	std::deque<VkDescriptorImageInfo> m_imageInfos;
 	std::deque<VkDescriptorBufferInfo> m_bufferInfos;
@@ -26,14 +30,14 @@ public:
 	void Init() override;
 	void Cleanup();
 
-	void Add(VK_DescriptorLayoutHandle _layoutHandle);
-	void Adds(std::vector<VK_DescriptorLayoutHandle> _layoutHandles);
+	void Add(const std::string& _pipelineName, VK_DescriptorLayoutHandle _layoutHandle);
+	void Adds(const std::string& _pipelineName, std::vector<VK_DescriptorLayoutHandle> _layoutHandles);
 
 	std::vector<VkDescriptorSet> GetDescriptorSets(uint32_t _imageIndex);
 
-	void StoreData(std::string _name, void* _data, size_t _size, uint32_t _frameIndex) override;
-	void StoreTexture(Texture* _texture, uint32_t _dstArray, uint32_t _frameIndex) override;
-	void StoreTextures(std::vector<Texture>& _textures, uint32_t _frameIndex) override;
+	void StoreData(const std::string& _pipelineName, const std::string& _uniformName, void* _data, size_t _size, uint32_t _frameIndex) override;
+	void StoreTexture(const std::string& _pipelineName, const std::string& _name, Texture* _texture, uint32_t _dstArray, uint32_t _frameIndex) override;
+	void StoreTextures(const std::string& _pipelineName, const std::string& _name, std::vector<Texture>& _textures, uint32_t _frameIndex) override;
 	void PushUniform() override;
 private:
 };
