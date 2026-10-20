@@ -223,7 +223,7 @@ float4 GetTexture(uint32_t _textureID, float2 _uv)
 {
     if (_textureID == TOMBSTONE_ID)
     {
-        return float4(0.0f);
+        return float4(1.0f);
     }
 
     return textures[NonUniformResourceIndex((uint)_textureID)].Sample(_uv);

@@ -18,7 +18,7 @@ float4 vertMain(uint _vertexID : SV_VertexID) : SV_Position
 }
 
 [shader("fragment")]
-float3 fragMain(float4 _pos : SV_Position) : SV_Target
+float4 fragMain(float4 _pos : SV_Position) : SV_Target
 {
-    return texture.Load(int3(int2(_pos.xy), 0));
+    return float4(texture.Load(int3(int2(_pos.xy), 0)), 1.0);
 }

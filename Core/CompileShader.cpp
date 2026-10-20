@@ -13,12 +13,6 @@
 
 void CompileShaders()
 {
-	const std::vector<std::string> entryNames =
-	{
-	"vertMain",
-	"fragMain"
-	};
-
 	std::string path = "Core/Shaders";
 
 	std::vector<std::string> shaderFiles;

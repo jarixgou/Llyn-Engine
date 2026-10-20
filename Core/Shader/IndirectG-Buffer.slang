@@ -74,8 +74,8 @@ struct FGOutput
 {
     float3 pos : SV_Target0;
     float3 normal : SV_Target1;
-    float3 albedo : SV_Target2;
-    float2 specular : SV_Target3;
+    float4 albedo : SV_Target2;
+    float4 specular : SV_Target3;
 }
 
 // Bindless
@@ -125,11 +125,8 @@ VSOutput vertMain(uint _vertexID: SV_VertexID, uint _instance: SV_StartInstanceL
     output.materialID = metaData.materialID;
 
     const uint vertexMod = _vertexID % 3;
-    output.barycentric = float3(
-        vertexMod == 0 ? 1.0f : 0.0f,
-        vertexMod == 1 ? 1.0f : 0.0f,
-        vertexMod == 2 ? 1.0f : 0.0f,
-    );
+    output.barycentric =
+        float3(vertexMod == 0 ? 1.0f : 0.0f, vertexMod == 1 ? 1.0f : 0.0f, vertexMod == 2 ? 1.0f : 0.0f, );
 
     return output;
 }
@@ -149,12 +146,27 @@ FGOutput fragMain(VSOutput _vsOutput)
 {
     const Material material = materials[_vsOutput.materialID];
 
+    const float4 albedoTexture = GetTexture(material.albedoID, _vsOutput.uv0);
+
+    if (albedoTexture.w < 0.1)
+    {
+        discard;
+    }
+
     FGOutput output;
 
     output.pos = _vsOutput.worldPos;
     output.normal = _vsOutput.normal;
-    output.albedo = GetTexture(material.albedoID, _vsOutput.uv0).xyz;
-    output.specular = { GetTexture(material.specularID, _vsOutput.uv0).x, material.smoothness };
+    output.albedo = albedoTexture * float4(material.albedoColor, 1.0);
+
+    float4 specularTexture = GetTexture(material.specularID, _vsOutput.uv0);
+
+    output.specular = 
+    { 
+        specularTexture.x * material.specularColor.x, 
+        specularTexture.y * material.specularColor.y,
+        specularTexture.z * material.specularColor.z, 
+        material.smoothness };
 
     return output;
 }
