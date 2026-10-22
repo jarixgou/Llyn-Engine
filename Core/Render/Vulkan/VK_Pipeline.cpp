@@ -88,7 +88,7 @@ void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_Swap
 {
 	LLYN_ASSERT(_device != nullptr && _swapChain != nullptr);
 
-	VkShaderModule shaderModule = CreateShaderModule(_device, Utils::ReadFile("Core/Shaders/slang.spv"));
+	VkShaderModule shaderModule = CreateShaderModule(_device, Utils::ReadFile(_info.shaderPath));
 
 	VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 	vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -349,6 +349,7 @@ VkDescriptorType VK_Pipeline::GetDescriptorType(const UniformType& _uniformType)
 	case UNIFORM_TYPE_CONSTANT:					return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	case UNIFORM_TYPE_STORAGE:					return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 	case UNIFORM_TYPE_COMBINED_IMAGE_SAMPLER:	return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	case UNIFORM_TYPE_SAMPLED_IMAGE:			return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 	case UNIFORM_TYPE_MAX:
 		LOGGER_ERROR("Invalid uniform type ! ");
 		return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;

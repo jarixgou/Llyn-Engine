@@ -42,7 +42,7 @@ void VK_ImGui::Init(const VK_Instance* _instance, const VK_SwapChain* _swapChain
 
 	CreateDescriptorPool(&VK_Device::Get());
 
-	InitImGui(_instance, &VK_Device::Get(), _swapChain, _frameSync);
+	InitImGui(_instance, _swapChain, _frameSync);
 }
 
 void VK_ImGui::Cleanup(VkCommandPool _cmdPool)
@@ -71,7 +71,7 @@ VkCommandBuffer VK_ImGui::Draw(VK_RenderWindow* _renderWindow, uint32_t _frameIn
 	return m_cmdBuffs[_frameIndex];
 }
 
-void VK_ImGui::InitImGui(const VK_Instance* _instance, const VK_Device* _device, const VK_SwapChain* _swapChain, const VK_FrameSync* _frameSync)
+void VK_ImGui::InitImGui(const VK_Instance* _instance, const VK_SwapChain* _swapChain, const VK_FrameSync* _frameSync)
 {
 	ImGui::CreateContext();
 
@@ -85,7 +85,7 @@ void VK_ImGui::InitImGui(const VK_Instance* _instance, const VK_Device* _device,
 	ImGui_ImplGlfw_InitForVulkan(Window::Get().GetGLFWWindow(), enableGLFWCallBack);
 	
 	const VkFormat swapChainFormat = _swapChain->GetFormat();
-	const VkFormat depthFormat = VK_DepthResources::FinDepthFormat(_device);
+	const VkFormat depthFormat = VK_DepthResources::FinDepthFormat(&VK_Device::Get());
 
 	VkPipelineRenderingCreateInfo pipelineRenderingInfo{};
 	pipelineRenderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
@@ -98,10 +98,10 @@ void VK_ImGui::InitImGui(const VK_Instance* _instance, const VK_Device* _device,
 	ImGui_ImplVulkan_InitInfo initInfo{};
 	initInfo.ApiVersion = _instance->GetAPIVersion();
 	initInfo.Instance = *_instance->GetInstance();
-	initInfo.PhysicalDevice = *_device->GetPhycicalDevice();
-	initInfo.Device = *_device->GetDevice();
-	initInfo.QueueFamily = _device->GetQueueIndex();
-	initInfo.Queue = *_device->GetGraphicsQueue();
+	initInfo.PhysicalDevice = *VK_Device::Get().GetPhycicalDevice();
+	initInfo.Device = *VK_Device::Get().GetDevice();
+	initInfo.QueueFamily = VK_Device::Get().GetQueueIndex();
+	initInfo.Queue = *VK_Device::Get().GetGraphicsQueue();
 	initInfo.DescriptorPool = m_desscriptorPool;
 	initInfo.MinImageCount = _swapChain->GetMinImageCount();
 	initInfo.ImageCount = static_cast<uint32_t>(_swapChain->GetImageCount());

@@ -19,7 +19,7 @@ public:
 
 	VkCommandBuffer Draw(VK_RenderWindow* _renderWindow, uint32_t _frameIndex, uint32_t _imageIndex);
 private:
-	void InitImGui(const VK_Instance* _instance, const VK_Device* _device, const VK_SwapChain* _swapChain, const VK_FrameSync* _frameSync);
+	void InitImGui(const VK_Instance* _instance, const VK_SwapChain* _swapChain, const VK_FrameSync* _frameSync);
 	void CreateDescriptorPool(const VK_Device* _device);
 };
 

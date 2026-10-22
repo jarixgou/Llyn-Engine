@@ -1,28 +1,6 @@
 ﻿  Analyse des sources à la recherche des dépendances de module...
   VK_Pipeline.cpp
-  VK_Render.cpp
 D:\Llyn Engine\Core\Render\Vulkan\VK_Pipeline.cpp(235,20): warning C4018: « < » : incompatibilité signé/non signé
-D:\Llyn Engine\Core\Math\Math.h(12,7): warning C4099: 'Quaternions' : nom de type déjà rencontré avec 'struct' et utilisant maintenant 'class'
-  (compiler le fichier source 'Render/Vulkan/VK_Render.cpp')
-      D:\Llyn Engine\Core\Math\Quaternions.h(8,8):
-      voir la déclaration de 'Quaternions'
-  
-D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'uint32_t', perte possible de données
-  (compiler le fichier source 'Render/Vulkan/VK_Render.cpp')
-      D:\Llyn Engine\Core\Entities\ECS.h(83,24):
-      le contexte d’instanciation du modèle (le plus ancien) est
-          D:\Llyn Engine\Core\Render\Vulkan\VK_Render.cpp(242,41):
-          voir la référence à l'instanciation de la fonction modèle 'T *ECS::GetComponent<Transform>(const EntityID &)' en cours de compilation
-          with
-          [
-              T=Transform
-          ]
-          D:\Llyn Engine\Core\Entities\ECS.h(129,9):
-          voir la référence à l'instanciation de la fonction modèle 'SparseSet<Transform> *ECS::GetPool<Transform>(void)' en cours de compilation
-  
-D:\Llyn Engine\Core\Entities\ECS.h(83,24): warning C4267: 'initialisation' : conversion de 'size_t' en 'const uint32_t', perte possible de données
-  (compiler le fichier source 'Render/Vulkan/VK_Render.cpp')
-  
 slang.lib(slang.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR déjà défini dans vulkan-1.lib(vulkan-1.dll) ; seconde définition ignorée
 spirv_reflect.obj : warning LNK4006: spvReflectBlockVariableTypeName déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée
 spirv_reflect.obj : warning LNK4006: spvReflectSourceLanguage déjà défini dans spirv-reflect-static.lib(spirv_reflect.obj) ; seconde définition ignorée

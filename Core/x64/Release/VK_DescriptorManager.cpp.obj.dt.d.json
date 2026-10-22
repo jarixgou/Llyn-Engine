@@ -172,6 +172,7 @@
             "d:\\llyn engine\\core\\render\\vulkan\\vk_device.h",
             "d:\\llyn engine\\core\\render\\vulkan\\vk_texture.h",
             "d:\\llyn engine\\core\\render\\vulkan\\vk_image.h",
+            "d:\\llyn engine\\core\\logger.h",
             "d:\\llyn engine\\core\\asset\\texture.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vulkan_raii.hpp",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vulkan.hpp",

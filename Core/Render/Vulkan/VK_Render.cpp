@@ -80,16 +80,18 @@ void VK_Render::Init(IUniformManager** _uniformManger, Transform* _cameraTransfo
 	VK_Buffer::SetFrameSync(m_frameSync);
 
 	PipelineInfo pipelineInfo;
+	pipelineInfo.shaderPath = "Core/shaders/Indirect.slang.spv";
 	pipelineInfo.imageFormats.emplace_back(IMAGE_FORMAT_R8G8B8A8_SRGB);
 	m_defaultPipeline->Init(m_renderWindow->GetSwapChain(), pipelineInfo);
 
 	PipelineInfo frameBufferInfo;
-	frameBufferInfo.shaderPath = "FrameBuffer.slang.spv";
+	frameBufferInfo.shaderPath = "Core/Shaders/FrameBuffer.slang.spv";
 	frameBufferInfo.imageFormats = { IMAGE_FORMAT_R8G8B8A8_SRGB };
 	m_frameBufferPipeline->Init(m_renderWindow->GetSwapChain(), frameBufferInfo);
 
 	VK_DescriptorManager* descriptorManager = new VK_DescriptorManager;
-	descriptorManager->Adds(TODO, m_defaultPipeline->GetDescriptorLayouts());
+	descriptorManager->Adds("Default", m_defaultPipeline->GetDescriptorLayouts());
+	descriptorManager->Adds("FrameBuffer", m_frameBufferPipeline->GetDescriptorLayouts());
 
 	*_uniformManger = descriptorManager;
 
@@ -145,7 +147,7 @@ void VK_Render::Init(IUniformManager** _uniformManger, Transform* _cameraTransfo
 			renderingInfo.pDepthAttachment = &depthAttachment;
 
 			std::vector<VkDescriptorSet> descSets =
-				static_cast<VK_DescriptorManager*>(_manager)->GetDescriptorSets(_frameIndex);
+				static_cast<VK_DescriptorManager*>(_manager)->GetDescriptorSets("Default", _frameIndex);
 
 			vkCmdBeginRendering(_cmdBuff, &renderingInfo);
 			vkCmdBindPipeline(_cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_defaultPipeline->GetPipeline());
@@ -170,6 +172,8 @@ void VK_Render::Init(IUniformManager** _uniformManger, Transform* _cameraTransfo
 
 			vkCmdEndRendering(_cmdBuff);
 		});
+
+	m_renderGraph->Compile();
 }
 
 void VK_Render::Update(Scene* _scene, Camera* _camera, LightManager* _lightManager, IUniformManager* _uniformManager)
@@ -206,9 +210,9 @@ void VK_Render::Update(Scene* _scene, Camera* _camera, LightManager* _lightManag
 		m_metaDatas.emplace_back();
 	}
 
-	_uniformManager->StoreData(TODO, "matrices",
+	_uniformManager->StoreData("Default", "matrices",
 	                           m_matricesDatas.data(), ARRAY_SIZE_IN_BYTES(m_matricesDatas), m_frameSync->GetFrameIndex());
-	_uniformManager->StoreData(TODO, "metaDatas",
+	_uniformManager->StoreData("Default", "metaDatas",
 	                           m_metaDatas.data(), ARRAY_SIZE_IN_BYTES(m_metaDatas), m_frameSync->GetFrameIndex());
 
 	_uniformManager->PushUniform();
@@ -231,6 +235,12 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	m_renderGraph->Execute(cmdBuff, *VK_Device::Get().GetGraphicsQueue(), _uniformManager, m_frameSync->GetFrameIndex());
 
+	VK_Resource* finalResource = m_renderGraph->GetResource("FinalImage");
+
+	VK_DescriptorManager* uniformManager = static_cast<VK_DescriptorManager*>(_uniformManager);
+	uniformManager->StoreImage("FrameBuffer", "texture", m_frameSync->GetFrameIndex(), finalResource->image);
+	uniformManager->PushUniform();
+
 	VK_Buffer::BeginCommandBuffer(cmdBuff, 0);
 
 	m_renderWindow->Clear(cmdBuff, imageIndex);
@@ -242,6 +252,16 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	m_renderWindow->BeginRendering(cmdBuff, imageIndex, &colorClear, &depthValue);
 
+	std::vector<VkDescriptorSet> descSets = uniformManager->GetDescriptorSets("FrameBuffer", m_frameSync->GetFrameIndex());
+
+	vkCmdBindPipeline(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_frameBufferPipeline->GetPipeline());
+	vkCmdSetViewport(cmdBuff, 0, 1, m_renderWindow->GetWiewport());
+	vkCmdSetScissor(cmdBuff, 0, 1, m_renderWindow->GetScissor());
+	vkCmdBindDescriptorSets(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_defaultPipeline->GetPipelineLayout(), 0,
+		static_cast<uint32_t>(descSets.size()), descSets.data(), 0, VK_NULL_HANDLE);
+	vkCmdDraw(cmdBuff, 4, 1, 0, 0);
+	m_renderWindow->EndRendering(cmdBuff);
+	vkEndCommandBuffer(cmdBuff);
 
 
 /*	std::vector<VkDescriptorSet> descSets =
@@ -268,9 +288,6 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 		vkCmdDrawIndirect(cmdBuff, m_indirectDrawBuff[m_frameSync->GetFrameIndex()]->buffer, 0,
 			static_cast<uint32_t>(m_indirectCmds.size()), sizeof(VkDrawIndirectCommand));
 	}*/
-
-	m_renderWindow->EndRendering(cmdBuff);
-	vkEndCommandBuffer(cmdBuff);
 
 	VkCommandBuffer imGuiCmdBuff = m_imgui->Draw(m_renderWindow, m_frameSync->GetFrameIndex(), imageIndex);
 

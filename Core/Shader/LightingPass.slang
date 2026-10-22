@@ -154,16 +154,44 @@ float3 CalcPointLight(PointLight _light, float3 _pos, float4 _albedo, float4 _sp
 
 float3 CalcSpotLight(SpotLight _light, float3 _pos, float4 _albedo, float4 _specular, float3 _normal)
 {
+    const float3 lightVec = _light.pos - _pos;
+    const float3 lightDir = normalize(lightVec);
 
+    const float theta = dot(lightDir, normalize(-_light.dir));
+
+    if (theta > _light.cutOff)
+    {
+        const float epsilon = _light.cutOff - _light.outerCutOff;
+        const float intensity = clamp((theta - _light.outerCutOff) / epsilon, 0.0, 1.0);
+
+        const float3 ambient = _light.ambient * float3(_albedo.x, _albedo.y, _albedo.z);
+
+        // Diffuse
+        const float3 normal = normalize(_normal);
+        const float diffuse = max(dot(normal, lightDir), 0.0);
+        const float3 finalDiffuse = _light.diffuse * diffuse * float3(_albedo.x, _albedo.y, _albedo.z) * intensity;
+
+        // Specular
+        const float3 viewDir = normalize(_normal);
+        const float3 halfwayDir = normalize(lightDir + viewDir);
+        const float specular = pow(max(dot(normal, halfwayDir), 0.0), SmoothnessToShininess(_specular.w));
+        const float3 finalSpecular = _light.specular * specular * float3(_specular.x, _specular.y, _specular.z) * intensity;
+
+        return ambient + finalDiffuse + finalSpecular;
+    }
+    else
+    {
+        return _light.ambient * float3(_albedo.x, _albedo.y, _albedo.z);
+    }
 }
 
 [shader("fragment")]
 float3 fragMain(float4 _fragPos : SV_Position) : SV_Target
 {
-    const float3 posTexture = gPosition.Load((int)_fragPos.x, (int)_fragPos.y, 0);
-    const float3 normalTexture = gNormal.Load((int)_fragPos.x, (int)_fragPos.y, 0);
-    const float4 albedoTexture = gAlbedo.Load((int)_fragPos.x, (int)_fragPos.y, 0);
-    const float4 specularTexture = gSpecular.Load((int)_fragPos.x, (int)_fragPos.y, 0);
+    const float3 posTexture = gPosition.Load(int3(int2(_fragPos.xy), 0));
+    const float3 normalTexture = gNormal.Load(int3(int2(_fragPos.xy), 0));
+    const float4 albedoTexture = gAlbedo.Load(int3(int2(_fragPos.xy), 0));
+    const float4 specularTexture = gSpecular.Load(int3(int2(_fragPos.xy), 0));
 
     float3 finalColor = float3(0.0);
 
@@ -185,4 +213,6 @@ float3 fragMain(float4 _fragPos : SV_Position) : SV_Target
     {
         finalColor += CalcSpotLight(spotLights[i], posTexture, albedoTexture, specularTexture, normalTexture);
     }
+
+    return finalColor;
 }

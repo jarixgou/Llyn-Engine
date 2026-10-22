@@ -1,10 +1,10 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\users\\etudiant2\\llyn-engine\\core\\compileshader.cpp",
+        "Source": "d:\\llyn engine\\core\\compileshader.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\users\\etudiant2\\llyn-engine\\core\\compileshader.h",
+            "d:\\llyn engine\\core\\compileshader.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\fstream",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",
@@ -174,8 +174,8 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\assert.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\slang\\slang-gfx.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\assert.h",
-            "c:\\users\\etudiant2\\llyn-engine\\core\\logger.h",
-            "c:\\users\\etudiant2\\llyn-engine\\core\\utils\\utils.h",
+            "d:\\llyn engine\\core\\logger.h",
+            "d:\\llyn engine\\core\\utils\\utils.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vulkan_core.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vulkan\\vk_platform.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_h264std.h",
@@ -190,8 +190,8 @@
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_av1std_encode.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std.h",
             "c:\\vulkansdk\\1.4.357.0\\include\\vk_video\\vulkan_video_codec_vp9std_decode.h",
-            "c:\\users\\etudiant2\\llyn-engine\\core\\vector\\fwdvec3.h",
-            "c:\\users\\etudiant2\\llyn-engine\\core\\llyncore.h"
+            "d:\\llyn engine\\core\\vector\\fwdvec3.h",
+            "d:\\llyn engine\\core\\llyncore.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

@@ -3,12 +3,12 @@
 #include "VK_Device.h"
 #include "VK_LayoutInfo.h"
 #include "VK_Texture.h"
+#include "../../Logger.h"
 #include "../../Asset/Texture.h"
 
 void VK_DescriptorManager::Init()
 {
-	m_descriptorPools.clear();
-	m_descriptors.clear();
+
 }
 
 void VK_DescriptorManager::Cleanup()
@@ -17,7 +17,7 @@ void VK_DescriptorManager::Cleanup()
 
 void VK_DescriptorManager::Add(const std::string& _pipelineName, VK_DescriptorLayoutHandle _layoutHandle)
 {
-	if (m_descriptorPools.contains(_layoutHandle))
+	if (m_pipelineHandle[_pipelineName].m_descriptorPools.contains(_layoutHandle))
 	{
 		return;
 	}
@@ -26,7 +26,6 @@ void VK_DescriptorManager::Add(const std::string& _pipelineName, VK_DescriptorLa
 
 	std::vector<VkDescriptorPoolSize> descPoolSizes(_layoutHandle.infos.size());
 	bool bindless = false;
-	uint32_t bindlessCount = 1;
 	for (size_t i = 0; i < _layoutHandle.infos.size(); ++i)
 	{
 		VkDescriptorPoolSize descPoolSize;
@@ -69,29 +68,30 @@ void VK_DescriptorManager::Add(const std::string& _pipelineName, VK_DescriptorLa
 		"Failed to allocate descriptor sets !");
 
 	descHandle.shaderBuffer.resize(_layoutHandle.infos.size());
-	m_descriptorPools[_layoutHandle] = m_descriptors.size();
-	m_descriptors.emplace_back(descHandle);
-
-	if (bindless)
-	{
-		bindlessLayout = _layoutHandle;
-	}
+	m_pipelineHandle[_pipelineName].m_descriptorPools[_layoutHandle] = m_pipelineHandle[_pipelineName].m_descriptors.size();
+	m_pipelineHandle[_pipelineName].m_descriptors.emplace_back(descHandle);
 }
 
 void VK_DescriptorManager::Adds(const std::string& _pipelineName, std::vector<VK_DescriptorLayoutHandle> _layoutHandles)
 {
 	for (int i = 0; i < _layoutHandles.size(); ++i)
 	{
-		Add(TODO, _layoutHandles[i]);
+		Add(_pipelineName, _layoutHandles[i]);
 	}
 }
 
-std::vector<VkDescriptorSet> VK_DescriptorManager::GetDescriptorSets(uint32_t _imageIndex)
+std::vector<VkDescriptorSet> VK_DescriptorManager::GetDescriptorSets(const std::string& _pipelineName, uint32_t _imageIndex)
 {
-	std::vector<VkDescriptorSet> descSets(m_descriptors.size());
-	for (size_t i = 0; i < m_descriptors.size(); ++i)
+	if (!m_pipelineHandle.contains(_pipelineName))
 	{
-		descSets[i] = m_descriptors[i].descriptorSet[_imageIndex];
+		LOGGER_ERROR("Wrong pipeline name : " + _pipelineName);
+		return std::vector<VkDescriptorSet>();
+	}
+
+	std::vector<VkDescriptorSet> descSets(m_pipelineHandle[_pipelineName].m_descriptors.size());
+	for (size_t i = 0; i < m_pipelineHandle[_pipelineName].m_descriptors.size(); ++i)
+	{
+		descSets[i] = m_pipelineHandle[_pipelineName].m_descriptors[i].descriptorSet[_imageIndex];
 	}
 
 	return descSets;
@@ -99,12 +99,18 @@ std::vector<VkDescriptorSet> VK_DescriptorManager::GetDescriptorSets(uint32_t _i
 
 void VK_DescriptorManager::StoreData(const std::string& _pipelineName, const std::string& _uniformName, void* _data, size_t _size, uint32_t _frameIndex)
 {
-	for (auto& descriptorPool : m_descriptorPools)
+	if (!m_pipelineHandle.contains(_pipelineName))
+	{
+		LOGGER_ERROR("Wrong pipeline name : " + _pipelineName + " for " + _uniformName);
+		return;
+	}
+
+	for (auto& descriptorPool : m_pipelineHandle[_pipelineName].m_descriptorPools)
 	{
 		for (size_t i = 0; i < descriptorPool.first.infos.size(); ++i)
 		{
 			const VK_LayoutInfo layoutInfo = descriptorPool.first.infos[i];
-			VK_DescriptorHandle* descHandle = &m_descriptors[descriptorPool.second];
+			VK_DescriptorHandle* descHandle = &m_pipelineHandle[_pipelineName].m_descriptors[descriptorPool.second];
 
 			if (layoutInfo.name == _uniformName)
 			{
@@ -140,11 +146,26 @@ void VK_DescriptorManager::StoreTexture(const std::string& _pipelineName, const 
 	LLYN_ASSERT(_texture != nullptr);
 }
 
-void VK_DescriptorManager::StoreTextures(const std::string& _pipelineName, const std::string& _name, std::vector<Texture>& _textures, uint32_t _frameIndex)
+void VK_DescriptorManager::StoreTextures(const std::string& _pipelineName, const std::string& _uniformName, std::vector<Texture>& _textures, uint32_t _frameIndex)
 {
-	if (!m_descriptorPools.contains(bindlessLayout))
+	if (!m_pipelineHandle.contains(_pipelineName))
 	{
+		LOGGER_ERROR("Wrong pipeline name : " + _pipelineName + " for " + _uniformName);
 		return;
+	}
+
+	const VK_LayoutInfo* layoutInfo = nullptr;
+	VK_DescriptorHandle* descriptorHandle = nullptr;
+	for (auto& descriptorPool : m_pipelineHandle[_pipelineName].m_descriptorPools)
+	{
+		for (int i = 0; i < descriptorPool.first.infos.size(); ++i)
+		{
+			if (descriptorPool.first.infos[i].name == _uniformName)
+			{
+				descriptorHandle = &m_pipelineHandle[_pipelineName].m_descriptors[descriptorPool.second];
+				layoutInfo = &descriptorPool.first.infos[i];
+			}
+		}
 	}
 
 	m_writes.reserve(m_writes.size() + _textures.size());
@@ -159,17 +180,60 @@ void VK_DescriptorManager::StoreTextures(const std::string& _pipelineName, const
 		VkWriteDescriptorSet write{};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.pNext = VK_NULL_HANDLE;
-		write.dstSet = m_descriptors[m_descriptorPools[bindlessLayout]].descriptorSet[_frameIndex];
-		write.dstBinding = 0;
+		write.dstSet = descriptorHandle->descriptorSet[_frameIndex];
+		write.dstBinding = layoutInfo->binding;
 		write.dstArrayElement = static_cast<uint32_t>(i);
 		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		write.descriptorType = layoutInfo->type;
 		write.pImageInfo = &imageInfo;
 		write.pBufferInfo = VK_NULL_HANDLE;
 		write.pTexelBufferView = VK_NULL_HANDLE;
 
 		m_writes.emplace_back(write);
 	}
+}
+
+void VK_DescriptorManager::StoreImage(const std::string& _pipelineName, const std::string& _uniformName,
+                                      const uint32_t& _frameIndex, VK_Image& _image)
+{
+	if (!m_pipelineHandle.contains(_pipelineName))
+	{
+		LOGGER_ERROR("Wrong pipeline name : " + _pipelineName + " for " + _uniformName);
+		return;
+	}
+
+	const VK_LayoutInfo* layoutInfo = nullptr;
+	VK_DescriptorHandle* descriptorHandle = nullptr;
+	for (auto& descriptorPool : m_pipelineHandle[_pipelineName].m_descriptorPools)
+	{
+		for (int i = 0; i < descriptorPool.first.infos.size(); ++i)
+		{
+			if (descriptorPool.first.infos[i].name == _uniformName)
+			{
+				descriptorHandle = &m_pipelineHandle[_pipelineName].m_descriptors[descriptorPool.second];
+				layoutInfo = &descriptorPool.first.infos[i];
+			}
+		}
+	}
+
+	VkDescriptorImageInfo& imageInfo = m_imageInfos.emplace_back();
+	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	imageInfo.imageView = _image.m_imageView;
+	imageInfo.sampler = VK_NULL_HANDLE;
+
+	VkWriteDescriptorSet write;
+	write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	write.pNext = VK_NULL_HANDLE;
+	write.dstSet = descriptorHandle->descriptorSet[_frameIndex];
+	write.dstBinding = layoutInfo->binding;
+	write.dstArrayElement = 0;
+	write.descriptorCount = 1;
+	write.descriptorType = layoutInfo->type;
+	write.pImageInfo = &imageInfo;
+	write.pBufferInfo = VK_NULL_HANDLE;
+	write.pTexelBufferView = VK_NULL_HANDLE;
+
+	m_writes.emplace_back();
 }
 
 void VK_DescriptorManager::PushUniform()
