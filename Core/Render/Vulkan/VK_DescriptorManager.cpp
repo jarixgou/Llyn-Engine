@@ -221,7 +221,7 @@ void VK_DescriptorManager::StoreImage(const std::string& _pipelineName, const st
 	imageInfo.imageView = _image.m_imageView;
 	imageInfo.sampler = VK_NULL_HANDLE;
 
-	VkWriteDescriptorSet write;
+	VkWriteDescriptorSet write{};
 	write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	write.pNext = VK_NULL_HANDLE;
 	write.dstSet = descriptorHandle->descriptorSet[_frameIndex];
@@ -233,7 +233,7 @@ void VK_DescriptorManager::StoreImage(const std::string& _pipelineName, const st
 	write.pBufferInfo = VK_NULL_HANDLE;
 	write.pTexelBufferView = VK_NULL_HANDLE;
 
-	m_writes.emplace_back();
+	m_writes.emplace_back(write);
 }
 
 void VK_DescriptorManager::PushUniform()

@@ -13,6 +13,8 @@ private:
 
 	VkPipelineLayout m_pipelineLayout = VK_NULL_HANDLE;
 	VkPipeline m_pipeline = VK_NULL_HANDLE;
+
+	void* m_pushConstantData = nullptr;
 public:
 	void Init(const VK_SwapChain* _swapChain, const PipelineInfo& _info);
 
@@ -22,6 +24,9 @@ public:
 	const VkPipelineLayout* GetPipelineLayout();
 	
 	std::vector<VK_DescriptorLayoutHandle> GetDescriptorLayouts();
+
+	void SetPushConstant(void* _data);
+	void* GetPushConstant();
 private:
 	void CreateDescriptorSetLayout(const VK_Device* _device, const SpirvReflectWrapper& _reflect);
 

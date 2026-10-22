@@ -20,6 +20,7 @@ enum class BlendMode : uint8_t
 
 enum class RenderFace : uint8_t
 {
+	NONE,
 	BACK,
 	FRONT,
 	BOTH

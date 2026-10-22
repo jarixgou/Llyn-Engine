@@ -34,8 +34,6 @@ private:
 	std::vector<VK_RenderPass> m_passes;
 	std::vector<size_t> m_executionOrder;
 
-	std::vector<VkSemaphore> m_semaphores;
-	std::vector<std::pair<size_t, size_t>> m_semaphoreSignalWaitPairs;
 public:
 	void AddResource(const std::string& _name, VkFormat _format, VkImageLayout _initialLayout, VkImageLayout _finalLayout, VkImageAspectFlags _imageAspect, VkImageUsageFlags _usage, const Vec2u& _size);
 	void AddPass(const std::string& _name, const std::vector<std::string>& _inputs,

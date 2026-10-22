@@ -61,6 +61,16 @@ std::vector<VK_DescriptorLayoutHandle> VK_Pipeline::GetDescriptorLayouts()
 	return m_descriptorLayouts;
 }
 
+void VK_Pipeline::SetPushConstant(void* _data)
+{
+	m_pushConstantData = _data;
+}
+
+void* VK_Pipeline::GetPushConstant()
+{
+	return m_pushConstantData;
+}
+
 void VK_Pipeline::CreateDescriptorSetLayout(const VK_Device* _device, const SpirvReflectWrapper& _reflect)
 {
 	m_descriptorLayouts.resize(_reflect.m_setInfos.size());
@@ -268,6 +278,8 @@ VkCullModeFlags VK_Pipeline::GetCullMode(RenderFace _renderFace)
 {
 	switch (_renderFace)
 	{
+	case RenderFace::NONE:
+		return VK_CULL_MODE_NONE;
 	case RenderFace::BACK:
 		return VK_CULL_MODE_BACK_BIT;
 		break;

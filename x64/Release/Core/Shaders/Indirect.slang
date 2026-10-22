@@ -195,9 +195,9 @@ VSOutput vertMain(uint _vertexID : SV_VertexID, uint _instance: SV_StartInstance
 
     VSOutput output;
 
-    output.pos = mul(float4(vertexData.pos, 1.0f), matrix.mvp);
-    output.worldPos = mul(vertexData.pos, float3x3(matrix.localPos));
-    output.normal = mul(vertexData.normal, float3x3(matrix.normal));
+    output.pos = mul(matrix.mvp, float4(vertexData.pos, 1.0f));
+    output.worldPos = mul(matrix.localPos, float4(vertexData.pos, 1.0f)).xyz;
+    output.normal = mul((float3x3)matrix.normal, vertexData.normal);
 
     output.tangent = vertexData.tangent;
     output.bitangent = vertexData.bitangent;

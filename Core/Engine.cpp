@@ -27,11 +27,8 @@ void Engine::Init()
 	m_scene = new Scene;
 	m_scene->Init();
 
-	m_cameraTransform = new Transform;
-	m_cameraTransform->pos.z = -10;
-
 	m_render = new VK_Render;
-	m_render->Init(&m_uniformManager, m_cameraTransform);
+	m_render->Init(&m_uniformManager);
 
 	m_lightManager = new LightManager;
 	m_lightManager->Init();
@@ -46,6 +43,8 @@ void Engine::Init()
 	RessourceManager::Get().Init();
 
 	m_cameraEditor = new Camera;
+	m_cameraTransform = new Transform;
+	m_cameraTransform->pos.z = -10;
 	m_cameraEditor->UpdateMatrices(*m_cameraTransform);
 
 	Entity entity;

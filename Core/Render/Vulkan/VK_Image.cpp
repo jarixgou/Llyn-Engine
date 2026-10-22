@@ -436,7 +436,7 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 		}
 		else
 		{
-			LOGGER_CRITICAL("Unknow barrier case 6 !");
+			LOGGER_CRITICAL("Unknow barrier case 6 ! " + std::to_string(_oldLayout) + " | " + std::to_string(_newLayout));
 		}
 	}
 	else if (_oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL &&
