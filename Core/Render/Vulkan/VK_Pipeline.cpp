@@ -199,8 +199,8 @@ void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_Swap
 		pushConstants[i].size = _reflect.m_pushConstants[i].size;
 	}
 
-	std::vector<VkDescriptorSetLayout> setLayouts(4);
-	for (int i = 0; i < 4; ++i)
+	std::vector<VkDescriptorSetLayout> setLayouts(m_descriptorLayouts.size());
+	for (int i = 0; i < m_descriptorLayouts.size(); ++i)
 	{
 		setLayouts[i] = m_descriptorLayouts[i].layout;
 	}

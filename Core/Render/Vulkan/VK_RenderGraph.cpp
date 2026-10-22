@@ -153,7 +153,10 @@ void VK_RenderGraph::Execute(VkCommandBuffer& _cmdBuff, VkQueue& _queue, IUnifor
 		{
 			VK_Resource& resource = m_resources[m_passes[m_executionOrder[i]].outputs[j]];
 
-			resource.image.TransitionLayout(_cmdBuff, resource.initialLayout, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+			VkImageLayout newLayout = resource.image.GetImageAspect() == VK_IMAGE_ASPECT_COLOR_BIT ?
+				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+			resource.image.TransitionLayout(_cmdBuff, resource.initialLayout, newLayout);
 		}
 
 		if (m_passes[m_executionOrder[i]].updateFunc)
@@ -167,7 +170,10 @@ void VK_RenderGraph::Execute(VkCommandBuffer& _cmdBuff, VkQueue& _queue, IUnifor
 		{
 			VK_Resource& resource = m_resources[m_passes[m_executionOrder[i]].outputs[j]];
 
-			resource.image.TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, resource.finalLayout);
+			VkImageLayout oldLayout = resource.image.GetImageAspect() == VK_IMAGE_ASPECT_COLOR_BIT ?
+				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+			resource.image.TransitionLayout(_cmdBuff, oldLayout, resource.finalLayout);
 		}
 
 		vkEndCommandBuffer(_cmdBuff);

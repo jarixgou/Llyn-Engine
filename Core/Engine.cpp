@@ -27,6 +27,9 @@ void Engine::Init()
 	m_scene = new Scene;
 	m_scene->Init();
 
+	m_cameraTransform = new Transform;
+	m_cameraTransform->pos.z = -10;
+
 	m_render = new VK_Render;
 	m_render->Init(&m_uniformManager, m_cameraTransform);
 
@@ -42,8 +45,6 @@ void Engine::Init()
 	MeshFilterPooler::Get().Init();
 	RessourceManager::Get().Init();
 
-	m_cameraTransform = new Transform;
-	m_cameraTransform->pos.z = -10;
 	m_cameraEditor = new Camera;
 	m_cameraEditor->UpdateMatrices(*m_cameraTransform);
 

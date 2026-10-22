@@ -37,6 +37,8 @@ public:
 	                      _levelCount);
 
 	bool HasStencilComponent(VkFormat _format);
+
+	VkImageAspectFlags GetImageAspect();
 private:
 	static VkImageType GetType(ImageType _type);
 	static VkImageViewType GetViewType(ImageType _type);

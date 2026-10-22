@@ -104,6 +104,11 @@ bool VK_Image::HasStencilComponent(VkFormat _format)
 		_format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
+VkImageAspectFlags VK_Image::GetImageAspect()
+{
+	return m_aspect;
+}
+
 VkImageType VK_Image::GetType(ImageType _type)
 {
 	switch (_type)
@@ -257,7 +262,7 @@ VK_StageAndAccess VK_Image::GetStageAndAccess(VkImageLayout _oldLayout,
 			stageAndAccess.dstStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
 			stageAndAccess.dstAccess = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
 		}
-		else if (_newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+		else if (_newLayout == VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL)
 		{
 			stageAndAccess.dstStage = VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT |
 				VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT;
