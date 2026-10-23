@@ -90,18 +90,18 @@ ConstantBuffer<LightData> lightData;
 [vk::push_constant]
 float3 camPos;
 
-static const float2 vertices[4] = 
+static const float2 vertices[6] =
 {
-	{ -1.0, -1.0 },
-	{ 1.0, -1.0 },
-	{ 1.0, 1.0 },
-	{ -1.0, 1.0 }
+    { -1.0, -1.0 }, { 1.0, -1.0 }, { 1.0, 1.0 },
+    { -1.0, -1.0 }, { 1.0, 1.0 },  { -1.0, 1.0 }
 };
 
 [shader("vertex")]
 float4 vertMain(uint _vertexID: SV_VertexID) : SV_Position
 {
-    return float4(vertices[_vertexID], 1.0, 1.0);
+    float2 vertex = vertices[_vertexID];
+
+    return float4(vertex, 0, 1.0);
 }
 
 float SmoothnessToShininess(float _smoothness)
@@ -186,7 +186,7 @@ float3 CalcSpotLight(SpotLight _light, float3 _pos, float4 _albedo, float4 _spec
 }
 
 [shader("fragment")]
-float3 fragMain(float4 _fragPos : SV_Position) : SV_Target
+float4 fragMain(float4 _fragPos : SV_Position) : SV_Target
 {
     const float3 posTexture = gPosition.Load(int3(int2(_fragPos.xy), 0));
     const float3 normalTexture = gNormal.Load(int3(int2(_fragPos.xy), 0));
@@ -214,5 +214,5 @@ float3 fragMain(float4 _fragPos : SV_Position) : SV_Target
         finalColor += CalcSpotLight(spotLights[i], posTexture, albedoTexture, specularTexture, normalTexture);
     }
 
-    return finalColor;
+    return float4(finalColor, 1.0);
 }

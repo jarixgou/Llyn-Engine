@@ -14,10 +14,12 @@ class VK_Render : public IRender
 private:
 	VK_Instance* m_instance = nullptr;
 	VK_FrameSync* m_frameSync = nullptr;
-	VK_Pipeline* m_defaultPipeline = nullptr;
-	VK_Pipeline* m_frameBufferPipeline = nullptr;
 	VK_DepthResources* m_depthResources = nullptr;
 	VK_RenderGraph* m_renderGraph = nullptr;
+
+	VK_Pipeline* m_gBufferPipeline = nullptr;
+	VK_Pipeline* m_lightingPipeline = nullptr;
+	VK_Pipeline* m_frameBufferPipeline = nullptr;
 
 	VK_RenderWindow* m_renderWindow = nullptr;
 

@@ -72,8 +72,8 @@ struct VSOutput
 
 struct FGOutput
 {
-    float3 pos : SV_Target0;
-    float3 normal : SV_Target1;
+    float4 pos : SV_Target0;
+    float4 normal : SV_Target1;
     float4 albedo : SV_Target2;
     float4 specular : SV_Target3;
 }
@@ -110,9 +110,9 @@ VSOutput vertMain(uint _vertexID: SV_VertexID, uint _instance: SV_StartInstanceL
     const VertexData vertexData = verticies[metaData.vertexOffset + index];
 
     VSOutput output;
-    output.pos = mul(float4(vertexData.pos, 1.0), matrix.mvp);
-    output.worldPos = mul(vertexData.pos, float3x3(matrix.localPos));
-    output.normal = mul(vertexData.pos, float3x3(matrix.normal));
+    output.pos = mul(matrix.mvp, float4(vertexData.pos, 1.0f));
+    output.worldPos = mul(matrix.localPos, float4(vertexData.pos, 1.0f)).xyz;
+    output.normal = mul((float3x3)matrix.normal, vertexData.normal);
 
     output.tangent = vertexData.tangent;
     output.bitangent = vertexData.bitangent;
@@ -155,8 +155,8 @@ FGOutput fragMain(VSOutput _vsOutput)
 
     FGOutput output;
 
-    output.pos = _vsOutput.worldPos;
-    output.normal = _vsOutput.normal;
+    output.pos = float4(_vsOutput.worldPos, 1.0);
+    output.normal = float4(_vsOutput.normal, 1.0);
     output.albedo = albedoTexture * float4(material.albedoColor, 1.0);
 
     float4 specularTexture = GetTexture(material.specularID, _vsOutput.uv0);

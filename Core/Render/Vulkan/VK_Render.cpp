@@ -54,9 +54,17 @@ void VK_Render::Cleanup()
 	delete m_depthResources;
 	m_depthResources = nullptr;
 
-	m_defaultPipeline->Cleanup();
-	delete m_defaultPipeline;
-	m_defaultPipeline = nullptr;
+	m_gBufferPipeline->Cleanup();
+	delete m_gBufferPipeline;
+	m_gBufferPipeline = nullptr;
+
+	m_lightingPipeline->Cleanup();
+	delete m_lightingPipeline;
+	m_lightingPipeline = nullptr;
+
+	m_frameBufferPipeline->Cleanup();
+	delete m_frameBufferPipeline;
+	m_frameBufferPipeline = nullptr;
 
 	VK_Device::Get().Cleanup();
 
@@ -79,10 +87,20 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 
 	VK_Buffer::SetFrameSync(m_frameSync);
 
-	PipelineInfo pipelineInfo;
-	pipelineInfo.shaderPath = "Core/shaders/Indirect.slang.spv";
-	pipelineInfo.imageFormats.emplace_back(IMAGE_FORMAT_R8G8B8A8_SRGB);
-	m_defaultPipeline->Init(m_renderWindow->GetSwapChain(), pipelineInfo);
+	PipelineInfo gBufferPipelineInfo;
+	gBufferPipelineInfo.shaderPath = "Core/shaders/IndirectG-Buffer.slang.spv";
+	gBufferPipelineInfo.imageFormats = 
+		{
+			IMAGE_FORMAT_R8G8B8A8, IMAGE_FORMAT_R8G8B8A8, IMAGE_FORMAT_R8G8B8A8_SRGB,
+			IMAGE_FORMAT_R8G8B8A8_SRGB
+		};
+	m_gBufferPipeline->Init(m_renderWindow->GetSwapChain(), gBufferPipelineInfo);
+
+	PipelineInfo lightingPipelineInfo;
+	lightingPipelineInfo.shaderPath = "Core/shaders/LightingPass.slang.spv";
+	lightingPipelineInfo.imageFormats = { IMAGE_FORMAT_R8G8B8A8_SRGB };
+	lightingPipelineInfo.renderFace = RenderFace::NONE;
+	m_lightingPipeline->Init(m_renderWindow->GetSwapChain(), lightingPipelineInfo);
 
 	LOGGER_INFO("FrameBuffer pipeline creation ! ");
 	PipelineInfo frameBufferInfo;
@@ -92,7 +110,9 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	m_frameBufferPipeline->Init(m_renderWindow->GetSwapChain(), frameBufferInfo);
 
 	VK_DescriptorManager* descriptorManager = new VK_DescriptorManager;
-	descriptorManager->Adds("Default", m_defaultPipeline->GetDescriptorLayouts());
+	
+	descriptorManager->Adds("GBuffer", m_gBufferPipeline->GetDescriptorLayouts());
+	descriptorManager->Adds("Lighting", m_lightingPipeline->GetDescriptorLayouts());
 	descriptorManager->Adds("FrameBuffer", m_frameBufferPipeline->GetDescriptorLayouts());
 
 	*_uniformManger = descriptorManager;
@@ -104,36 +124,56 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 		*m_indirectDrawBuff[i] = VK_Buffer::CreateIndirectBuffer(1000 * sizeof(VkDrawIndirectCommand));
 	}
 
-	m_renderGraph->AddResource("FinalImage", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, { 1920, 1080 });
+	m_renderGraph->AddResource("gPosition", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		{ 1920, 1080 });
+	m_renderGraph->AddResource("gNormal", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		{ 1920, 1080 });
+	m_renderGraph->AddResource("gAlbedo", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		{ 1920, 1080 });
+	m_renderGraph->AddResource("gSpecular", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		{ 1920, 1080 });
+
 	m_renderGraph->AddResource("Depth", VK_FORMAT_D32_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_ASPECT_DEPTH_BIT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
 		{ 1920, 1080 });
 
-	m_renderGraph->AddPass("Indirect", {}, { "FinalImage", "Depth" }, nullptr,
+	m_renderGraph->AddPass("GBuffer", {}, { "gPosition", "gNormal", "gAlbedo", "gSpecular", "Depth" },
+		nullptr,
 		[&](VkCommandBuffer _cmdBuff, IUniformManager* _manager, const uint32_t& _frameIndex)
 		{
-			VK_Resource* resourceFinal = m_renderGraph->GetResource("FinalImage");
-			VK_Resource* resourceDepth = m_renderGraph->GetResource("Depth");
+			std::vector<VK_Resource*> resources =
+			{
+				m_renderGraph->GetResource("gPosition"),
+				m_renderGraph->GetResource("gNormal"),
+				m_renderGraph->GetResource("gAlbedo"),
+				m_renderGraph->GetResource("gSpecular"),
+				m_renderGraph->GetResource("Depth")
+			};
 
-			VkRenderingAttachmentInfo colorAttachment{};
-			colorAttachment.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
-			colorAttachment.pNext = VK_NULL_HANDLE;
-			colorAttachment.imageView = resourceFinal->image.m_imageView;
-			colorAttachment.clearValue.color = { 0.0f,0.0f, 0.0f, 1.0f };
-			colorAttachment.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			colorAttachment.resolveMode = VK_RESOLVE_MODE_NONE;
-			colorAttachment.resolveImageView = VK_NULL_HANDLE;
-			colorAttachment.resolveImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-			colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			std::vector<VkRenderingAttachmentInfo> colorAttachments(4);
+			for (size_t i = 0; i < colorAttachments.size(); ++i)
+			{
+				VkRenderingAttachmentInfo* color = &colorAttachments[i];
+				color->sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+				color->pNext = VK_NULL_HANDLE;
+				color->imageView = resources[i]->image.m_imageView;
+				color->imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				color->resolveMode = VK_RESOLVE_MODE_NONE;
+				color->resolveImageView = VK_NULL_HANDLE;
+				color->resolveImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				color->loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+				color->storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			}
 
-			VkRenderingAttachmentInfo depthAttachment;
+			VkRenderingAttachmentInfo depthAttachment{};
 			depthAttachment.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
 			depthAttachment.pNext = VK_NULL_HANDLE;
-			depthAttachment.imageView = resourceDepth->image.m_imageView;
-			depthAttachment.clearValue.depthStencil = { 1.0f, 0 };
-			depthAttachment.imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
+			depthAttachment.imageView = resources[resources.size() - 1]->image.m_imageView;
+			depthAttachment.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 			depthAttachment.resolveMode = VK_RESOLVE_MODE_NONE;
 			depthAttachment.resolveImageView = VK_NULL_HANDLE;
 			depthAttachment.resolveImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -146,34 +186,96 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 			renderingInfo.renderArea = { { 0, 0 }, *m_renderWindow->GetSwapChain()->GetExtent() };
 			renderingInfo.layerCount = 1;
 			renderingInfo.viewMask = 0;
-			renderingInfo.colorAttachmentCount = 1;
-			renderingInfo.pColorAttachments = &colorAttachment;
+			renderingInfo.colorAttachmentCount = static_cast<uint32_t>(colorAttachments.size());
+			renderingInfo.pColorAttachments = colorAttachments.data();
 			renderingInfo.pDepthAttachment = &depthAttachment;
 
-			std::vector<VkDescriptorSet> descSets =
-				static_cast<VK_DescriptorManager*>(_manager)->GetDescriptorSets("Default", _frameIndex);
+			std::vector<VkDescriptorSet> descSets = static_cast<VK_DescriptorManager*>(_manager)->GetDescriptorSets("GBuffer", _frameIndex);
 
 			vkCmdBeginRendering(_cmdBuff, &renderingInfo);
-			vkCmdBindPipeline(_cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_defaultPipeline->GetPipeline());
+			vkCmdBindPipeline(_cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_gBufferPipeline->GetPipeline());
 			vkCmdSetViewport(_cmdBuff, 0, 1, m_renderWindow->GetWiewport());
 			vkCmdSetScissor(_cmdBuff, 0, 1, m_renderWindow->GetScissor());
-			vkCmdBindDescriptorSets(_cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_defaultPipeline->GetPipelineLayout(),
+			vkCmdBindDescriptorSets(_cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_gBufferPipeline->GetPipelineLayout(),
 				0, static_cast<uint32_t>(descSets.size()), descSets.data(),
 				0, VK_NULL_HANDLE);
+
+			vkCmdDrawIndirect(_cmdBuff, m_indirectDrawBuff[_frameIndex]->buffer, 0,
+				static_cast<uint32_t>(m_indirectCmds.size()), sizeof(VkDrawIndirectCommand));
+
+			vkCmdEndRendering(_cmdBuff);
+		}
+	);
+
+	m_renderGraph->AddResource("LightingPass", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		{ 1920, 1080 });
+
+	m_renderGraph->AddPass("Lighting", { "GPosition", "GNormal", "GAlbedo", "GSpecular" }, { "LightingPass" },
+		[&](IUniformManager* _manager, const uint32_t _frameIndex)
+		{
+			std::vector<VK_Resource*> resources =
+			{
+				m_renderGraph->GetResource("gPosition"),
+				m_renderGraph->GetResource("gNormal"),
+				m_renderGraph->GetResource("gAlbedo"),
+				m_renderGraph->GetResource("gSpecular")
+			};
+
+			VK_DescriptorManager* manager = static_cast<VK_DescriptorManager*>(_manager);
+
+			for (int i = 0; i < resources.size(); ++i)
+			{
+				manager->StoreImage("Lighting", resources[i]->name, _frameIndex, resources[i]->image);
+			}
+
+			manager->PushUniform();
+		},
+		[&](VkCommandBuffer _cmdBuff, IUniformManager* _manager, const uint32_t& _frameIndex)
+		{
+			VK_Resource* lightingResource = m_renderGraph->GetResource("LightingPass");
+
+			VkRenderingAttachmentInfo colorAttachment;
+			colorAttachment.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+			colorAttachment.pNext = VK_NULL_HANDLE;
+			colorAttachment.imageView = lightingResource->image.m_imageView;
+			colorAttachment.clearValue.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+			colorAttachment.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			colorAttachment.resolveMode = VK_RESOLVE_MODE_NONE;
+			colorAttachment.resolveImageView = VK_NULL_HANDLE;
+			colorAttachment.resolveImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+
+			VkRenderingInfo renderingInfo{};
+			renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
+			renderingInfo.pNext = VK_NULL_HANDLE;
+			renderingInfo.renderArea = { { 0, 0 }, *m_renderWindow->GetSwapChain()->GetExtent() };
+			renderingInfo.layerCount = 1;
+			renderingInfo.viewMask = 0;
+			renderingInfo.colorAttachmentCount = 1;
+			renderingInfo.pColorAttachments = &colorAttachment;
+			renderingInfo.pDepthAttachment = VK_NULL_HANDLE;
+
+			std::vector<VkDescriptorSet> descSets = static_cast<VK_DescriptorManager*>(_manager)->GetDescriptorSets("Lighting", _frameIndex);
+
+			vkCmdBeginRendering(_cmdBuff, &renderingInfo);
+			vkCmdBindPipeline(_cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_lightingPipeline->GetPipeline());
+			vkCmdSetViewport(_cmdBuff, 0, 1, m_renderWindow->GetWiewport());
+			vkCmdSetScissor(_cmdBuff, 0, 1, m_renderWindow->GetScissor());
 
 			VkPushConstantsInfo constantInfo{};
 			constantInfo.sType = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO;
 			constantInfo.pNext = VK_NULL_HANDLE;
-			constantInfo.layout = *m_defaultPipeline->GetPipelineLayout();
+			constantInfo.layout = *m_lightingPipeline->GetPipelineLayout();
 			constantInfo.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 			constantInfo.offset = 0;
 			constantInfo.size = sizeof(Vec3f);
-			constantInfo.pValues = m_defaultPipeline->GetPushConstant();
+			constantInfo.pValues = m_lightingPipeline->GetPushConstant();
 
 			vkCmdPushConstants2(_cmdBuff, &constantInfo);
 
-			vkCmdDrawIndirect(_cmdBuff, m_indirectDrawBuff[_frameIndex]->buffer, 0,
-				static_cast<uint32_t>(m_indirectCmds.size()), sizeof(VkDrawIndirectCommand));
+			vkCmdDraw(_cmdBuff, 6, 1, 0, 0);
 
 			vkCmdEndRendering(_cmdBuff);
 		});
@@ -215,9 +317,9 @@ void VK_Render::Update(Scene* _scene, Camera* _camera, LightManager* _lightManag
 		m_metaDatas.emplace_back();
 	}
 
-	_uniformManager->StoreData("Default", "matrices",
+	_uniformManager->StoreData("GBuffer", "matrices",
 		m_matricesDatas.data(), ARRAY_SIZE_IN_BYTES(m_matricesDatas), m_frameSync->GetFrameIndex());
-	_uniformManager->StoreData("Default", "metaDatas",
+	_uniformManager->StoreData("GBuffer", "metaDatas",
 		m_metaDatas.data(), ARRAY_SIZE_IN_BYTES(m_metaDatas), m_frameSync->GetFrameIndex());
 
 	_uniformManager->PushUniform();
@@ -240,10 +342,10 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	VK_Buffer::BeginCommandBuffer(cmdBuff, 0);
 
-	m_defaultPipeline->SetPushConstant(&_cameraTransform->pos);
+	m_lightingPipeline->SetPushConstant(&_cameraTransform->pos);
 	m_renderGraph->Execute(cmdBuff, *VK_Device::Get().GetGraphicsQueue(), _uniformManager, m_frameSync->GetFrameIndex());
 
-	VK_Resource* finalResource = m_renderGraph->GetResource("FinalImage");
+	VK_Resource* finalResource = m_renderGraph->GetResource("LightingPass");
 	finalResource->image.TransitionLayout(cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	VK_DescriptorManager* uniformManager = static_cast<VK_DescriptorManager*>(_uniformManager);
@@ -313,7 +415,8 @@ void VK_Render::AllocateVariable()
 	m_instance = new VK_Instance;
 	m_renderWindow = new VK_RenderWindow;
 	m_frameSync = new VK_FrameSync;
-	m_defaultPipeline = new VK_Pipeline;
+	m_gBufferPipeline = new VK_Pipeline;
+	m_lightingPipeline = new VK_Pipeline;
 	m_frameBufferPipeline = new VK_Pipeline;
 	m_depthResources = new VK_DepthResources;
 	m_renderGraph = new VK_RenderGraph;

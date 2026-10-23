@@ -76,10 +76,10 @@ void MeshFilterPooler::UpdateMeshFilter(IUniformManager* _uniformManager, uint32
 
 	if (!m_frameSends[_frameIndex])
 	{
-		_uniformManager->StoreData("Default", "vertices",
+		_uniformManager->StoreData("GBuffer", "vertices",
 		                           m_vertices.data(), ARRAY_SIZE_IN_BYTES(m_vertices), _frameIndex);
 
-		_uniformManager->StoreData("Default", "indices",
+		_uniformManager->StoreData("GBuffer", "indices",
 		                           m_indices.data(), ARRAY_SIZE_IN_BYTES(m_indices), _frameIndex);
 
 		m_frameSends[_frameIndex] = true;

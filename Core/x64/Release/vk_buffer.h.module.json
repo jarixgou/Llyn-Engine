@@ -5,14 +5,14 @@
         {
             "primary-output": "x64\\Release\\VK_Buffer.h.obj",
             "outputs": [
-                "D:\\Llyn Engine\\x64\\Release\\Core.pdb",
+                "C:\\Users\\Etudiant2\\Llyn-Engine\\x64\\Release\\Core.pdb",
                 "x64\\Release\\",
-                "D:\\Llyn Engine\\Core\\x64\\Release\\VK_Buffer.h.ifc"
+                "C:\\Users\\Etudiant2\\Llyn-Engine\\Core\\x64\\Release\\VK_Buffer.h.ifc"
             ],
             "provides": [
                 {
                     "logical-name": "Render\\Vulkan\\VK_Buffer.h",
-                    "source-path": "d:\\llyn engine\\core\\render\\vulkan\\vk_buffer.h",
+                    "source-path": "c:\\users\\etudiant2\\llyn-engine\\core\\render\\vulkan\\vk_buffer.h",
                     "lookup-method": "absolute"
                 }
             ],

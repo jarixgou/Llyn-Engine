@@ -192,14 +192,19 @@ void VK_Pipeline::CreateGraphicsPipeline(const VK_Device* _device, const VK_Swap
 	multisampleCreateInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 	multisampleCreateInfo.sampleShadingEnable = VK_TRUE;
 
-	VkPipelineColorBlendAttachmentState colorBlendAttachment = CreateBlendMode(_info);
+	std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachment(_reflect.m_imageOutputCount);
+	for (uint32_t i = 0; i < _reflect.m_imageOutputCount; ++i)
+	{
+		colorBlendAttachment[i] = CreateBlendMode(_info);
+	}
+
 	VkPipelineColorBlendStateCreateInfo colorBlendfCreateInfo{};
 	colorBlendfCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	colorBlendfCreateInfo.pNext = VK_NULL_HANDLE;
 	colorBlendfCreateInfo.logicOpEnable = VK_FALSE;
 	colorBlendfCreateInfo.logicOp = VK_LOGIC_OP_COPY;
-	colorBlendfCreateInfo.attachmentCount = 1;
-	colorBlendfCreateInfo.pAttachments = &colorBlendAttachment;
+	colorBlendfCreateInfo.attachmentCount = static_cast<uint32_t>(colorBlendAttachment.size());
+	colorBlendfCreateInfo.pAttachments = colorBlendAttachment.data();
 
 	std::vector<VkPushConstantRange> pushConstants(_reflect.m_pushConstants.size());
 	for (size_t i = 0; i < _reflect.m_pushConstants.size(); ++i)

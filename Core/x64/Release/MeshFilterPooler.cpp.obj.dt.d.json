@@ -1,10 +1,10 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "d:\\llyn engine\\core\\component\\meshfilterpooler.cpp",
+        "Source": "c:\\users\\etudiant2\\llyn-engine\\core\\component\\meshfilterpooler.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "d:\\llyn engine\\core\\component\\meshfilterpooler.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\component\\meshfilterpooler.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",
@@ -105,10 +105,10 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_bit_utils.hpp",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xbit_ops.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xnode_handle.h",
-            "d:\\llyn engine\\core\\component\\meshfilter.h",
-            "d:\\llyn engine\\core\\component\\component.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\component\\meshfilter.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\component\\component.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\bitset",
-            "d:\\llyn engine\\core\\entities\\sparseset.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\entities\\sparseset.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iostream",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\istream",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_ostream.hpp",
@@ -141,11 +141,11 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\clocale",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\locale.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\ostream",
-            "d:\\llyn engine\\core\\llyncore.h",
-            "d:\\llyn engine\\core\\vertex.h",
-            "d:\\llyn engine\\core\\vector\\vec2.h",
-            "d:\\llyn engine\\core\\vector\\vec3.h",
-            "d:\\llyn engine\\core\\render\\uniformmanager.h"
+            "c:\\users\\etudiant2\\llyn-engine\\core\\llyncore.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\vertex.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\vector\\vec2.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\vector\\vec3.h",
+            "c:\\users\\etudiant2\\llyn-engine\\core\\render\\uniformmanager.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []
