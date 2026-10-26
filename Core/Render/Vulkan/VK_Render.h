@@ -25,6 +25,8 @@ private:
 
 	std::vector<VK_Buffer*> m_indirectDrawBuff;
 
+	VK_Viewport* m_viewport = nullptr;
+
 	VK_ImGui* m_imgui = nullptr;
 
 	std::vector<VkDrawIndirectCommand> m_indirectCmds;

@@ -8,11 +8,7 @@ struct VertexData
     float3 normal;
     float pad1;
 
-    float3 tangent;
-    float pad2;
-
-    float3 bitangent;
-    float pad3;
+    float4 tangent;
 
     float3 color;
     float pad4;
@@ -59,8 +55,8 @@ struct VSOutput
     float3 color;
 
     float3 normal;
-    float3 tangent;
-    float3 bitangent;
+
+    float3x3 TBN;
 
     float3 barycentric;
 
@@ -84,7 +80,7 @@ Sampler2D textures[];
 
 // Core
 [vk::binding(0, 1)]
-StructuredBuffer<VertexData> verticies;
+StructuredBuffer<VertexData> vertices;
 
 [vk::binding(1, 1)]
 StructuredBuffer<uint32_t> indices;
@@ -107,15 +103,19 @@ VSOutput vertMain(uint _vertexID: SV_VertexID, uint _instance: SV_StartInstanceL
 
     const uint index = indices[metaData.indexOffset + _vertexID];
 
-    const VertexData vertexData = verticies[metaData.vertexOffset + index];
+    const VertexData vertexData = vertices[metaData.vertexOffset + index];
 
     VSOutput output;
     output.pos = mul(matrix.mvp, float4(vertexData.pos, 1.0f));
     output.worldPos = mul(matrix.localPos, float4(vertexData.pos, 1.0f)).xyz;
-    output.normal = mul((float3x3)matrix.normal, vertexData.normal);
+    output.normal = normalize(mul((float3x3)matrix.normal, vertexData.normal));
 
-    output.tangent = vertexData.tangent;
-    output.bitangent = vertexData.bitangent;
+    float3 T = normalize(mul((float3x3)matrix.localPos, vertexData.tangent.xyz));
+    T = normalize(T - dot(T, output.normal) * output.normal);
+
+    const float3 B = cross(output.normal, T) * vertexData.tangent.w;
+
+    output.TBN = float3x3(T, B, output.normal);
 
     output.color = vertexData.color;
 
@@ -135,7 +135,7 @@ float4 GetTexture(uint32_t _textureID, float2 _uv)
 {
     if (_textureID == TOMBSTONE_ID)
     {
-        return float4(0.0);
+        return float4(1.0);
     }
 
     return textures[NonUniformResourceIndex((uint)_textureID)].Sample(_uv);
@@ -156,7 +156,6 @@ FGOutput fragMain(VSOutput _vsOutput)
     FGOutput output;
 
     output.pos = float4(_vsOutput.worldPos, 1.0);
-    output.normal = float4(_vsOutput.normal, 1.0);
     output.albedo = albedoTexture * float4(material.albedoColor, 1.0);
 
     float4 specularTexture = GetTexture(material.specularID, _vsOutput.uv0);
@@ -166,7 +165,18 @@ FGOutput fragMain(VSOutput _vsOutput)
         specularTexture.x * material.specularColor.x, 
         specularTexture.y * material.specularColor.y,
         specularTexture.z * material.specularColor.z, 
-        material.smoothness };
+        material.smoothness 
+    };
+
+    output.normal = float4(_vsOutput.normal, 1.0);
+
+    if (material.normalID != TOMBSTONE_ID)
+    {
+        float4 normalTexture = GetTexture(material.normalID, _vsOutput.uv0);
+        normalTexture = normalize(normalTexture * 2.0 - 1.0);
+
+        output.normal = float4(mul(normalTexture.xyz, _vsOutput.TBN), 1.0);
+    }
 
     return output;
 }

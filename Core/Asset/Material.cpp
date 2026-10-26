@@ -159,6 +159,8 @@ bool Material::Add(const std::string& _filePath, IRessource* _ressource)
 	json["SpecularMap"]["Color"] = { m_specularColor.x, m_specularColor.y, m_specularColor.z };
 	json["SpecularMap"]["Smoothness"] = m_smoothness;
 
+	json["NormalMap"] = RessourceManager::Get().GetFilePath<Texture>(m_normalID);
+
 	std::ofstream file(_filePath);
 	file << json.dump(4);
 	file.close();

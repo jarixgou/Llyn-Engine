@@ -15,16 +15,19 @@ void VK_RenderGraph::AddResource(const std::string& _name, VkFormat _format, VkI
 	resource.image.Init(_format, _initialLayout, IMAGE_TYPE_2D, _imageAspect, _usage, 1, _size);
 
 	m_resources[_name] = resource;
+	m_resourcesName.emplace_back(_name);
 }
 
 void VK_RenderGraph::AddPass(const std::string& _name, const std::vector<std::string>& _inputs,
-                             const std::vector<std::string>& _outputs, std::function<void(IUniformManager*, const uint32_t&)> _updateFunc, std::
+                             const std::vector<std::string>& _outputs, std::function<void(VkCommandBuffer, IUniformManager*, const uint32_t&)>
+                             _updateFunc, std::
                              function<void(VkCommandBuffer&, IUniformManager*, const uint32_t&)> _executeFunc)
 {
 	VK_RenderPass pass;
 	pass.name = _name;
 	pass.inputs = _inputs;
 	pass.outputs = _outputs;
+	pass.updateFunc = _updateFunc;
 	pass.executeFunc = _executeFunc;
 
 	m_passes.emplace_back(pass);
@@ -115,9 +118,9 @@ void VK_RenderGraph::Execute(VkCommandBuffer& _cmdBuff, VkQueue& _queue, IUnifor
 			resource.image.TransitionLayout(_cmdBuff, resource.initialLayout, newLayout);
 		}
 
-		if (m_passes[m_executionOrder[i]].updateFunc)
+		if (m_passes[m_executionOrder[i]].updateFunc != nullptr)
 		{
-			m_passes[m_executionOrder[i]].updateFunc(_uniformManager, _frameIndex);
+			m_passes[m_executionOrder[i]].updateFunc(_cmdBuff, _uniformManager, _frameIndex);
 		}
 
 		m_passes[m_executionOrder[i]].executeFunc(_cmdBuff, _uniformManager, _frameIndex);
@@ -142,4 +145,9 @@ VK_Resource* VK_RenderGraph::GetResource(const std::string& _name)
 	}
 
 	return nullptr;
+}
+
+const std::vector<std::string>& VK_RenderGraph::GetResourcesName()
+{
+	return m_resourcesName;
 }

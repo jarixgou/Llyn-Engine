@@ -7,6 +7,7 @@
         ],
         "Texture": "Core/Models/Sponza/white.png"
     },
+    "NormalMap": "",
     "SpecularMap": {
         "Color": [
             1.0,

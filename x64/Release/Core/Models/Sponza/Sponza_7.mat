@@ -7,6 +7,7 @@
         ],
         "Texture": "Core/Models/Sponza/15295713303328085182.jpg"
     },
+    "NormalMap": "Core/Models/Sponza/10388182081421875623.jpg",
     "SpecularMap": {
         "Color": [
             1.0,

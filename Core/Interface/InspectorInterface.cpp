@@ -86,6 +86,19 @@ void InspectorInterface::Update(Entity* _entity, ECS* _ecs)
 
 		}
 
+		if (ImGui::MenuItem("Point Light"))
+		{
+			PointLight pointLight{};
+
+			_ecs->AddComponents(_entity->id, pointLight);
+		}
+
+		if (ImGui::MenuItem("Spot Light"))
+		{
+			SpotLight spotLight{};
+
+			_ecs->AddComponents(_entity->id, spotLight);
+		}
 
 		ImGui::EndPopup();
 	}
@@ -243,11 +256,17 @@ bool InspectorInterface::DrawDirLight(DirLight* _dirLight)
 
 bool InspectorInterface::DrawPointLight(PointLight* _pointLight)
 {
-	;
 	bool changed = false;
 
 	if (ImGui::CollapsingHeader("Point Light"))
 	{
+		ImGui::Text("Position : ");
+		ImGui::SameLine();
+		if (Utils::DrawVec3(_pointLight->pos, "P"))
+		{
+			changed = true;
+		}
+
 		ImGui::Text("Ambient  : ");
 		ImGui::SameLine();
 		float ambientColor[3] = { _pointLight->ambient.x, _pointLight->ambient.y, _pointLight->ambient.z };
@@ -322,6 +341,13 @@ bool InspectorInterface::DrawSpotLight(SpotLight* _spotLight)
 
 	if (ImGui::CollapsingHeader("Spot Light"))
 	{
+		ImGui::Text("Position : ");
+		ImGui::SameLine();
+		if (Utils::DrawVec3(_spotLight->pos, "P"))
+		{
+			changed = true;
+		}
+
 		ImGui::Text("Direction     : ");
 		ImGui::SameLine();
 		if (Utils::DrawVec3(_spotLight->dir, "Dir"))

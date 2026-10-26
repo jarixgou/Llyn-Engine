@@ -5,14 +5,14 @@
 
 #include "Vector/Vec2.h"
 #include "Vector/Vec3.h"
+#include "Vector/Vec4.h"
 
 struct Vertex
 {
 	GPU_ALIGN Vec3f pos = { 0.0f, 0.0f, 0.0f };
 
 	GPU_ALIGN Vec3f normal = { 0.0f, 0.0f, 0.0f };
-	GPU_ALIGN Vec3f tangent = { 0.0f, 0.0f, 0.0f };
-	GPU_ALIGN Vec3f bitangent = { 0.0f, 0.0f, 0.0f };
+	GPU_ALIGN Vec4f tangent = { 0.0f, 0.0f, 0.0f };
 
 	GPU_ALIGN Vec3f color = { 1.0f, 1.0f, 1.0f };
 

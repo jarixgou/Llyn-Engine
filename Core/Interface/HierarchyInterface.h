@@ -8,10 +8,10 @@
 class HierarchyInterface
 {
 private:
-	std::vector<Entity>* m_hierarchy = nullptr;
+	Scene* m_scene = nullptr;
 	Entity* m_selectedEntity = nullptr;
 public:
-	void Init(std::vector<Entity>* _hierarchy);
+	void Init(Scene* _scene);
 
 	void Update();
 

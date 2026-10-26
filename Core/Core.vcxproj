@@ -196,8 +196,10 @@
     <ClInclude Include="ImGui\imstb_rectpack.h" />
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
+    <ClInclude Include="Interface\AssetExplorerInterface.h" />
     <ClInclude Include="Interface\HierarchyInterface.h" />
     <ClInclude Include="Interface\InspectorInterface.h" />
+    <ClInclude Include="Interface\StatisticsInterface.h" />
     <ClInclude Include="LlynCore.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Math\Math.h" />
@@ -237,6 +239,7 @@
     <ClInclude Include="Render\Vulkan\VK_ShaderBuffer.h" />
     <ClInclude Include="Render\Vulkan\VK_Texture.h" />
     <ClInclude Include="Render\Vulkan\VK_TextureInfo.h" />
+    <ClInclude Include="Render\Vulkan\VK_Viewport.h" />
     <ClInclude Include="Render\Vulkan\VK_VmaAllocatorWrapper.h" />
     <ClInclude Include="Render\Window.h" />
     <ClInclude Include="Asset\Material.h" />
@@ -307,6 +310,7 @@
     <ClCompile Include="Render\Vulkan\VK_Render.cpp" />
     <ClCompile Include="Render\Vulkan\VK_ShaderBuffer.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Texture.cpp" />
+    <ClCompile Include="Render\Vulkan\VK_Viewport.cpp" />
     <ClCompile Include="Render\Vulkan\VK_VmaAllocatorWrapper.cpp" />
     <ClCompile Include="Render\Window.cpp" />
     <ClCompile Include="Scene.cpp" />

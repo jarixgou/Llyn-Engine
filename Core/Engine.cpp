@@ -34,7 +34,7 @@ void Engine::Init()
 	m_lightManager->Init();
 
 	m_hierarchyInterface = new HierarchyInterface;
-	m_hierarchyInterface->Init(&m_scene->hierarchy);
+	m_hierarchyInterface->Init(m_scene);
 
 	m_clock = new Clock;
 	m_clock->Restart();
@@ -73,6 +73,9 @@ void Engine::Update()
 	ImGui_ImplVulkan_NewFrame();
 
 	ImGui::NewFrame();
+	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+
+	m_render->Update(m_scene, m_cameraEditor, m_lightManager, m_uniformManager);
 
 	m_hierarchyInterface->Update();
 	InspectorInterface::Update(m_hierarchyInterface->GetSelectedEntity(), m_scene->ecs);

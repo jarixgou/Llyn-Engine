@@ -22,7 +22,7 @@ void LightManager::UpdateLights(ECS* _ecs, IUniformManager* _uniformManager, uin
 	{
 		std::vector<DirLight> dirLights = _ecs->GetComponents<DirLight>();
 
-		m_lightData.nbDirLight = static_cast<uint32_t>(m_dirLightsCache.size());
+		m_lightData.nbDirLight = static_cast<uint32_t>(dirLights.size());
 		m_dirLightsCache.resize(m_lightData.nbDirLight);
 
 		if (m_dirLightsCache.empty())
@@ -52,7 +52,7 @@ void LightManager::UpdateLights(ECS* _ecs, IUniformManager* _uniformManager, uin
 	{
 		std::vector<PointLight> pointLights = _ecs->GetComponents<PointLight>();
 
-		m_lightData.nbPointLight = static_cast<uint32_t> (m_pointLightsCache.size());
+		m_lightData.nbPointLight = static_cast<uint32_t> (pointLights.size());
 		m_pointLightsCache.resize(m_lightData.nbPointLight);
 
 		if (m_pointLightsCache.empty())
@@ -88,7 +88,7 @@ void LightManager::UpdateLights(ECS* _ecs, IUniformManager* _uniformManager, uin
 	{
 		std::vector<SpotLight> spotLights = _ecs->GetComponents<SpotLight>();
 
-		m_lightData.nbSpotLight = static_cast<uint32_t>(m_spotLightsCache.size());
+		m_lightData.nbSpotLight = static_cast<uint32_t>(spotLights.size());
 		m_spotLightsCache.resize(m_lightData.nbSpotLight);
 
 		if (m_spotLightsCache.empty())

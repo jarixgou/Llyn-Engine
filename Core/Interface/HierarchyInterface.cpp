@@ -1,26 +1,50 @@
 #include "HierarchyInterface.h"
 
+#include "../Scene.h"
+#include "../Entities/ECS.h"
 #include "../Entities/Entity.h"
+#include "../Component/Transform.h"
 #include "../ImGui/imgui.h"
 
-void HierarchyInterface::Init(std::vector<Entity>* _hierarchy)
+void HierarchyInterface::Init(Scene* _scene)
 {
-	m_hierarchy = _hierarchy;
+	m_scene = _scene;
 }
 
 void HierarchyInterface::Update()
 {
 	ImGui::Begin("Hierarchy");
 
-	ImGui::Text("Root nodes : %zu", m_hierarchy->size());
+	if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+	{
+		ImGui::OpenPopup("NewEntity");
+	}
+
+	if (ImGui::BeginPopup("NewEntity"))
+	{
+		if (ImGui::MenuItem("New entity"))
+		{
+			Entity entity{};
+			entity.id = m_scene->ecs->CreateEntity();
+
+			Transform transform{};
+			m_scene->ecs->AddComponents(entity.id, transform);
+
+			m_scene->hierarchy.emplace_back(entity);
+		}
+
+		ImGui::EndPopup();
+	}
+
+	ImGui::Text("Root nodes : %zu", m_scene->hierarchy.size());
 
 	ImGui::Separator();
 
 	ImGui::BeginTable("##list", 1, ImGuiTableFlags_RowBg);
 
-	for (int i = 0; i < m_hierarchy->size(); ++i)
+	for (int i = 0; i < m_scene->hierarchy.size(); ++i)
 	{
-		DrawTreeNode(&(*m_hierarchy)[i]);
+		DrawTreeNode(&m_scene->hierarchy[i]);
 	}
 
 	ImGui::EndTable();

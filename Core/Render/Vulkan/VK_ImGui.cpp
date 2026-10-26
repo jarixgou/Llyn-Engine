@@ -61,7 +61,12 @@ VkCommandBuffer VK_ImGui::Draw(VK_RenderWindow* _renderWindow, uint32_t _frameIn
 {
 	VK_Buffer::BeginCommandBuffer(m_cmdBuffs[_frameIndex], VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
-	_renderWindow->BeginRendering(m_cmdBuffs[_frameIndex], _imageIndex, nullptr, nullptr);
+	VkClearValue colorClear;
+	colorClear.color = VkClearColorValue{ 0.0f, 0.0f, 0.0f, 1.0f };
+	VkClearValue depthValue;
+	depthValue.depthStencil = VkClearDepthStencilValue{ 1.0f, 0 };
+
+	_renderWindow->BeginRendering(m_cmdBuffs[_frameIndex], _imageIndex, &colorClear, &depthValue);
 
 	ImDrawData* drawData = ImGui::GetDrawData();
 	ImGui_ImplVulkan_RenderDrawData(drawData, m_cmdBuffs[_frameIndex]);

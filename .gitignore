@@ -92,6 +92,7 @@ x86/
 # Publish Web Output
 *.[Pp]ublish.xml
 
-
+Core/x64
+LlynEngine/x64
 x64/Release/Core.lib
 x64/Debug/Core.lib

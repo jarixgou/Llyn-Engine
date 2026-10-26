@@ -290,6 +290,30 @@ void Model::LoadPrimitive(const fastgltf::Asset& _asset, const fastgltf::Primiti
 		}
 	}
 
+	// Get tangent
+	const fastgltf::Attribute* tangentAttribute = _primitive.findAttribute("TANGENT");
+	if (tangentAttribute != nullptr)
+	{
+		const fastgltf::Accessor& accessor = _asset.accessors[tangentAttribute->accessorIndex];
+
+		if (accessor.type == fastgltf::AccessorType::Vec4)
+		{
+			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(_asset, accessor,
+				[&](fastgltf::math::fvec4 t, size_t i)
+				{
+					_outVertices[i].tangent = { t.x(), t.y(), t.z(), t.w() };
+				});
+		}
+		else if (accessor.type == fastgltf::AccessorType::Vec3)
+		{
+			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_asset, accessor,
+				[&](fastgltf::math::fvec3 t, size_t i)
+				{
+					_outVertices[i].tangent = { t.x(), t.y(), t.z(), 1.0f }; // handedness par défaut
+				});
+		}
+	}
+
 	// Get UV
 	std::string uvAttributeName = "TEXCOORD_" + std::to_string(_uvIndex);
 	const fastgltf::Attribute* uvAttrib = _primitive.findAttribute(uvAttributeName);
@@ -362,6 +386,7 @@ RessourceID Model::GetMaterial(const fastgltf::Asset& _gltfAsset, const fastgltf
 		}
 
 		const RessourceID normalTextureID = GetTexture(_gltfAsset, _material.normalTexture);
+
 		material.SetNormal(normalTextureID);
 
 		materialID = RessourceManager::Get().Add<Material>(materialPath, &material);
@@ -417,14 +442,22 @@ RessourceID Model::GetTexture(const fastgltf::Asset& _gltfAsset, const fastgltf:
 			const size_t imageIndex = _gltfAsset.textures[_textureInfo.value().textureIndex].imageIndex.value();
 
 			std::visit(fastgltf::visitor{
-					[](auto& _arg) {},
-					[&](fastgltf::sources::URI& _filePath) {
+					[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
+					[&](const fastgltf::sources::URI& _filePath) {
 						assert(_filePath.fileByteOffset == 0);
 						assert(_filePath.uri.isLocalPath());
 
 						const std::string texturePath(_filePath.uri.path().begin(), _filePath.uri.path().end());
 
-						textureID = RessourceManager::Get().GetRessourceID<Texture>(texturePath);
+						textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + texturePath);
+					},
+					[&](const fastgltf::sources::Vector& _vector)
+					{
+						std::cout << "Vector" << std::endl;
+					},
+					[&](const fastgltf::sources::BufferView& _view)
+					{
+						std::cout << "BufferView" << std::endl;
 					}
 				}, _gltfAsset.images[imageIndex].data);
 		}
