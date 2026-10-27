@@ -24,17 +24,30 @@ struct Matrices
     float4x4 normal;
 }
 
+enum MaterialMode
+{
+    SPECULAR,
+    METALLIC
+}
+
 struct Material
 {
+    MaterialMode mode;
     uint16_t albedoID;
     uint16_t specularID;
+    uint16_t metallicID;
     uint16_t normalID;
+    uint16_t emissiveID;
+    uint16_t aoID;
 
     float3 albedoColor;
     float pad0;
 
     float3 specularColor;
     float smoothness;
+
+    float3 emissiveColor;
+    float pad1;
 }
 
 struct MetaData
@@ -72,6 +85,8 @@ struct FGOutput
     float4 normal : SV_Target1;
     float4 albedo : SV_Target2;
     float4 specular : SV_Target3;
+    float4 emissive : SV_Target4;
+    float2 ao : SV_Target5;
 }
 
 // Bindless
@@ -160,22 +175,48 @@ FGOutput fragMain(VSOutput _vsOutput)
 
     float4 specularTexture = GetTexture(material.specularID, _vsOutput.uv0);
 
-    output.specular = 
-    { 
-        specularTexture.x * material.specularColor.x, 
-        specularTexture.y * material.specularColor.y,
-        specularTexture.z * material.specularColor.z, 
-        material.smoothness 
-    };
+    if (material.mode == MaterialMode::SPECULAR)
+    {
+        output.specular = 
+        { 
+            specularTexture.x * material.specularColor.x, 
+            specularTexture.y * material.specularColor.y,
+            specularTexture.z * material.specularColor.z, 
+            material.smoothness 
+        };
+    }
+    else
+    {
+        output.specular = GetTexture(material.metallicID, _vsOutput.uv0);
+    }
 
-    output.normal = float4(_vsOutput.normal, 1.0);
+    output.normal = float4(_vsOutput.normal, (float)material.mode);
 
     if (material.normalID != TOMBSTONE_ID)
     {
         float4 normalTexture = GetTexture(material.normalID, _vsOutput.uv0);
         normalTexture = normalize(normalTexture * 2.0 - 1.0);
 
-        output.normal = float4(mul(normalTexture.xyz, _vsOutput.TBN), 1.0);
+        output.normal.xyz = mul(normalTexture.xyz, _vsOutput.TBN);
+    }
+
+    if (material.emissiveID != TOMBSTONE_ID)
+    {
+        output.emissive = GetTexture(material.emissiveID, _vsOutput.uv0) * float4(material.emissiveColor, 1.0);
+    }
+    else
+    {
+        output.emissive = float4(0.0);
+    }
+
+    if (material.aoID != TOMBSTONE_ID)
+    {
+        output.ao = GetTexture(material.aoID, _vsOutput.uv0).xy;
+        output.ao.y = 0.0;
+    }
+    else
+    {
+        output.ao = float2(0.0, 1.0);
     }
 
     return output;

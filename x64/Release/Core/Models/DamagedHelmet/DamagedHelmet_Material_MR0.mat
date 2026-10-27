@@ -1,0 +1,31 @@
+{
+    "AOMap": "Core/Models/DamagedHelmet/Default_AO.jpg",
+    "BaseMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": "Core/Models/DamagedHelmet/Default_albedo.jpg"
+    },
+    "EmissiveMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": "Core/Models/DamagedHelmet/Default_emissive.jpg"
+    },
+    "MetallicMap": "Core/Models/DamagedHelmet/Default_metalRoughness.jpg",
+    "Mode": 1,
+    "NormalMap": "Core/Models/DamagedHelmet/Default_normal.jpg",
+    "SpecularMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Smoothness": 1.0,
+        "Texture": ""
+    }
+}

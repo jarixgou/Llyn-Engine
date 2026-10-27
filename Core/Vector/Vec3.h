@@ -18,7 +18,7 @@ struct Vec3
 	Vec3 operator*(const Vec3& _other) const;
 
 	Vec3& operator*=(const float& _f);
-	Vec3 operator*(const float& _f);
+	Vec3 operator*(const float& _f) const;
 
 	Vec3& operator/=(const Vec3& _other);
 	Vec3 operator/(const Vec3& _other) const;
@@ -92,7 +92,7 @@ Vec3<T>& Vec3<T>::operator*=(const float& _f)
 }
 
 template <typename T>
-Vec3<T> Vec3<T>::operator*(const float& _f)
+Vec3<T> Vec3<T>::operator*(const float& _f) const
 {
 	Vec3 tmp = *this;
 	tmp *= _f;

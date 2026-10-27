@@ -11,7 +11,7 @@ struct Vec2
 	Vec2 operator+(const Vec2& _other);
 
 	Vec2& operator-=(const Vec2& _other);
-	Vec2 operator-(const Vec2& _other);
+	Vec2 operator-(const Vec2& _other) const;
 
 	Vec2& operator*=(const Vec2& _other);
 	Vec2 operator*(const Vec2& _other);
@@ -50,7 +50,7 @@ Vec2<T>& Vec2<T>::operator-=(const Vec2& _other)
 }
 
 template <typename T>
-Vec2<T> Vec2<T>::operator-(const Vec2& _other)
+Vec2<T> Vec2<T>::operator-(const Vec2& _other) const 
 {
 	Vec2 tmp = *this;
 	tmp -= _other;

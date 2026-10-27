@@ -43,8 +43,12 @@ private:
 	void LoadPrimitive(const fastgltf::Asset& _asset, const fastgltf::Primitive& _primitive,
 	                   const size_t& _uvIndex, std::vector<Vertex>& _outVertices, std::vector<Index>& _outIndices);
 	RessourceID GetMaterial(const fastgltf::Asset& _gltfAsset, const fastgltf::Material& _material, uint32_t _materialIndex);
+
 	RessourceID GetTexture(const fastgltf::Asset& _asset, const fastgltf::Optional<fastgltf::TextureInfo>& _textureInfo);
 	RessourceID GetTexture(const fastgltf::Asset& _asset, const fastgltf::Optional<fastgltf::NormalTextureInfo>& _textureInfo);
+	RessourceID GetTexture(const fastgltf::Asset& _asset, const fastgltf::Optional<fastgltf::OcclusionTextureInfo>& _textureInfo);
+
+	void ComputeTangent(std::vector<Vertex>& _vertices, std::vector<Index> _indices);
 };
 
 #endif

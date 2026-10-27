@@ -15,7 +15,7 @@ void VK_DepthResources::Init(VkExtent2D _extent)
 
 	LOGGER_INFO("Depth resource creation !");
 	m_image.Init(depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, IMAGE_TYPE_2D, VK_IMAGE_ASPECT_DEPTH_BIT,
-		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 1, Vec2u(_extent.width, _extent.height));
+	             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 1, VkComponentMapping{}, Vec2u(_extent.width, _extent.height));
 	LOGGER_INFO("Depth resource created !");
 }
 

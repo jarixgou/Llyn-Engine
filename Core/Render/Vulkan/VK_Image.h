@@ -25,10 +25,10 @@ private:
 public:
 
 	void Init(VkFormat _format, VkImageLayout _layout, const ImageType& _type, VkImageAspectFlags _aspect,
-	          VkImageUsageFlags _usage, uint32_t _mipsLevel, const Vec2u& _textureSize, bool _swapChain = false);
+	          VkImageUsageFlags _usage, uint32_t _mipsLevel, VkComponentMapping _component, const Vec2u& _textureSize, bool _swapChain = false);
 	void Cleanup();
 
-	void CreateView();
+	void CreateView(VkComponentMapping _component);
 
 	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout);
 	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout);

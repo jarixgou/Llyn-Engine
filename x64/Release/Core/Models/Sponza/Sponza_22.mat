@@ -1,4 +1,5 @@
 {
+    "AOMap": "",
     "BaseMap": {
         "Color": [
             1.0,
@@ -7,6 +8,16 @@
         ],
         "Texture": "Core/Models/Sponza/8481240838833932244.jpg"
     },
+    "EmissiveMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": ""
+    },
+    "MetallicMap": "Core/Models/Sponza/17556969131407844942.jpg",
+    "Mode": 1,
     "NormalMap": "Core/Models/Sponza/10381718147657362067.jpg",
     "SpecularMap": {
         "Color": [
@@ -14,7 +25,7 @@
             1.0,
             1.0
         ],
-        "Smoothness": 0.5,
-        "Texture": "Core/Textures/DefaultSpecular.png"
+        "Smoothness": 1.0,
+        "Texture": ""
     }
 }

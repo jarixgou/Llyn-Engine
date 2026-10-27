@@ -1,0 +1,7 @@
+﻿  Génération de code en cours
+  99 of 13027 functions ( 0.8%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    207 functions had inline decision re-evaluated but remain unchanged
+  Fin de la génération du code
+Core.lib(spirv_reflect.obj) : warning LNK4099: PDB 'spirv-reflect-static.pdb' n'a pu être trouvé avec 'Core.lib(spirv_reflect.obj)' ou sur 'D:\Llyn Engine\x64\Release\spirv-reflect-static.pdb' ; l'objet sera lié sans informations de débogage
+  Llyn Engine.vcxproj -> D:\Llyn Engine\x64\Release\Llyn Engine.exe

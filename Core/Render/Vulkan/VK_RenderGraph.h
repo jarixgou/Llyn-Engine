@@ -36,7 +36,8 @@ private:
 	std::vector<size_t> m_executionOrder;
 
 public:
-	void AddResource(const std::string& _name, VkFormat _format, VkImageLayout _initialLayout, VkImageLayout _finalLayout, VkImageAspectFlags _imageAspect, VkImageUsageFlags _usage, const Vec2u& _size);
+	void AddResource(const std::string& _name, VkFormat _format, VkImageLayout _initialLayout, VkImageLayout _finalLayout, VkImageAspectFlags _imageAspect, VkImageUsageFlags _usage, VkComponentMapping
+	                 _component, const Vec2u& _size);
 	void AddPass(const std::string& _name, const std::vector<std::string>& _inputs,
 	             const std::vector<std::string>& _outputs, std::function<void(VkCommandBuffer, IUniformManager*, const uint32_t&)>
 	             _updateFunc, std::

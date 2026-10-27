@@ -40,7 +40,12 @@ bool Material::Load(const std::string& _fileName)
 	for (auto field : root)
 	{
 		std::string_view key = field.unescaped_key();
-		if (key == "BaseMap")
+
+		if (key == "Mode" && field.value().is_integer())
+		{
+			m_mode = static_cast<MaterialMode>(field.value().get_int32().value());
+		} 
+		else if (key == "BaseMap")
 		{
 			simdjson::ondemand::object baseMap = field.value().get_object();
 			for (auto baseField : baseMap)
@@ -113,6 +118,48 @@ bool Material::Load(const std::string& _fileName)
 			std::string_view texturePath = field.value().get_string();
 			m_normalID = RessourceManager::Get().GetRessourceID<Texture>(std::string(texturePath));
 		}
+		else if (key == "MetallicMap" && field.value().is_string())
+		{
+			std::string_view texturePath = field.value().get_string();
+			m_metallicID = RessourceManager::Get().GetRessourceID<Texture>(std::string(texturePath));
+		}
+		else if (key == "EmissiveMap")
+		{
+			simdjson::ondemand::object emissiveMap = field.value().get_object();
+			for (auto emissiveField : emissiveMap)
+			{
+				std::string_view emissiveKey = emissiveField.unescaped_key();
+				if (emissiveKey == "Texture" && emissiveField.value().is_string())
+				{
+					std::string_view texturePath = emissiveField.value().get_string();
+					m_emissiveID = RessourceManager::Get().GetRessourceID<Texture>(std::string(texturePath));
+				}
+				else if (emissiveKey == "Color")
+				{
+					float color[3] = {0.0f};
+					int i = 0;
+					for (auto value : emissiveField.value().get_array())
+					{
+						if (value.is_scalar())
+						{
+							if (i < 3)
+							{
+								color[i] = static_cast<float>(value.get_double());
+
+								i += 1;
+							}
+						}
+					}
+
+					m_emissiveColor = { color[0], color[1], color[2] };
+				}
+			}
+		}
+		else if (key == "AOMap" && field.value().is_string())
+		{
+			std::string_view texturePath = field.value().get_string();
+			m_aoID = RessourceManager::Get().GetRessourceID<Texture>(std::string(texturePath));
+		}
 	}
 
 	return true;
@@ -139,19 +186,27 @@ bool Material::Add(const std::string& _filePath, IRessource* _ressource)
 
 	Material* material = static_cast<Material*>(_ressource);
 
+	m_mode = material->GetMode();
 	m_baseID = material->GetBase();
 	m_baseColor = material->GetBaseColor();
 
 	m_specularID = material->GetSpecular();
 	m_specularColor = material->GetSpecularColor();
 
+	m_metallicID = material->GetMetallic();
 	m_normalID = material->GetNormal();
+
+	m_emissiveID = material->GetEmissive();
+	m_emissiveColor = material->GetEmissiveColor();
+
+	m_aoID = material->GetAO();
 
 	m_smoothness = material->GetSmoothness();
 
 	// Create material file 
 	nlohmann::json json;
 
+	json["Mode"] = static_cast<int>(m_mode);
 	json["BaseMap"]["Texture"] = RessourceManager::Get().GetFilePath<Texture>(m_baseID);
 	json["BaseMap"]["Color"] = { m_baseColor.x, m_baseColor.y, m_baseColor.z };
 
@@ -159,7 +214,14 @@ bool Material::Add(const std::string& _filePath, IRessource* _ressource)
 	json["SpecularMap"]["Color"] = { m_specularColor.x, m_specularColor.y, m_specularColor.z };
 	json["SpecularMap"]["Smoothness"] = m_smoothness;
 
+	json["MetallicMap"] = RessourceManager::Get().GetFilePath<Texture>(m_metallicID);
+
 	json["NormalMap"] = RessourceManager::Get().GetFilePath<Texture>(m_normalID);
+
+	json["EmissiveMap"]["Texture"] = RessourceManager::Get().GetFilePath<Texture>(m_emissiveID);
+	json["EmissiveMap"]["Color"] = { m_emissiveColor.x, m_emissiveColor.y, m_emissiveColor.z };
+
+	json["AOMap"] = RessourceManager::Get().GetFilePath<Texture>(m_aoID);
 
 	std::ofstream file(_filePath);
 	file << json.dump(4);
@@ -218,6 +280,21 @@ Vec3f Material::GetSpecularColor() const
 	return m_specularColor;
 }
 
+void Material::SetMetallic(const std::string& _texturePath)
+{
+	m_metallicID = RessourceManager::Get().GetRessourceID<Texture>(_texturePath);
+}
+
+void Material::SetMetallic(const RessourceID& _textureID)
+{
+	m_metallicID = _textureID;
+}
+
+const RessourceID& Material::GetMetallic()
+{
+	return m_metallicID;
+}
+
 void Material::SetNormal(const std::string& _texturePath)
 {
 	m_normalID = RessourceManager::Get().GetRessourceID<Texture>(_texturePath);
@@ -231,6 +308,56 @@ void Material::SetNormal(const RessourceID& _textureID)
 RessourceID Material::GetNormal() const
 {
 	return m_normalID;
+}
+
+void Material::SetEmissive(const std::string& _texturePath)
+{
+	m_emissiveID = RessourceManager::Get().GetRessourceID<Texture>(_texturePath);
+}
+
+void Material::SetEmissive(const RessourceID& _textureID)
+{
+	m_emissiveID = _textureID;
+}
+
+const RessourceID& Material::GetEmissive()
+{
+	return m_emissiveID;
+}
+
+void Material::SetEmissiveColor(const Vec3f& _color)
+{
+	m_emissiveColor = _color;
+}
+
+const Vec3f& Material::GetEmissiveColor()
+{
+	return m_emissiveColor;
+}
+
+void Material::SetAO(const std::string& _texturePath)
+{
+	m_aoID = RessourceManager::Get().GetRessourceID<Texture>(_texturePath);
+}
+
+void Material::SetAO(const RessourceID& _textureID)
+{
+	m_aoID = _textureID;
+}
+
+const RessourceID& Material::GetAO()
+{
+	return m_aoID;
+}
+
+void Material::SetMode(const MaterialMode& _mode)
+{
+	m_mode = _mode;
+}
+
+const MaterialMode& Material::GetMode()
+{
+	return m_mode;
 }
 
 void Material::SetSmoothness(float _smoothness)

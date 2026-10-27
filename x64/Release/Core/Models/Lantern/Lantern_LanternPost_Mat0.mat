@@ -1,0 +1,31 @@
+{
+    "AOMap": "",
+    "BaseMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": "Core/Models/Lantern/Lantern_baseColor.png"
+    },
+    "EmissiveMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": "Core/Models/Lantern/Lantern_emissive.png"
+    },
+    "MetallicMap": "Core/Models/Lantern/Lantern_roughnessMetallic.png",
+    "Mode": 1,
+    "NormalMap": "Core/Models/Lantern/Lantern_normal.png",
+    "SpecularMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Smoothness": 1.0,
+        "Texture": ""
+    }
+}

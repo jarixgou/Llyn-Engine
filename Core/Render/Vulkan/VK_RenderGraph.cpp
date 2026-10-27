@@ -6,13 +6,13 @@
 #include "../../Asset/TextureConfig.h"
 
 void VK_RenderGraph::AddResource(const std::string& _name, VkFormat _format, VkImageLayout _initialLayout,
-                                 VkImageLayout _finalLayout, VkImageAspectFlags _imageAspect, VkImageUsageFlags _usage, const Vec2u& _size)
+                                 VkImageLayout _finalLayout, VkImageAspectFlags _imageAspect, VkImageUsageFlags _usage, VkComponentMapping _component, const Vec2u& _size)
 {
 	VK_Resource resource;
 	resource.name = _name;
 	resource.initialLayout = _initialLayout;
 	resource.finalLayout = _finalLayout;
-	resource.image.Init(_format, _initialLayout, IMAGE_TYPE_2D, _imageAspect, _usage, 1, _size);
+	resource.image.Init(_format, _initialLayout, IMAGE_TYPE_2D, _imageAspect, _usage, 1, _component, _size);
 
 	m_resources[_name] = resource;
 	m_resourcesName.emplace_back(_name);

@@ -15,6 +15,8 @@ void Application::Run()
 
 void Application::Init()
 {
+	srand(time(NULL));
+
 	Window::Get().Init({ 1920, 1080 }, "Llyn");
 
 	CompileShaders();

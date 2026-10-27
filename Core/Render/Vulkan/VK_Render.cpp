@@ -96,7 +96,7 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	gBufferPipelineInfo.imageFormats =
 	{
 		IMAGE_FORMAT_R16G16B16A16_SFLOAT, IMAGE_FORMAT_R16G16B16A16_SFLOAT, IMAGE_FORMAT_R8G8B8A8_SRGB,
-		IMAGE_FORMAT_R8G8B8A8_SRGB
+		IMAGE_FORMAT_R8G8B8A8, IMAGE_FORMAT_R16G16B16A16_SFLOAT, IMAGE_FORMAT_R8G8
 	};
 	m_gBufferPipeline->Init(m_renderWindow->GetSwapChain(), gBufferPipelineInfo);
 
@@ -129,23 +129,29 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	}
 
 	m_renderGraph->AddResource("gPosition", VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-		{ 1920, 1080 });
+	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+	                           VkComponentMapping{}, { 1920, 1080 });
+	VkComponentMapping componentNormal{};
+	componentNormal.a = VK_COMPONENT_SWIZZLE_ONE;
 	m_renderGraph->AddResource("gNormal", VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-		{ 1920, 1080 });
+	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		componentNormal, { 1920, 1080 });
 	m_renderGraph->AddResource("gAlbedo", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		VkComponentMapping{}, { 1920, 1080 });
+	m_renderGraph->AddResource("gSpecular", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		componentNormal, { 1920, 1080 });
+	m_renderGraph->AddResource("gEmissive", VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VkComponentMapping{}, { 1920, 1080 });
+	m_renderGraph->AddResource("gAO", VK_FORMAT_R8G8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-		{ 1920, 1080 });
-	m_renderGraph->AddResource("gSpecular", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-		{ 1920, 1080 });
-
+		VkComponentMapping{}, { 1920, 1080 });
 	m_renderGraph->AddResource("Depth", VK_FORMAT_D32_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-		VK_IMAGE_ASPECT_DEPTH_BIT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
-		{ 1920, 1080 });
+	                           VK_IMAGE_ASPECT_DEPTH_BIT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+		VkComponentMapping{}, { 1920, 1080 });
 
-	m_renderGraph->AddPass("GBuffer", {}, { "gPosition", "gNormal", "gAlbedo", "gSpecular", "Depth" },
+	m_renderGraph->AddPass("GBuffer", {}, { "gPosition", "gNormal", "gAlbedo", "gSpecular", "gEmissive", "gAO", "Depth" },
 		nullptr,
 		[&](VkCommandBuffer _cmdBuff, IUniformManager* _manager, const uint32_t& _frameIndex)
 		{
@@ -155,10 +161,12 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 				m_renderGraph->GetResource("gNormal"),
 				m_renderGraph->GetResource("gAlbedo"),
 				m_renderGraph->GetResource("gSpecular"),
+				m_renderGraph->GetResource("gEmissive"),
+				m_renderGraph->GetResource("gAO"),
 				m_renderGraph->GetResource("Depth")
 			};
 
-			std::vector<VkRenderingAttachmentInfo> colorAttachments(4);
+			std::vector<VkRenderingAttachmentInfo> colorAttachments(resources.size() - 1);
 			for (size_t i = 0; i < colorAttachments.size(); ++i)
 			{
 				VkRenderingAttachmentInfo* color = &colorAttachments[i];
@@ -214,10 +222,10 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	);
 
 	m_renderGraph->AddResource("LightingPass", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-		{ 1920, 1080 });
+	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		VkComponentMapping{}, { 1920, 1080 });
 
-	m_renderGraph->AddPass("Lighting", { "gPosition", "gNormal", "gAlbedo", "gSpecular" }, { "LightingPass" },
+	m_renderGraph->AddPass("Lighting", { "gPosition", "gNormal", "gAlbedo", "gSpecular", "gEmissive" }, { "LightingPass" },
 		[&](VkCommandBuffer _cmdBuff, IUniformManager* _manager, const uint32_t _frameIndex)
 		{
 			std::vector<VK_Resource*> resources =
@@ -225,7 +233,9 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 				m_renderGraph->GetResource("gPosition"),
 				m_renderGraph->GetResource("gNormal"),
 				m_renderGraph->GetResource("gAlbedo"),
-				m_renderGraph->GetResource("gSpecular")
+				m_renderGraph->GetResource("gSpecular"),
+				m_renderGraph->GetResource("gEmissive"),
+				m_renderGraph->GetResource("gAO")
 			};
 
 			VK_DescriptorManager* manager = static_cast<VK_DescriptorManager*>(_manager);

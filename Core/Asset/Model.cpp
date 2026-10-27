@@ -19,6 +19,7 @@
 #include "../Vertex.h"
 #include "../Component/MeshFIlterPooler.h"
 #include "../Vector/Vec3.h"
+#include "../Math/Math.h"
 
 bool Model::Load(const std::string& _filePath)
 {
@@ -28,7 +29,7 @@ bool Model::Load(const std::string& _filePath)
 		fastgltf::Extensions::KHR_materials_variants;
 
 	fastgltf::Parser parser(supportedExtensions);
-
+	
 	constexpr fastgltf::Options gltfOptions =
 		fastgltf::Options::DontRequireValidAssetMember |
 		fastgltf::Options::AllowDouble |
@@ -290,30 +291,6 @@ void Model::LoadPrimitive(const fastgltf::Asset& _asset, const fastgltf::Primiti
 		}
 	}
 
-	// Get tangent
-	const fastgltf::Attribute* tangentAttribute = _primitive.findAttribute("TANGENT");
-	if (tangentAttribute != nullptr)
-	{
-		const fastgltf::Accessor& accessor = _asset.accessors[tangentAttribute->accessorIndex];
-
-		if (accessor.type == fastgltf::AccessorType::Vec4)
-		{
-			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(_asset, accessor,
-				[&](fastgltf::math::fvec4 t, size_t i)
-				{
-					_outVertices[i].tangent = { t.x(), t.y(), t.z(), t.w() };
-				});
-		}
-		else if (accessor.type == fastgltf::AccessorType::Vec3)
-		{
-			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_asset, accessor,
-				[&](fastgltf::math::fvec3 t, size_t i)
-				{
-					_outVertices[i].tangent = { t.x(), t.y(), t.z(), 1.0f }; // handedness par défaut
-				});
-		}
-	}
-
 	// Get UV
 	std::string uvAttributeName = "TEXCOORD_" + std::to_string(_uvIndex);
 	const fastgltf::Attribute* uvAttrib = _primitive.findAttribute(uvAttributeName);
@@ -346,6 +323,34 @@ void Model::LoadPrimitive(const fastgltf::Asset& _asset, const fastgltf::Primiti
 				_outIndices[_idx] = _index;
 			});
 	}
+
+	// Get tangent
+	const fastgltf::Attribute* tangentAttribute = _primitive.findAttribute("TANGENT");
+	if (tangentAttribute != nullptr)
+	{
+		const fastgltf::Accessor& accessor = _asset.accessors[tangentAttribute->accessorIndex];
+
+		if (accessor.type == fastgltf::AccessorType::Vec4)
+		{
+			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(_asset, accessor,
+				[&](fastgltf::math::fvec4 t, size_t i)
+				{
+					_outVertices[i].tangent = { t.x(), t.y(), t.z(), t.w() };
+				});
+		}
+		else if (accessor.type == fastgltf::AccessorType::Vec3)
+		{
+			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_asset, accessor,
+				[&](fastgltf::math::fvec3 t, size_t i)
+				{
+					_outVertices[i].tangent = { t.x(), t.y(), t.z(), 1.0f };
+				});
+		}
+		else
+		{
+			ComputeTangent(_outVertices, _outIndices);
+		}
+	}
 }
 
 RessourceID Model::GetMaterial(const fastgltf::Asset& _gltfAsset, const fastgltf::Material& _material, const uint32_t _materialIndex)
@@ -354,9 +359,10 @@ RessourceID Model::GetMaterial(const fastgltf::Asset& _gltfAsset, const fastgltf
 		std::string(_material.name) + std::to_string(_materialIndex) + ".mat";
 
 	RessourceID materialID = RessourceManager::Get().GetRessourceID<Material>(materialPath);
+
 	if (materialID == TOMBSTONE_RESOURCE)
 	{
-		Material material;
+		Material material{};
 
 		const RessourceID baseTextureID = GetTexture(_gltfAsset, _material.pbrData.baseColorTexture);
 		if (baseTextureID != TOMBSTONE_RESOURCE)
@@ -368,8 +374,18 @@ RessourceID Model::GetMaterial(const fastgltf::Asset& _gltfAsset, const fastgltf
 			material.SetBase("Core/Textures/DefaultBase.png");
 		}
 
-		if (_material.specular != nullptr)
+		if (_material.pbrData.metallicRoughnessTexture.has_value())
 		{
+			material.SetMode(MaterialMode::METALLIC);
+
+			const RessourceID metallicTextureID = GetTexture(_gltfAsset, _material.pbrData.metallicRoughnessTexture);
+			material.SetMetallic(metallicTextureID);
+
+			material.SetSmoothness(_material.pbrData.roughnessFactor);
+		}
+		else if (_material.specular != nullptr)
+		{
+			material.SetMode(MaterialMode::SPECULAR);
 			const RessourceID specularTextureID = GetTexture(_gltfAsset, _material.specular->specularTexture);
 			if (specularTextureID != TOMBSTONE_RESOURCE)
 			{
@@ -385,8 +401,18 @@ RessourceID Model::GetMaterial(const fastgltf::Asset& _gltfAsset, const fastgltf
 			material.SetSpecular("Core/Textures/DefaultSpecular.png");
 		}
 
-		const RessourceID normalTextureID = GetTexture(_gltfAsset, _material.normalTexture);
+		const RessourceID emissiveTextureID = GetTexture(_gltfAsset, _material.emissiveTexture);
+		material.SetEmissive(emissiveTextureID);
+		if (emissiveTextureID != TOMBSTONE_RESOURCE)
+		{
+			auto emissiveFactor = _material.emissiveFactor;
+			material.SetEmissiveColor({ emissiveFactor.x(), emissiveFactor.y(), emissiveFactor.z() });
+		}
 
+		const RessourceID aoTextureID = GetTexture(_gltfAsset, _material.occlusionTexture);
+		material.SetAO(aoTextureID);
+
+		const RessourceID normalTextureID = GetTexture(_gltfAsset, _material.normalTexture);
 		material.SetNormal(normalTextureID);
 
 		materialID = RessourceManager::Get().Add<Material>(materialPath, &material);
@@ -396,15 +422,15 @@ RessourceID Model::GetMaterial(const fastgltf::Asset& _gltfAsset, const fastgltf
 	return materialID;
 }
 
-RessourceID Model::GetTexture(const fastgltf::Asset& _gltfAsset, const fastgltf::Optional<fastgltf::TextureInfo>& _textureInfo)
+RessourceID Model::GetTexture(const fastgltf::Asset& _asset, const fastgltf::Optional<fastgltf::TextureInfo>& _textureInfo)
 {
 	RessourceID textureID = TOMBSTONE_RESOURCE;
 
 	if (_textureInfo.has_value())
 	{
-		if (_gltfAsset.textures[_textureInfo.value().textureIndex].imageIndex.has_value())
+		if (_asset.textures[_textureInfo.value().textureIndex].imageIndex.has_value())
 		{
-			const size_t imageIndex = _gltfAsset.textures[_textureInfo.value().textureIndex].imageIndex.value();
+			const size_t imageIndex = _asset.textures[_textureInfo.value().textureIndex].imageIndex.value();
 
 			std::visit(fastgltf::visitor{
 					[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
@@ -424,22 +450,22 @@ RessourceID Model::GetTexture(const fastgltf::Asset& _gltfAsset, const fastgltf:
 					{
 						std::cout << "BufferView" << std::endl;
 					}
-				}, _gltfAsset.images[imageIndex].data);
+				}, _asset.images[imageIndex].data);
 		}
 	}
 
 	return textureID;
 }
 
-RessourceID Model::GetTexture(const fastgltf::Asset& _gltfAsset, const fastgltf::Optional<fastgltf::NormalTextureInfo>& _textureInfo)
+RessourceID Model::GetTexture(const fastgltf::Asset& _asset, const fastgltf::Optional<fastgltf::NormalTextureInfo>& _textureInfo)
 {
 	RessourceID textureID = TOMBSTONE_RESOURCE;
 
 	if (_textureInfo.has_value())
 	{
-		if (_gltfAsset.textures[_textureInfo.value().textureIndex].imageIndex.has_value())
+		if (_asset.textures[_textureInfo.value().textureIndex].imageIndex.has_value())
 		{
-			const size_t imageIndex = _gltfAsset.textures[_textureInfo.value().textureIndex].imageIndex.value();
+			const size_t imageIndex = _asset.textures[_textureInfo.value().textureIndex].imageIndex.value();
 
 			std::visit(fastgltf::visitor{
 					[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
@@ -459,9 +485,104 @@ RessourceID Model::GetTexture(const fastgltf::Asset& _gltfAsset, const fastgltf:
 					{
 						std::cout << "BufferView" << std::endl;
 					}
-				}, _gltfAsset.images[imageIndex].data);
+				}, _asset.images[imageIndex].data);
 		}
 	}
 
 	return textureID;
+}
+
+RessourceID Model::GetTexture(const fastgltf::Asset& _asset,
+	const fastgltf::Optional<fastgltf::OcclusionTextureInfo>& _textureInfo)
+{
+	RessourceID textureID = TOMBSTONE_RESOURCE;
+
+	if (_textureInfo.has_value())
+	{
+		if (_asset.textures[_textureInfo.value().textureIndex].imageIndex.has_value())
+		{
+			const size_t imageIndex = _asset.textures[_textureInfo.value().textureIndex].imageIndex.value();
+
+			std::visit(fastgltf::visitor{
+					[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
+					[&](const fastgltf::sources::URI& _filePath) {
+						assert(_filePath.fileByteOffset == 0);
+						assert(_filePath.uri.isLocalPath());
+
+						const std::string texturePath(_filePath.uri.path().begin(), _filePath.uri.path().end());
+
+						textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + texturePath);
+					},
+					[&](const fastgltf::sources::Vector& _vector)
+					{
+						std::cout << "Vector" << std::endl;
+					},
+					[&](const fastgltf::sources::BufferView& _view)
+					{
+						std::cout << "BufferView" << std::endl;
+					}
+				}, _asset.images[imageIndex].data);
+		}
+	}
+
+	return textureID;
+}
+
+void Model::ComputeTangent(std::vector<Vertex>& _vertices, std::vector<Index> _indices)
+{
+	std::vector<Vec3f> tan(_vertices.size(), Vec3f{});
+	std::vector<Vec3f> bit(_vertices.size(), Vec3f{});
+
+	for (size_t i = 0; i + 2 < _indices.size(); i += 3)
+	{
+		const Index& i0 = _indices[i];
+		const Index& i1 = _indices[i + 1];
+		const Index& i2 = _indices[i + 2];
+
+		const Vertex& v0 = _vertices[i0];
+		const Vertex& v1 = _vertices[i1];
+		const Vertex& v2 = _vertices[i2];
+
+		const Vec3f dP0 = v1.pos - v0.pos;
+		const Vec3f dP1 = v2.pos - v0.pos;
+
+		const Vec2f dUv0 = v1.uv0 - v0.uv0;
+		const Vec2f dUv1 = v2.uv0 - v0.uv0;
+
+		const float f = 1.0f / (dUv0.x * dUv1.y - dUv1.x * dUv0.y);
+
+		Vec3f t{};
+		t.x = f * (dUv1.y * dP0.x - dUv0.y * dP1.x);
+		t.y = f * (dUv1.y * dP0.y - dUv0.y * dP1.y);
+		t.z = f * (dUv1.y * dP0.z - dUv0.y * dP1.z);
+		
+		Vec3f b{};
+		b.x = f * (-dUv1.x * dP1.x + dUv0.x * dP1.x);
+		b.y = f * (-dUv1.x * dP1.y + dUv0.x * dP1.y);
+		b.z = f * (-dUv1.x * dP1.z + dUv0.x * dP1.z);
+
+		tan[i0] += t;
+		tan[i1] += t;
+		tan[i2] += t;
+
+		bit[i0] += b;
+		bit[i1] += b;
+		bit[i2] += b;
+	}
+
+	for (size_t i = 0; i < _vertices.size(); ++i)
+	{
+		const Vec3f& normal = _vertices[i].normal;
+		Vec3f t = tan[i] - normal * Dot(normal, tan[i]);
+
+		if (Dot(t, t) < 1e-12f)
+		{
+			Vec3f axis = abs(normal.x) < 0.9f ? Vec3f{ 1.0f, 0.0f, 0.0f } : Vec3f{ 0.0f, 1.0f, 0.0f };
+			t = axis - normal * Dot(normal, axis);
+		}
+		t = Normalize(t);
+
+		const float w = Dot(Cross(normal, t), bit[i]) < 0.0f ? -1.0f : 1.0f;
+		_vertices[i].tangent = { t.x, t.y, t.z, w };
+	}
 }

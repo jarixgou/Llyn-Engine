@@ -53,7 +53,9 @@ enum MipMapFilter;
 enum ImageFormat;
 struct TextureConfig;
 class Texture;
+enum class MaterialMode;
 class Material;
+class Model;
 
 // Component forward declaration
 struct Transform;

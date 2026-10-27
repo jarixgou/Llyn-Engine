@@ -15,7 +15,7 @@ void VK_Texture::Init(VK_TextureInfo& _info)
 	const VkFormat actualFormat = _info.preferredFormat != VK_FORMAT_UNDEFINED ?
 		_info.preferredFormat : GetFormat(_info.config.format);
 
-	VK_Image::Init(actualFormat, _info.layout, _info.config.type, _info.aspect, _info.usage, actualMipLevels, _info.textureSize);
+	VK_Image::Init(actualFormat, _info.layout, _info.config.type, _info.aspect, _info.usage, actualMipLevels, VkComponentMapping{}, _info.textureSize);
 
 	if (_info.data != nullptr)
 	{

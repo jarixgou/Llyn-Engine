@@ -126,7 +126,7 @@ void VK_SwapChain::CreateSwapChain(const VK_Device* _device, const VK_Instance* 
 	{
 		m_images[i].m_image = images[i];
 		m_images[i].Init(m_surfaceFormat.format, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, IMAGE_TYPE_2D,
-			VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 1, Vec2u(), true);
+		                 VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 1, VkComponentMapping{}, Vec2u(), true);
 
 	}
 }

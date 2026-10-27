@@ -8,7 +8,8 @@
 #include "../../Asset/TextureConfig.h"
 #include "../../Logger.h"
 
-void VK_Image::Init(VkFormat _format, VkImageLayout _layout, const ImageType& _type, VkImageAspectFlags _aspect, VkImageUsageFlags _usage, uint32_t _mipsLevel, const
+void VK_Image::Init(VkFormat _format, VkImageLayout _layout, const ImageType& _type, VkImageAspectFlags _aspect, VkImageUsageFlags _usage, uint32_t _mipsLevel, VkComponentMapping
+                    _component, const
                     Vec2u& _textureSize, bool _swapChain)
 {
 	m_format = _format;
@@ -38,7 +39,7 @@ void VK_Image::Init(VkFormat _format, VkImageLayout _layout, const ImageType& _t
 
 		VK_VmaAllocatorWrapper::Get().CreateImage(imageInfo, VMA_MEMORY_USAGE_AUTO, 0, m_image, m_allocation);
 	}
-	CreateView();
+	CreateView(_component);
 }
 
 void VK_Image::Cleanup()
@@ -54,7 +55,7 @@ void VK_Image::Cleanup()
 	}
 }
 
-void VK_Image::CreateView()
+void VK_Image::CreateView(VkComponentMapping _component)
 {
 	VkImageSubresourceRange subresource{};
 	subresource.aspectMask = m_aspect;
@@ -70,6 +71,8 @@ void VK_Image::CreateView()
 	viewInfo.viewType = m_viewType;
 	viewInfo.format = m_format;
 	viewInfo.subresourceRange = subresource;
+
+	viewInfo.components = _component;
 
 	VK_CHECK(vkCreateImageView(*VK_Device::Get().GetDevice(), &viewInfo, VK_NULL_HANDLE, &m_imageView),
 		"Failed to create image view ! ");

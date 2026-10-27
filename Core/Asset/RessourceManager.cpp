@@ -37,14 +37,20 @@ void RessourceManager::UpdateRessources(IUniformManager* _uniformManager, uint32
 		m_materialCaches.resize(materials.size());
 		for (int i = 0; i < materials.size(); ++i)
 		{
+			m_materialCaches[i].mode = materials[i].GetMode();
 			m_materialCaches[i].baseID = materials[i].GetBase();
 			m_materialCaches[i].specularID = materials[i].GetSpecular();
+			m_materialCaches[i].metallicID = materials[i].GetMetallic();
 			m_materialCaches[i].normalID = materials[i].GetNormal();
+			m_materialCaches[i].emissiveID = materials[i].GetEmissive();
+			m_materialCaches[i].aoID = materials[i].GetAO();
 
 			m_materialCaches[i].baseColor = materials[i].GetBaseColor();
 			m_materialCaches[i].specularColor = materials[i].GetSpecularColor();
 
 			m_materialCaches[i].smoothness = materials[i].GetSmoothness();
+
+			m_materialCaches[i].emissiveColor = materials[i].GetEmissiveColor();
 		}
 
 		if (m_materialCaches.empty())

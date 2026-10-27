@@ -5,24 +5,26 @@
 #include <memory>
 
 #include "Ressource.h"
+#include "MaterialMode.h"
 #include "../Vector/Vec3.h"
 #include "../LlynCore.h"
 
-/*enum class MaterialMode : uint8_t
-{
-	SPECULAR,
-	METALLIC
-};*/
 
 class Material : public IRessource
 {
 private:
+	MaterialMode m_mode = MaterialMode::SPECULAR;
+
 	RessourceID m_baseID = TOMBSTONE_RESOURCE;
 	RessourceID m_specularID = TOMBSTONE_RESOURCE;
+	RessourceID m_metallicID = TOMBSTONE_RESOURCE;
 	RessourceID m_normalID = TOMBSTONE_RESOURCE;
+	RessourceID m_emissiveID = TOMBSTONE_RESOURCE;
+	RessourceID m_aoID = TOMBSTONE_RESOURCE;
 
 	Vec3f m_baseColor = { 1.0f, 1.0f, 1.0f };
 	Vec3f m_specularColor = { 1.0f, 1.0f, 1.0f };
+	Vec3f m_emissiveColor = { 1.0f, 1.0f, 1.0f };
 
 	float m_smoothness = 0.5f;
 	
@@ -54,9 +56,27 @@ public:
 	void SetSpecularColor(const Vec3f& _color);
 	Vec3f GetSpecularColor() const;
 
+	void SetMetallic(const std::string& _texturePath);
+	void SetMetallic(const RessourceID& _textureID);
+	const RessourceID& GetMetallic();
+
 	void SetNormal(const std::string& _texturePath);
 	void SetNormal(const RessourceID& _textureID);
 	RessourceID GetNormal() const;
+
+	void SetEmissive(const std::string& _texturePath);
+	void SetEmissive(const RessourceID& _textureID);
+	const RessourceID& GetEmissive();
+
+	void SetEmissiveColor(const Vec3f& _color);
+	const Vec3f& GetEmissiveColor();
+
+	void SetAO(const std::string& _texturePath);
+	void SetAO(const RessourceID& _textureID);
+	const RessourceID& GetAO();
+
+	void SetMode(const MaterialMode& _mode);
+	const MaterialMode& GetMode();
 
 	void SetSmoothness(float _smoothness);
 	float GetSmoothness();
