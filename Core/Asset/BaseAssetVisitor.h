@@ -6,7 +6,7 @@ class AssetVisitor;
 class BaseAssetVisitor
 {
 public:
-	virtual void Accept(AssetVisitor* _visitor);
+	virtual void Accept(AssetVisitor* _visitor) = 0;
 };
 
 #endif

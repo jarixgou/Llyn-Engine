@@ -6,6 +6,7 @@
 #include <fastgltf/core.hpp>
 #include <fastgltf/tools.hpp>
 
+#include "AssetVisitor.h"
 #include "../Entities/ECS.h"
 #include "../Entities/Entity.h"
 
@@ -116,6 +117,11 @@ void Model::SetModel(ECS* _ecs, Entity* _entity)
 		_entity->childs[i].parentID = _entity->id;
 		ParseRootModel(_ecs, &_entity->childs[i], &m_rootModels[i]);
 	}
+}
+
+void Model::Accept(AssetVisitor* _visitor)
+{
+	_visitor->visit(this);
 }
 
 void Model::ParseRootModel(ECS* _ecs, Entity* _entity, const Mesh* _rootModel)

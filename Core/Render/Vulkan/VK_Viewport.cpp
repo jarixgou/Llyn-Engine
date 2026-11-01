@@ -51,8 +51,8 @@ void VK_Viewport::Update(VK_RenderGraph* _renderGraph)
 	VK_Buffer::EndSingleTimeCommand(cmdBuff);
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
-	ImTextureID texId = (ImTextureID)m_descriptorSet;
-	ImGui::Image(ImTextureRef(texId), size);
+	ImTextureID texID = (ImTextureID)m_descriptorSet;
+	ImGui::Image(ImTextureRef(texID), size);
 
 	ImGui::End();
 }

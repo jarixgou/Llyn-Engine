@@ -6,6 +6,7 @@
 #include "VK_Device.h"
 #include "VK_VmaAllocatorWrapper.h"
 #include "../../Logger.h"
+#include "../../ImGui/imgui_impl_vulkan.h"
 
 void VK_Texture::Init(VK_TextureInfo& _info)
 {
@@ -40,6 +41,8 @@ void VK_Texture::Init(VK_TextureInfo& _info)
 		VK_Buffer::EndSingleTimeCommand(cmdBuff);
 	}
 	CreateSampler(GetFilter(_info.config.filter), GetMipFilter(_info.config.mipMapFilter), GetWrapMode(_info.config.wrapMode));
+
+	m_previewTexture = ImGui_ImplVulkan_AddTexture(m_imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 }
 
 void VK_Texture::Cleanup()
@@ -169,6 +172,11 @@ VkFormat VK_Texture::GetFormat(const ImageFormat& _format)
 
 	LOGGER_WARNING("Unsupported image format ! ");
 	return VK_FORMAT_R8G8B8A8_SRGB;
+}
+
+VkDescriptorSet VK_Texture::GetPreviewTexture()
+{
+	return m_previewTexture;
 }
 
 VkFilter VK_Texture::GetFilter(const ImageFilter& _filter)

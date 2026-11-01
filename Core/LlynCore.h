@@ -56,6 +56,7 @@ class Texture;
 enum class MaterialMode;
 class Material;
 class Model;
+struct Folder;
 
 // Component forward declaration
 struct Transform;

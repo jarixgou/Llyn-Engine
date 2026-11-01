@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Asset\AssetVisitor.h" />
+    <ClInclude Include="Asset\Folder.h" />
     <ClInclude Include="Asset\MaterialMode.h" />
     <ClInclude Include="Asset\Ressource.h" />
     <ClInclude Include="Asset\Model.h" />
@@ -265,6 +266,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Asset\AssetVisitor.cpp" />
+    <ClCompile Include="Asset\Folder.cpp" />
     <ClCompile Include="Asset\RessourceManager.cpp" />
     <ClCompile Include="Asset\Material.cpp" />
     <ClCompile Include="Asset\Texture.cpp" />

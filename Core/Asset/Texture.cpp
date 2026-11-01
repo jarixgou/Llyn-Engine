@@ -6,6 +6,7 @@
 #include <JSON/simdjson.h>
 #include <JSON/json.hpp>
 
+#include "AssetVisitor.h"
 #include "../Logger.h"
 #include "../Render/Vulkan/VK_Texture.h"
 #include "../Render/Vulkan/VK_TextureInfo.h"
@@ -61,6 +62,11 @@ bool Texture::Add(const std::string& _filePath, IRessource* _ressource)
 VK_Texture* Texture::GetVKTexture()
 {
 	return VK_texture;
+}
+
+void Texture::Accept(AssetVisitor* _visitor)
+{
+	_visitor->visit(this);
 }
 
 void Texture::LoadConfig(const std::string& _filePath)

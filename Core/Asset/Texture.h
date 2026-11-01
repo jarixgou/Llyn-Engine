@@ -3,6 +3,7 @@
 
 #include <vulkan/vulkan_raii.hpp>
 
+#include "BaseAssetVisitor.h"
 #include "../LlynCore.h"
 
 #include "Ressource.h"
@@ -10,7 +11,7 @@
 
 #include "TextureConfig.h"
 
-class Texture : public IRessource
+class Texture : public IRessource, public BaseAssetVisitor
 {
 private:
 	TextureConfig m_config;
@@ -26,6 +27,8 @@ public:
 	bool Add(const std::string& _filePath, IRessource* _ressource) override;
 
 	VK_Texture* GetVKTexture();
+
+	void Accept(AssetVisitor* _visitor) override;
 private:
 	void LoadConfig(const std::string& _filePath);
 };

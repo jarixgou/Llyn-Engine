@@ -28,6 +28,7 @@ class RessourceManager
 private:
 	RessourceManager() = default;
 	
+	uint32_t m_nextUniqueID = 0;
 	bool m_init = false;
 	std::vector<Texture> m_textureCaches;
 	std::vector<bool> m_frameSendsTexture;
@@ -113,7 +114,15 @@ RessourceID RessourceManager::GetRessourceID(const std::string& _filePath)
 		return TOMBSTONE_RESOURCE;
 	}
 
-	newRessource->name = _filePath;
+	size_t lastSlash = _filePath.find_last_of('/');
+	if (lastSlash != std::string::npos)
+	{
+		newRessource->m_name = _filePath.substr(lastSlash + 1);
+	}
+	else
+	{
+		newRessource->m_name = _filePath;
+	}
 
 	if (!ressourceHandle.freeIDs.empty())
 	{
@@ -130,6 +139,9 @@ RessourceID RessourceManager::GetRessourceID(const std::string& _filePath)
 
 		return nextID;
 	}
+
+	newRessource->m_id = m_nextUniqueID;
+	m_nextUniqueID += 1;
 
 	const RessourceID nextID = static_cast<RessourceID>(ressourceHandle.ressources.size());
 
@@ -168,6 +180,16 @@ T* RessourceManager::GetRessource(const std::string& _filePath)
 		newRessource = nullptr;
 
 		return nullptr;
+	}
+
+	size_t lastSlash = _filePath.find_last_of('/');
+	if (lastSlash != std::string::npos)
+	{
+		newRessource->m_name = _filePath.substr(lastSlash + 1);
+	}
+	else
+	{
+		newRessource->m_name = _filePath;
 	}
 
 	if (!ressourceHandle.freeIDs.empty())

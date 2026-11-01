@@ -9,12 +9,15 @@
 
 class VK_Texture : public VK_Image
 {
+private:
+	VkDescriptorSet m_previewTexture = VK_NULL_HANDLE;
 public:
 	VkSampler m_sampler = VK_NULL_HANDLE;
 public:
 	void Init(VK_TextureInfo& _info);
 	void Cleanup();
 	static VkFormat GetFormat(const ImageFormat& _format);
+	VkDescriptorSet GetPreviewTexture();
 private:
 	void CreateSampler(VkFilter _filter, VkSamplerMipmapMode _mipFilter, VkSamplerAddressMode _wrapMode);
 	void GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize);

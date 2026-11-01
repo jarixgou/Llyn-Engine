@@ -4,13 +4,14 @@
 #include <cstdint>
 #include <memory>
 
+#include "BaseAssetVisitor.h"
 #include "Ressource.h"
 #include "MaterialMode.h"
 #include "../Vector/Vec3.h"
 #include "../LlynCore.h"
 
 
-class Material : public IRessource
+class Material : public IRessource, public BaseAssetVisitor
 {
 private:
 	MaterialMode m_mode = MaterialMode::SPECULAR;
@@ -80,6 +81,8 @@ public:
 
 	void SetSmoothness(float _smoothness);
 	float GetSmoothness();
+
+	void Accept(AssetVisitor* _visitor) override;
 };
 
 #endif

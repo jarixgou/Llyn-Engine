@@ -4,6 +4,7 @@
 #include <vector>
 #include <fastgltf/types.hpp>
 
+#include "BaseAssetVisitor.h"
 #include "../LlynCore.h"
 
 #include "Ressource.h"
@@ -21,7 +22,7 @@ struct Mesh
 	std::vector<Mesh> subMeshes;
 };
 
-class Model : public IRessource
+class Model : public IRessource, public BaseAssetVisitor
 {
 private:
 	std::string m_rootDir;
@@ -36,6 +37,7 @@ public:
 
 	void SetModel(ECS* _ecs, Entity* _entity);
 
+	void Accept(AssetVisitor* _visitor) override;
 private:
 	void ParseRootModel(ECS* _ecs, Entity* _entity, const Mesh* _rootModel);
 	void ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_t _nodeIndex, Transform& _parentTransform);

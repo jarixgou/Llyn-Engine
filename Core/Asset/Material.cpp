@@ -4,9 +4,11 @@
 #include <JSON/simdjson.h>
 #include <JSON/json.hpp>
 
+#include "AssetVisitor.h"
 #include "RessourceManager.h"
 #include "Texture.h"
 #include "../Utils/Utils.h"
+#include "AssetVisitor.h"
 
 Material::~Material()
 {
@@ -368,4 +370,9 @@ void Material::SetSmoothness(float _smoothness)
 float Material::GetSmoothness()
 {
 	return m_smoothness;
+}
+
+void Material::Accept(AssetVisitor* _visitor)
+{
+	_visitor->visit(this);
 }

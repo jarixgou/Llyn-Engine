@@ -50,8 +50,8 @@ void Engine::Init()
 	Entity entity;
 	entity.id = m_scene->ecs->CreateEntity();
 
-	//Model* model = RessourceManager::Get().GetRessource<Model>("Core/Models/Sponza/Sponza.gltf");
-	Model* model = RessourceManager::Get().GetRessource<Model>("Core/Models/DamagedHelmet/DamagedHelmet.gltf");
+	Model* model = RessourceManager::Get().GetRessource<Model>("Core/Models/Sponza/Sponza.gltf");
+	//Model* model = RessourceManager::Get().GetRessource<Model>("Core/Models/DamagedHelmet/DamagedHelmet.gltf");
 	model->SetModel(m_scene->ecs, &entity);
 
 	Entity dirLight;

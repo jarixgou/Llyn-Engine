@@ -5,9 +5,11 @@
 
 class AssetVisitor
 {
-	void visit(const Texture* _texture);
+public:
+	void visit(Texture* _texture);
 	void visit(const Material* _material);
 	void visit(const Model* _model);
+	void visit(Folder* _folder);
 };
 
 #endif
