@@ -171,7 +171,7 @@ FGOutput fragMain(VSOutput _vsOutput)
     FGOutput output;
 
     output.pos = float4(_vsOutput.worldPos, 1.0);
-    output.albedo = albedoTexture * float4(material.albedoColor, 1.0);
+    output.albedo = albedoTexture * float4(material.albedoColor, 1.0) * float4(_vsOutput.color, 1.0);
 
     float4 specularTexture = GetTexture(material.specularID, _vsOutput.uv0);
 

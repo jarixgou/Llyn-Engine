@@ -40,7 +40,7 @@ public:
 	void Accept(AssetVisitor* _visitor) override;
 private:
 	void ParseRootModel(ECS* _ecs, Entity* _entity, const Mesh* _rootModel);
-	void ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_t _nodeIndex, Transform& _parentTransform);
+	void ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_t _nodeIndex);
 	
 	void LoadPrimitive(const fastgltf::Asset& _asset, const fastgltf::Primitive& _primitive,
 	                   const size_t& _uvIndex, std::vector<Vertex>& _outVertices, std::vector<Index>& _outIndices);

@@ -30,7 +30,7 @@ bool Model::Load(const std::string& _filePath)
 		fastgltf::Extensions::KHR_materials_variants;
 
 	fastgltf::Parser parser(supportedExtensions);
-	
+
 	constexpr fastgltf::Options gltfOptions =
 		fastgltf::Options::DontRequireValidAssetMember |
 		fastgltf::Options::AllowDouble |
@@ -78,8 +78,7 @@ bool Model::Load(const std::string& _filePath)
 	{
 		Mesh rootModel;
 
-		Transform transform;
-		ParseNode(&rootModel, gltfAsset, gltfAsset.scenes[sceneIndex].nodeIndices[i], transform);
+		ParseNode(&rootModel, gltfAsset, gltfAsset.scenes[sceneIndex].nodeIndices[i]);
 
 		m_rootModels.emplace_back(rootModel);
 	}
@@ -152,7 +151,7 @@ void Model::ParseRootModel(ECS* _ecs, Entity* _entity, const Mesh* _rootModel)
 	}
 }
 
-void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_t _nodeIndex, Transform& _parentTransform)
+void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_t _nodeIndex)
 {
 	if (_rootModel == nullptr)
 	{
@@ -250,12 +249,11 @@ void Model::ParseNode(Mesh* _rootModel, const fastgltf::Asset& _gltfAsset, size_
 			// Implement
 		} }, _gltfAsset.nodes[_nodeIndex].transform);
 
-	*transform = *transform * _parentTransform;
 	_rootModel->transform = transform;
 
 	for (size_t i = 0; i < _gltfAsset.nodes[_nodeIndex].children.size(); i++)
 	{
-		ParseNode(&_rootModel->subMeshes[primitiveCount + i], _gltfAsset, _gltfAsset.nodes[_nodeIndex].children[i], *transform);
+		ParseNode(&_rootModel->subMeshes[primitiveCount + i], _gltfAsset, _gltfAsset.nodes[_nodeIndex].children[i]);
 	}
 }
 
@@ -281,6 +279,36 @@ void Model::LoadPrimitive(const fastgltf::Asset& _asset, const fastgltf::Primiti
 			});
 	}
 
+	// Get vertex color
+	/*const fastgltf::Attribute* colorAttrib = _primitive.findAttribute("COLOR_0");
+	if (colorAttrib != nullptr)
+	{
+		if (colorAttrib->accessorIndex < _asset.accessors.size())
+		{
+			const fastgltf::Accessor& accessor = _asset.accessors[colorAttrib->accessorIndex];
+
+			if (accessor.bufferViewIndex.has_value())
+			{
+				if (accessor.type == fastgltf::AccessorType::Vec3)
+				{
+					fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_asset, accessor,
+						[&](fastgltf::math::fvec3 _color, size_t _idx)
+						{
+							_outVertices[_idx].color = { _color.x(), _color.y(), _color.z() };
+						});
+				}
+				else if (accessor.type == fastgltf::AccessorType::Vec4)
+				{
+					fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(_asset, accessor,
+						[&](fastgltf::math::fvec4 _color, size_t _idx)
+						{
+							_outVertices[_idx].color = { _color.x(), _color.y(), _color.z() };
+						});
+				}
+			}
+		}
+	}*/
+
 	// Get normal
 	const fastgltf::Attribute* normalAttrib = _primitive.findAttribute("NORMAL");
 	if (normalAttrib != nullptr)
@@ -298,7 +326,7 @@ void Model::LoadPrimitive(const fastgltf::Asset& _asset, const fastgltf::Primiti
 	}
 
 	// Get UV
-	std::string uvAttributeName = "TEXCOORD_" + std::to_string(_uvIndex);
+	const std::string uvAttributeName = "TEXCOORD_" + std::to_string(_uvIndex);
 	const fastgltf::Attribute* uvAttrib = _primitive.findAttribute(uvAttributeName);
 	if (uvAttrib != nullptr)
 	{
@@ -336,25 +364,28 @@ void Model::LoadPrimitive(const fastgltf::Asset& _asset, const fastgltf::Primiti
 	{
 		const fastgltf::Accessor& accessor = _asset.accessors[tangentAttribute->accessorIndex];
 
-		if (accessor.type == fastgltf::AccessorType::Vec4)
+		if (accessor.bufferViewIndex.has_value())
 		{
-			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(_asset, accessor,
-				[&](fastgltf::math::fvec4 t, size_t i)
-				{
-					_outVertices[i].tangent = { t.x(), t.y(), t.z(), t.w() };
-				});
-		}
-		else if (accessor.type == fastgltf::AccessorType::Vec3)
-		{
-			fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_asset, accessor,
-				[&](fastgltf::math::fvec3 t, size_t i)
-				{
-					_outVertices[i].tangent = { t.x(), t.y(), t.z(), 1.0f };
-				});
-		}
-		else
-		{
-			ComputeTangent(_outVertices, _outIndices);
+			if (accessor.type == fastgltf::AccessorType::Vec4)
+			{
+				fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(_asset, accessor,
+					[&](fastgltf::math::fvec4 t, size_t _idx)
+					{
+						_outVertices[_idx].tangent = { t.x(), t.y(), t.z(), t.w() };
+					});
+			}
+			else if (accessor.type == fastgltf::AccessorType::Vec3)
+			{
+				fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(_asset, accessor,
+					[&](fastgltf::math::fvec3 t, size_t _idx)
+					{
+						_outVertices[_idx].tangent = { t.x(), t.y(), t.z(), 1.0f };
+					});
+			}
+			else
+			{
+				ComputeTangent(_outVertices, _outIndices);
+			}
 		}
 	}
 }
@@ -438,25 +469,29 @@ RessourceID Model::GetTexture(const fastgltf::Asset& _asset, const fastgltf::Opt
 		{
 			const size_t imageIndex = _asset.textures[_textureInfo.value().textureIndex].imageIndex.value();
 
-			std::visit(fastgltf::visitor{
-					[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
-					[&](const fastgltf::sources::URI& _filePath) {
-						assert(_filePath.fileByteOffset == 0);
-						assert(_filePath.uri.isLocalPath());
+			textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + std::string(_asset.images[imageIndex].name) + ".png");
+			if (textureID == TOMBSTONE_RESOURCE)
+			{
+				std::visit(fastgltf::visitor{
+							[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
+							[&](const fastgltf::sources::URI& _filePath) {
+								assert(_filePath.fileByteOffset == 0);
+								assert(_filePath.uri.isLocalPath());
 
-						const std::string texturePath(_filePath.uri.path().begin(), _filePath.uri.path().end());
+								const std::string texturePath(_filePath.uri.path().begin(), _filePath.uri.path().end());
 
-						textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + texturePath);
-					},
-					[&](const fastgltf::sources::Vector& _vector)
-					{
-						std::cout << "Vector" << std::endl;
-					},
-					[&](const fastgltf::sources::BufferView& _view)
-					{
-						std::cout << "BufferView" << std::endl;
-					}
-				}, _asset.images[imageIndex].data);
+								textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + texturePath);
+							},
+							[&](const fastgltf::sources::Vector& _vector)
+							{
+								std::cout << "Vector" << std::endl;
+							},
+							[&](const fastgltf::sources::BufferView& _view)
+							{
+								std::cout << "BufferView" << std::endl;
+							}
+					}, _asset.images[imageIndex].data);
+			}
 		}
 	}
 
@@ -473,25 +508,29 @@ RessourceID Model::GetTexture(const fastgltf::Asset& _asset, const fastgltf::Opt
 		{
 			const size_t imageIndex = _asset.textures[_textureInfo.value().textureIndex].imageIndex.value();
 
-			std::visit(fastgltf::visitor{
-					[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
-					[&](const fastgltf::sources::URI& _filePath) {
-						assert(_filePath.fileByteOffset == 0);
-						assert(_filePath.uri.isLocalPath());
+			textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + std::string(_asset.images[imageIndex].name) + ".png");
+			if (textureID == TOMBSTONE_RESOURCE)
+			{
+				std::visit(fastgltf::visitor{
+							[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
+							[&](const fastgltf::sources::URI& _filePath) {
+								assert(_filePath.fileByteOffset == 0);
+								assert(_filePath.uri.isLocalPath());
 
-						const std::string texturePath(_filePath.uri.path().begin(), _filePath.uri.path().end());
+								const std::string texturePath(_filePath.uri.path().begin(), _filePath.uri.path().end());
 
-						textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + texturePath);
-					},
-					[&](const fastgltf::sources::Vector& _vector)
-					{
-						std::cout << "Vector" << std::endl;
-					},
-					[&](const fastgltf::sources::BufferView& _view)
-					{
-						std::cout << "BufferView" << std::endl;
-					}
-				}, _asset.images[imageIndex].data);
+								textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + texturePath);
+							},
+							[&](const fastgltf::sources::Vector& _vector)
+							{
+								std::cout << "Vector" << std::endl;
+							},
+							[&](const fastgltf::sources::BufferView& _view)
+							{
+								std::cout << "BufferView" << std::endl;
+							}
+					}, _asset.images[imageIndex].data);
+			}
 		}
 	}
 
@@ -509,25 +548,29 @@ RessourceID Model::GetTexture(const fastgltf::Asset& _asset,
 		{
 			const size_t imageIndex = _asset.textures[_textureInfo.value().textureIndex].imageIndex.value();
 
-			std::visit(fastgltf::visitor{
-					[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
-					[&](const fastgltf::sources::URI& _filePath) {
-						assert(_filePath.fileByteOffset == 0);
-						assert(_filePath.uri.isLocalPath());
+			textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + std::string(_asset.images[imageIndex].name) + ".png");
+			if (textureID == TOMBSTONE_RESOURCE)
+			{
+				std::visit(fastgltf::visitor{
+							[](auto& _arg) {std::cout << "fallback: " << typeid(_arg).name() << std::endl;},
+							[&](const fastgltf::sources::URI& _filePath) {
+								assert(_filePath.fileByteOffset == 0);
+								assert(_filePath.uri.isLocalPath());
 
-						const std::string texturePath(_filePath.uri.path().begin(), _filePath.uri.path().end());
+								const std::string texturePath(_filePath.uri.path().begin(), _filePath.uri.path().end());
 
-						textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + texturePath);
-					},
-					[&](const fastgltf::sources::Vector& _vector)
-					{
-						std::cout << "Vector" << std::endl;
-					},
-					[&](const fastgltf::sources::BufferView& _view)
-					{
-						std::cout << "BufferView" << std::endl;
-					}
-				}, _asset.images[imageIndex].data);
+								textureID = RessourceManager::Get().GetRessourceID<Texture>(m_rootDir + texturePath);
+							},
+							[&](const fastgltf::sources::Vector& _vector)
+							{
+								std::cout << "Vector" << std::endl;
+							},
+							[&](const fastgltf::sources::BufferView& _view)
+							{
+								std::cout << "BufferView" << std::endl;
+							}
+					}, _asset.images[imageIndex].data);
+			}
 		}
 	}
 
@@ -561,7 +604,7 @@ void Model::ComputeTangent(std::vector<Vertex>& _vertices, std::vector<Index> _i
 		t.x = f * (dUv1.y * dP0.x - dUv0.y * dP1.x);
 		t.y = f * (dUv1.y * dP0.y - dUv0.y * dP1.y);
 		t.z = f * (dUv1.y * dP0.z - dUv0.y * dP1.z);
-		
+
 		Vec3f b{};
 		b.x = f * (-dUv1.x * dP1.x + dUv0.x * dP1.x);
 		b.y = f * (-dUv1.x * dP1.y + dUv0.x * dP1.y);

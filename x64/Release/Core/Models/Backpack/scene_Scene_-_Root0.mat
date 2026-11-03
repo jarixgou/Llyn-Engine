@@ -1,0 +1,31 @@
+{
+    "AOMap": "Core/Models/Backpack/textures/Scene_-_Root_metallicRoughness.png",
+    "BaseMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": "Core/Models/Backpack/textures/Scene_-_Root_baseColor.jpeg"
+    },
+    "EmissiveMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": ""
+    },
+    "MetallicMap": "Core/Models/Backpack/textures/Scene_-_Root_metallicRoughness.png",
+    "Mode": 1,
+    "NormalMap": "Core/Models/Backpack/textures/Scene_-_Root_normal.png",
+    "SpecularMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Smoothness": 1.0,
+        "Texture": ""
+    }
+}

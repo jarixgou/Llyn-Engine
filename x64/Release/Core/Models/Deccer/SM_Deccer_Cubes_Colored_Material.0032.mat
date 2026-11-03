@@ -1,0 +1,31 @@
+{
+    "AOMap": "",
+    "BaseMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": "Core/Textures/DefaultBase.png"
+    },
+    "EmissiveMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": ""
+    },
+    "MetallicMap": "",
+    "Mode": 0,
+    "NormalMap": "",
+    "SpecularMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Smoothness": 0.5,
+        "Texture": "Core/Textures/DefaultSpecular.png"
+    }
+}
