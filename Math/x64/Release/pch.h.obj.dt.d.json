@@ -1,0 +1,12 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\etudiant2\\llyn-engine\\math\\pch.h",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\users\\etudiant2\\llyn-engine\\math\\framework.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

@@ -1,0 +1,137 @@
+#ifndef VEC_3__H
+#define VEC_3__H
+
+template<typename T>
+struct Vec3
+{
+	T x = 0;
+	T y = 0;
+	T z = 0;
+
+	Vec3& operator+=(const Vec3& _other);
+	Vec3 operator+(const Vec3& _other) const;
+
+	Vec3& operator-=(const Vec3& _other);
+	Vec3 operator-(const Vec3& _other) const;
+
+	Vec3& operator*=(const Vec3& _other);
+	Vec3 operator*(const Vec3& _other) const;
+
+	Vec3& operator*=(const float& _f);
+	Vec3 operator*(const float& _f) const;
+
+	Vec3& operator/=(const Vec3& _other);
+	Vec3 operator/(const Vec3& _other) const;
+
+	bool operator==(const Vec3& _other);
+	bool operator!=(const Vec3& _other);
+};
+
+template <typename T>
+Vec3<T>& Vec3<T>::operator+=(const Vec3& _other)
+{
+	x += _other.x;
+	y += _other.y;
+	z += _other.z;
+
+	return *this;
+}
+
+template <typename T>
+Vec3<T> Vec3<T>::operator+(const Vec3& _other) const
+{
+	Vec3 tmp = *this;
+	tmp += _other;
+	return tmp;
+}
+
+template <typename T>
+Vec3<T>& Vec3<T>::operator-=(const Vec3& _other)
+{
+	z -= _other.z;
+	x -= _other.x;
+	y -= _other.y;
+
+	return *this;
+}
+
+template <typename T>
+Vec3<T> Vec3<T>::operator-(const Vec3& _other) const
+{
+	Vec3 tmp = *this;
+	tmp -= _other;
+	return tmp;
+}
+
+template <typename T>
+Vec3<T>& Vec3<T>::operator*=(const Vec3& _other)
+{
+	x *= _other.x;
+	y *= _other.y;
+	z *= _other.z;
+
+	return *this;
+}
+
+template <typename T>
+Vec3<T> Vec3<T>::operator*(const Vec3& _other) const
+{
+	Vec3 tmp = *this;
+	tmp *= _other;
+	return tmp;
+}
+
+template <typename T>
+Vec3<T>& Vec3<T>::operator*=(const float& _f)
+{
+	x *= _f;
+	y *= _f;
+	z *= _f;
+
+	return *this;
+}
+
+template <typename T>
+Vec3<T> Vec3<T>::operator*(const float& _f) const
+{
+	Vec3 tmp = *this;
+	tmp *= _f;
+
+	return tmp;
+}
+
+template <typename T>
+Vec3<T>& Vec3<T>::operator/=(const Vec3& _other)
+{
+	x /= _other.x;
+	y /= _other.y;
+	z /= _other.z;
+
+	return *this;
+}
+
+template <typename T>
+Vec3<T> Vec3<T>::operator/(const Vec3& _other) const
+{
+	Vec3 tmp = *this;
+	tmp /= _other;
+	return tmp;
+}
+
+template <typename T>
+bool Vec3<T>::operator==(const Vec3& _other)
+{
+	return x == _other.x && y == _other.y && z == _other.z;
+}
+
+template <typename T>
+bool Vec3<T>::operator!=(const Vec3& _other)
+{
+	return !(*this == _other);
+}
+
+using Vec3f = Vec3<float>;
+using Vec3i = Vec3<int>;
+using Vec3u = Vec3<unsigned int>;
+
+#endif

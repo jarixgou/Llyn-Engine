@@ -1,6 +1,6 @@
-﻿  Génération de code en cours
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-  All 13383 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+﻿  main.cpp
+  Génération de code en cours
+  Previous IPDB not found, fall back to full compilation.
+  All 13462 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Fin de la génération du code
-Core.lib(spirv_reflect.obj) : warning LNK4099: PDB 'spirv-reflect-static.pdb' n'a pu être trouvé avec 'Core.lib(spirv_reflect.obj)' ou sur 'C:\Users\Etudiant2\Llyn-Engine\x64\Release\spirv-reflect-static.pdb' ; l'objet sera lié sans informations de débogage
   Llyn Engine.vcxproj -> C:\Users\Etudiant2\Llyn-Engine\x64\Release\Llyn Engine.exe
