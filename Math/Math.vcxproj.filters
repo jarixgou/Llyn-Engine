@@ -22,9 +22,4 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Vector\Vec4.h">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-  </ItemGroup>
 </Project>

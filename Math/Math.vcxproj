@@ -22,9 +22,6 @@
     <ClInclude Include="Vector\Vec2.h" />
     <ClInclude Include="Vector\Vec3.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Vector\Vec4.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

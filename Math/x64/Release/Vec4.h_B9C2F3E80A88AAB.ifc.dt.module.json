@@ -1,0 +1,23 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\Vec4.obj",
+            "outputs": [
+                "x64\\Release\\Vec4.h_B9C2F3E80A88AAB.ifc.dt.module.json",
+                "x64\\Release\\Vec4.h_B9C2F3E80A88AAB.ifc.dt.d.json",
+                "x64\\Release\\Vec4.h.ifc",
+                "x64\\Release\\Math.pch"
+            ],
+            "provides": [
+                {
+                    "logical-name": "D:\\Llyn Engine\\Math\\Vector\\Vec4.h",
+                    "source-path": "d:\\llyn engine\\math\\vector\\vec4.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

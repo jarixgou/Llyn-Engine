@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\Vec4.h.obj",
+            "outputs": [
+                "D:\\Llyn Engine\\x64\\Release\\Math.pdb",
+                "x64\\Release\\",
+                "D:\\Llyn Engine\\Math\\x64\\Release\\Vec4.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Vector\\Vec4.h",
+                    "source-path": "d:\\llyn engine\\math\\vector\\vec4.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}
