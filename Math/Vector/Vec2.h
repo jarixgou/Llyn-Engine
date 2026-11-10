@@ -183,6 +183,11 @@ public:
 	{
 		return acosf(Dot(_a, _b) / (_a.Length() * _b.Length()));
 	}
+
+	static Vec2<float> Lerp(const Vec2& _a, const Vec2& _b, const float& _t)
+	{
+		return _a + (_b - _a) * _t;
+	}
 };
 
 typedef Vec2<float> Vec2f;
