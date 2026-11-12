@@ -6,8 +6,7 @@
             "primary-output": "x64\\Release\\Vec4.obj",
             "outputs": [
                 "x64\\Release\\Vec4.h.obj.dt.module.json",
-                "x64\\Release\\Vec4.h.obj.dt.d.json",
-                "x64\\Release\\Math.pch"
+                "x64\\Release\\Vec4.h.obj.dt.d.json"
             ],
             "requires": []
         }

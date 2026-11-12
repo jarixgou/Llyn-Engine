@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\users\\etudiant2\\llyn-engine\\math\\vector\\vec3.h",
+        "Source": "d:\\llyn engine\\math\\vector\\vec3.h",
         "ProvidedModule": "",
         "Includes": [
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cmath",
@@ -35,7 +35,7 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cstddef",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cstdint",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stdint.h",
-            "c:\\users\\etudiant2\\llyn-engine\\math\\math.h"
+            "d:\\llyn engine\\math\\math.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

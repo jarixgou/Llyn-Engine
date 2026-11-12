@@ -188,7 +188,7 @@ public:
 
 	static float Distance(const Vec3& _a, const Vec3 _b)
 	{
-		const Vec3 d = _a - _b;
+		const Vec3 d = _b - _a;
 
 		return d.Length();
 	}
@@ -226,12 +226,12 @@ public:
 		return (sinf((1 - _t) * angle) / sinAngle) * _a + (sinf(angle * _t) / sinAngle) * _b;
 	}
 
-	static Vec3 Project(const Vec3& _a, const Vec3& _onNormal)
+	static Vec3<float> Project(const Vec3& _a, const Vec3& _onNormal)
 	{
 		return (Dot(_a, _onNormal) / _onNormal.LengthSqr()) * _onNormal;
 	}
 
-	static Vec3 ProjectOnPlane(const Vec3& _a, const Vec3& _planeNormal)
+	static Vec3<float> ProjectOnPlane(const Vec3& _a, const Vec3& _planeNormal)
 	{
 		return _a - Project(_a, _planeNormal);
 	}

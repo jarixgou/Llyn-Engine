@@ -169,7 +169,7 @@ public:
 
 	static float Distance(const Vec2& _a, const Vec2& _b)
 	{
-		const Vec2 d = _a - _b;
+		const Vec2 d = _b - _a;
 
 		return d.Length();
 	}

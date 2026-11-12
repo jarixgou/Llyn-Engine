@@ -1,0 +1,15 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\FwdVec2.obj",
+            "outputs": [
+                "x64\\Release\\FwdVec2.h.obj.dt.module.json",
+                "x64\\Release\\FwdVec2.h.obj.dt.d.json",
+                "x64\\Release\\Math.pch"
+            ],
+            "requires": []
+        }
+    ]
+}
