@@ -92,7 +92,7 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	VK_Buffer::SetFrameSync(m_frameSync);
 
 	PipelineInfo gBufferPipelineInfo;
-	gBufferPipelineInfo.shaderPath = "Core/shaders/IndirectG-Buffer.slang.spv";
+	gBufferPipelineInfo.shaderPath = "Assets/Core/shaders/IndirectG-Buffer.slang.spv";
 	gBufferPipelineInfo.imageFormats =
 	{
 		IMAGE_FORMAT_R16G16B16A16_SFLOAT, IMAGE_FORMAT_R16G16B16A16_SFLOAT, IMAGE_FORMAT_R8G8B8A8_SRGB,
@@ -101,14 +101,13 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	m_gBufferPipeline->Init(m_renderWindow->GetSwapChain(), gBufferPipelineInfo);
 
 	PipelineInfo lightingPipelineInfo;
-	lightingPipelineInfo.shaderPath = "Core/shaders/LightingPass.slang.spv";
+	lightingPipelineInfo.shaderPath = "Assets/Core/shaders/LightingPass.slang.spv";
 	lightingPipelineInfo.imageFormats = { IMAGE_FORMAT_R8G8B8A8_SRGB };
 	lightingPipelineInfo.renderFace = RenderFace::NONE;
 	m_lightingPipeline->Init(m_renderWindow->GetSwapChain(), lightingPipelineInfo);
 
-	LOGGER_INFO("FrameBuffer pipeline creation ! ");
 	PipelineInfo frameBufferInfo;
-	frameBufferInfo.shaderPath = "Core/Shaders/FrameBuffer.slang.spv";
+	frameBufferInfo.shaderPath = "Assets/Core/Shaders/FrameBuffer.slang.spv";
 	frameBufferInfo.imageFormats = { IMAGE_FORMAT_R8G8B8A8_SRGB };
 	frameBufferInfo.renderFace = RenderFace::NONE;
 	m_frameBufferPipeline->Init(m_renderWindow->GetSwapChain(), frameBufferInfo);

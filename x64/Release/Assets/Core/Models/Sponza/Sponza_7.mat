@@ -1,0 +1,31 @@
+{
+    "AOMap": "",
+    "BaseMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": "Assets\\Core\\Models\\Sponza\\15295713303328085182.jpg"
+    },
+    "EmissiveMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Texture": ""
+    },
+    "MetallicMap": "Assets\\Core\\Models\\Sponza\\9916269861720640319.jpg",
+    "Mode": 1,
+    "NormalMap": "Assets\\Core\\Models\\Sponza\\10388182081421875623.jpg",
+    "SpecularMap": {
+        "Color": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Smoothness": 1.0,
+        "Texture": ""
+    }
+}

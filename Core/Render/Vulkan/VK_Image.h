@@ -3,7 +3,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include "VK_VmaAllocatorWrapper.h"
-#include "../../Vector/FwdVec2.h"
+#include "../../Vector/Vec2.h"
 #include "../../LlynCore.h"
 
 class VK_Image
@@ -19,13 +19,15 @@ protected:
 	VkImageAspectFlags m_aspect = VK_IMAGE_ASPECT_NONE;
 	VkImageUsageFlags m_usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 	uint32_t m_mipLevels = 0;
+
+	Vec2u m_textureSize = { 0, 0 };
 private:
 	VmaAllocation m_allocation = VK_NULL_HANDLE;
 	bool m_swapChain = false;
 public:
 
 	void Init(VkFormat _format, VkImageLayout _layout, const ImageType& _type, VkImageAspectFlags _aspect,
-	          VkImageUsageFlags _usage, uint32_t _mipsLevel, VkComponentMapping _component, const Vec2u& _textureSize, bool _swapChain = false);
+		VkImageUsageFlags _usage, uint32_t _mipsLevel, VkComponentMapping _component, const Vec2u& _textureSize, bool _swapChain = false);
 	void Cleanup();
 
 	void CreateView(VkComponentMapping _component);
@@ -34,7 +36,7 @@ public:
 	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout);
 	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _newLayout, uint32_t _baseMipLevel, uint32_t _levelCount);
 	void TransitionLayout(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout, VkImageLayout _newLayout, uint32_t _baseMipLevel, uint32_t
-	                      _levelCount);
+		_levelCount);
 
 	bool HasStencilComponent(VkFormat _format);
 
@@ -44,7 +46,7 @@ private:
 	static VkImageViewType GetViewType(ImageType _type);
 
 	void ImageBarrier(VkCommandBuffer _cmdBuff, VkImageLayout _oldLayout,
-	                  VkImageLayout _newLayout, uint32_t _layerCount, uint32_t _baseMipsLevel, uint32_t _levelCount);
+		VkImageLayout _newLayout, uint32_t _layerCount, uint32_t _baseMipsLevel, uint32_t _levelCount);
 
 	VkImageAspectFlags GetImageAspect(VkImageLayout _layout);
 	VK_StageAndAccess GetStageAndAccess(VkImageLayout _oldLayout, VkImageLayout _newLayout);

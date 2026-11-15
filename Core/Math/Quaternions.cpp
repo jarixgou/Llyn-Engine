@@ -77,13 +77,29 @@ Vec3f Quaternions::GetEuler() const
 {
 	Vec3f vec{};
 
-	vec.x = atan2f(2.0f * (w * x + y * z), 1.0f - 2.0f * (x * x + y * y));
-	vec.y = -M_PI / 2 + 2.0f *
-		atan2f(sqrtf(1.0f + 2.0f * (w * y - x * z)), sqrtf(1.0f - 2.0f * (w * y - x * z)));
-	vec.z = atan2f(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
+	// Calcul du sinus de Y (pitch)
+	float sinY = 2.0f * (w * y - x * z);
+
+	// Vérification de la singularité (proche de +90° ou -90°)
+	if (std::abs(sinY) >= 0.9999f)
+	{
+		// On bloque Y à +90° ou -90°
+		vec.y = std::copysign(static_cast<float>(M_PI) / 2.0f, sinY);
+
+		// Au pôle, X et Z contrôlent le même axe : on fixe Z à 0 et on met tout sur X
+		vec.x = 2.0f * atan2f(x, w);
+		vec.z = 0.0f;
+	}
+	else
+	{
+		vec.x = atan2f(2.0f * (w * x + y * z), 1.0f - 2.0f * (x * x + y * y));
+		vec.y = asinf(sinY);
+		vec.z = atan2f(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
+	}
 
 	return vec;
 }
+
 
 void Quaternions::SetAxisAngle(const Vec3f& _axis, float _angle)
 {

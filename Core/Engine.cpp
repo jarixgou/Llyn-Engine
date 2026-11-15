@@ -21,6 +21,7 @@
 
 #include "Interface/HierarchyInterface.h"
 #include "Interface/InspectorInterface.h"
+#include "Interface/AssetExplorerInterface.h"
 
 void Engine::Init()
 {
@@ -36,6 +37,9 @@ void Engine::Init()
 	m_hierarchyInterface = new HierarchyInterface;
 	m_hierarchyInterface->Init(m_scene);
 
+	m_assetExplorerInterface = new AssetExplorerInterface;
+	m_assetExplorerInterface->Init();
+
 	m_clock = new Clock;
 	m_clock->Restart();
 
@@ -50,9 +54,9 @@ void Engine::Init()
 	Entity entity;
 	entity.id = m_scene->ecs->CreateEntity();
 
-	//Model* model = RessourceManager::Get().GetRessource<Model>("Core/Models/Sponza/Sponza.gltf");
-	//Model* model = RessourceManager::Get().GetRessource<Model>("Core/Models/DamagedHelmet/DamagedHelmet.gltf");
-	Model* model = RessourceManager::Get().GetRessource<Model>("Core/Models/Backpack/scene.gltf");
+	//Model* model = RessourceManager::Get().GetRessource<Model>("Assets/Core/Models/Sponza/Sponza.gltf");
+	//Model* model = RessourceManager::Get().GetRessource<Model>("Assets/Core/Models/DamagedHelmet/DamagedHelmet.gltf");
+	Model* model = RessourceManager::Get().GetRessource<Model>("Assets/Core/Models/Backpack/scene.gltf");
 	model->SetModel(m_scene->ecs, &entity);
 
 	Entity dirLight;
@@ -81,6 +85,7 @@ void Engine::Update()
 
 	m_hierarchyInterface->Update();
 	InspectorInterface::Update(m_hierarchyInterface->GetSelectedEntity(), m_scene->ecs);
+	m_assetExplorerInterface->Update();
 
 	bool demo = false;
 	ImGui::ShowDemoWindow(&demo);

@@ -218,6 +218,7 @@
     <ClInclude Include="Render\GPUSpotLight.h" />
     <ClInclude Include="Render\MatricesData.h" />
     <ClInclude Include="Render\MetaData.h" />
+    <ClInclude Include="Render\PreviewTexture.h" />
     <ClInclude Include="Render\ShaderStage.h" />
     <ClInclude Include="Render\SpirvReflectWrapper.h" />
     <ClInclude Include="Render\UniformManager.h" />
@@ -287,6 +288,7 @@
     <ClCompile Include="ImGui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Interface\AssetExplorerInterface.cpp" />
     <ClCompile Include="Interface\HierarchyInterface.cpp" />
     <ClCompile Include="Interface\InspectorInterface.cpp" />
     <ClCompile Include="LlynCore.cpp" />
@@ -296,6 +298,7 @@
     <ClCompile Include="Math\Matrix\Mat3.cpp" />
     <ClCompile Include="Math\Matrix\Mat4.cpp" />
     <ClCompile Include="Math\Quaternions.cpp" />
+    <ClCompile Include="Render\PreviewTexture.cpp" />
     <ClCompile Include="Render\SpirvReflectWrapper.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Buffer.cpp" />
     <ClCompile Include="Render\Vulkan\VK_Buffer.h" />

@@ -9,6 +9,21 @@
 std::string GetVkResultMessage(VkResult _result);
 std::string GetSpvResultMessage(SpvReflectResult _result);
 
+StringHash StringHasher(const std::string& _s)
+{
+	// FNV-1a hash algorithm
+	uint32_t hash = 2166136261u;
+	constexpr uint32_t hashPrime = 16777619u;
+
+	for (char c : _s)
+	{
+		hash ^= static_cast<uint32_t>(c);
+		hash *= hashPrime;
+	}
+
+	return hash;
+}
+
 void VkCheck(int _result, const std::string& _message)
 {
 	if (_result == VK_SUCCESS)

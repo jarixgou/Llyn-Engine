@@ -9,6 +9,14 @@ private:
 	AssetVisitor m_assetVisitor;
 
 	Folder* m_actualFolder = nullptr;
+
+public:
+	void Init();
+	void Update();
+	void Cleanup();
+
+private:
+	void RecursiveFolder(Folder* _actualFolder, const std::string& _path);
 };
 
 #endif

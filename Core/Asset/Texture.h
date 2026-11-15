@@ -10,13 +10,14 @@
 #include "../Vector/FwdVec2.h"
 
 #include "TextureConfig.h"
+#include "../Vector/Vec2.h"
 
 class Texture : public IRessource, public BaseAssetVisitor
 {
 private:
 	TextureConfig m_config;
-
-	VK_Texture* VK_texture = nullptr;
+	Vec2u m_texSize = { 0,0 };
+	VK_Texture* m_VK_texture = nullptr;
 public:
 	Texture() = default;
 	~Texture() override;
@@ -27,6 +28,7 @@ public:
 	bool Add(const std::string& _filePath, IRessource* _ressource) override;
 
 	VK_Texture* GetVKTexture();
+	void SetVKTexture(VK_Texture* _VK_Texture);
 
 	void Accept(AssetVisitor* _visitor) override;
 private:

@@ -18,6 +18,7 @@ private:
 	IUniformManager* m_uniformManager = nullptr;
 
 	HierarchyInterface* m_hierarchyInterface = nullptr;
+	AssetExplorerInterface* m_assetExplorerInterface = nullptr;
 
 	Clock* m_clock = nullptr;
 public:

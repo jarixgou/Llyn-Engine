@@ -41,8 +41,6 @@ void VK_Texture::Init(VK_TextureInfo& _info)
 		VK_Buffer::EndSingleTimeCommand(cmdBuff);
 	}
 	CreateSampler(GetFilter(_info.config.filter), GetMipFilter(_info.config.mipMapFilter), GetWrapMode(_info.config.wrapMode));
-
-	m_previewTexture = ImGui_ImplVulkan_AddTexture(m_imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 }
 
 void VK_Texture::Cleanup()
@@ -53,7 +51,7 @@ void VK_Texture::Cleanup()
 }
 
 void VK_Texture::CreateSampler(VkFilter _filter, VkSamplerMipmapMode _mipFilter,
-                               VkSamplerAddressMode _wrapMode)
+	VkSamplerAddressMode _wrapMode)
 {
 	VkPhysicalDeviceProperties physicDeviceProps{};
 	vkGetPhysicalDeviceProperties(*VK_Device::Get().GetPhycicalDevice(), &physicDeviceProps);
@@ -95,49 +93,13 @@ void VK_Texture::GenerateMipMaps(VkCommandBuffer _cmdBuff, Vec2u& _texSize)
 
 	for (uint32_t i = 1; i < m_mipLevels; ++i)
 	{
-		TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, i - 1, 1);
-
-		VkImageSubresourceLayers srcSubresourceLayers{};
-		srcSubresourceLayers.aspectMask = m_aspect;
-		srcSubresourceLayers.mipLevel = i - 1;
-		srcSubresourceLayers.layerCount = 1;
-
-		VkImageSubresourceLayers dstSubresourceLayers{};
-		dstSubresourceLayers.aspectMask = m_aspect;
-		dstSubresourceLayers.mipLevel = i;
-		dstSubresourceLayers.layerCount = 1;
-
-		VkImageBlit2 blit{};
-		blit.sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2;
-		blit.pNext = VK_NULL_HANDLE;
-
-		blit.srcSubresource = srcSubresourceLayers;
-		blit.srcOffsets[0] = {};
-		blit.srcOffsets[1] = { static_cast<int32_t>(mipSize.x), static_cast<int32_t>(mipSize.y), 1 };
-
-		blit.dstSubresource = dstSubresourceLayers;
-		blit.dstOffsets[0] = {};
-		blit.dstOffsets[1] =
+		const Vec2u dstSize =
 		{
-			1 < mipSize.x ? static_cast<int32_t>(mipSize.x) / 2 : 1,
-			1 < mipSize.y ? static_cast<int32_t>(mipSize.y) / 2 : 1,
-			1
+			1 < mipSize.x ? mipSize.x / 2 : 1,
+		1 < mipSize.y ? mipSize.y / 2 : 1,
 		};
 
-		VkBlitImageInfo2 blitInfo{};
-		blitInfo.sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2;
-		blitInfo.pNext = VK_NULL_HANDLE;
-		blitInfo.srcImage = m_image;
-		blitInfo.srcImageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-		blitInfo.dstImage = m_image;
-		blitInfo.dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		blitInfo.regionCount = 1;
-		blitInfo.pRegions = &blit;
-		blitInfo.filter = VK_FILTER_LINEAR;
-
-		vkCmdBlitImage2(_cmdBuff, &blitInfo);
-
-		TransitionLayout(_cmdBuff, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, i - 1, 1);
+		BlitTo(_cmdBuff, *this, *this, mipSize, dstSize, i - 1, i, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 		if (1 < mipSize.x)
 		{
@@ -174,9 +136,57 @@ VkFormat VK_Texture::GetFormat(const ImageFormat& _format)
 	return VK_FORMAT_R8G8B8A8_SRGB;
 }
 
-VkDescriptorSet VK_Texture::GetPreviewTexture()
+void VK_Texture::BlitTo(VkCommandBuffer _cmd, VK_Image& _srcImg, VK_Image& _dstImage, const Vec2u& _srcTexSize, const Vec2u& _dstTexSize, uint32_t _srcMip, uint32_t
+                        _dstMip, VkImageLayout _oldLayout)
 {
-	return m_previewTexture;
+	_srcImg.TransitionLayout(_cmd, _oldLayout, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, _srcMip, 1);
+
+	VkImageSubresourceLayers srcSubresourceLayers{};
+	srcSubresourceLayers.aspectMask = m_aspect;
+	srcSubresourceLayers.mipLevel = _srcMip;
+	srcSubresourceLayers.layerCount = 1;
+
+	VkImageSubresourceLayers dstSubresourceLayers{};
+	dstSubresourceLayers.aspectMask = m_aspect;
+	dstSubresourceLayers.mipLevel = _dstMip;
+	dstSubresourceLayers.layerCount = 1;
+
+	VkImageBlit2 blit{};
+	blit.sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2;
+	blit.pNext = VK_NULL_HANDLE;
+
+	blit.srcSubresource = srcSubresourceLayers;
+	blit.srcOffsets[0] = {};
+	blit.srcOffsets[1] = { static_cast<int32_t>(_srcTexSize.x), static_cast<int32_t>(_srcTexSize.y), 1 };
+
+	blit.dstSubresource = dstSubresourceLayers;
+	blit.dstOffsets[0] = {};
+	blit.dstOffsets[1] =
+	{
+		static_cast<int32_t>(_dstTexSize.x),
+		static_cast<int32_t>(_dstTexSize.y),
+		1
+	};
+
+	VkBlitImageInfo2 blitInfo{};
+	blitInfo.sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2;
+	blitInfo.pNext = VK_NULL_HANDLE;
+	blitInfo.srcImage = _srcImg.m_image;
+	blitInfo.srcImageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	blitInfo.dstImage = _dstImage.m_image;
+	blitInfo.dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	blitInfo.regionCount = 1;
+	blitInfo.pRegions = &blit;
+	blitInfo.filter = VK_FILTER_LINEAR;
+
+	vkCmdBlitImage2(_cmd, &blitInfo);
+
+	_srcImg.TransitionLayout(_cmd, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, _srcMip, 1);
+}
+
+void VK_Texture::BlitTo(VkCommandBuffer _cmd, VK_Image& _dstImg, const Vec2u& _dstTexSize, uint32_t _srcMip)
+{
+	BlitTo(_cmd, *this, _dstImg, m_textureSize, _dstTexSize, _srcMip, 0, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 }
 
 VkFilter VK_Texture::GetFilter(const ImageFilter& _filter)

@@ -8,6 +8,7 @@
 class HierarchyInterface
 {
 private:
+	Texture* m_texture = nullptr;
 	Scene* m_scene = nullptr;
 	Entity* m_selectedEntity = nullptr;
 public:

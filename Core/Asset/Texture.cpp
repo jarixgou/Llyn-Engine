@@ -29,28 +29,30 @@ bool Texture::Load(const std::string& _filePath)
 		return false;
 	}
 
+	m_texSize = { static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight) };;
+
 	// Load texture config
 	LoadConfig(_filePath);
 
-	VK_texture = new VK_Texture;
+	m_VK_texture = new VK_Texture;
 
 	VK_TextureInfo textureInfo{};
 	textureInfo.config = m_config;
 	textureInfo.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 	textureInfo.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
-	textureInfo.textureSize = { static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight) };
+	textureInfo.textureSize = m_texSize;
 	textureInfo.data = pixels;
 
-	VK_texture->Init(textureInfo);
+	m_VK_texture->Init(textureInfo);
 
 	return true;
 }
 
 void Texture::Unload()
 {
-	VK_texture->Cleanup();
-	delete VK_texture;
-	VK_texture = nullptr;
+	m_VK_texture->Cleanup();
+	delete m_VK_texture;
+	m_VK_texture = nullptr;
 }
 
 bool Texture::Add(const std::string& _filePath, IRessource* _ressource)
@@ -61,7 +63,12 @@ bool Texture::Add(const std::string& _filePath, IRessource* _ressource)
 
 VK_Texture* Texture::GetVKTexture()
 {
-	return VK_texture;
+	return m_VK_texture;
+}
+
+void Texture::SetVKTexture(VK_Texture* _VK_Texture)
+{
+	m_VK_texture = _VK_Texture;
 }
 
 void Texture::Accept(AssetVisitor* _visitor)

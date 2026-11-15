@@ -13,7 +13,7 @@
 
 void CompileShaders()
 {
-	std::string path = "Core/Shaders";
+	const std::string path = "Assets";
 
 	std::vector<std::string> shaderFiles;
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(path))

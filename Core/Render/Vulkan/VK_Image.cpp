@@ -21,6 +21,8 @@ void VK_Image::Init(VkFormat _format, VkImageLayout _layout, const ImageType& _t
 	m_aspect = _aspect;
 	m_usage = _usage;
 
+	m_textureSize = _textureSize;
+
 	m_swapChain = _swapChain;
 
 	if (!m_swapChain)

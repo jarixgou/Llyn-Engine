@@ -98,33 +98,18 @@ enum Format;
 
 // ImGui Interface forward declaration
 class HierarchyInterface;
+class AssetExplorerInterface;
 
 #define TOMBSTONE_COMPONENT (std::numeric_limits<ComponentID>::max)()
 #define TOMBSTONE_ENTITY (std::numeric_limits<EntityID>::max)()
 #define TOMBSTONE_RESOURCE (std::numeric_limits<RessourceID>::max)()
 
+StringHash StringHasher(const std::string & _s);
+
 template <typename T>
 StringHash GetTypeSignature()
 {
-	std::string_view sign;
-#ifdef _MSC_VER
-	sign = __FUNCSIG__;
-#elif __clang__ || __GNUC__
-	sign = __PRETTY_FUNCTION__;
-#else
-#error "No supported compilator" 
-#endif
-
-	// FNV-1a hash algorithm
-	uint32_t hash = 2166136261u;
-	constexpr uint32_t hashPrime = 16777619u;
-	for (char data : sign)
-	{
-		hash ^= static_cast<uint32_t>(data);
-		hash *= hashPrime;
-	}
-
-	return hash;
+	return StringHasher(__FUNCSIG__);
 }
 
 void VkCheck(int _result, const std::string& _message);

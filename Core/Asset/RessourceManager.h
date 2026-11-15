@@ -10,6 +10,8 @@
 #include "Ressource.h"
 #include "Texture.h"
 #include "Material.h"
+#include "Model.h"
+
 #include "../Logger.h"
 #include "../Render/GPUMaterial.h"
 
