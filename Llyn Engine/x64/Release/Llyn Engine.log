@@ -1,6 +1,6 @@
-﻿  Génération de code en cours
-  11 of 13733 functions (<0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    155 functions had inline decision re-evaluated but remain unchanged
+﻿  Analyse des sources à la recherche des dépendances de module...
+  Génération de code en cours
+  Previous IPDB not found, fall back to full compilation.
+  All 13738 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Fin de la génération du code
-  Llyn Engine.vcxproj -> D:\Llyn Engine\x64\Release\Llyn Engine.exe
+  Llyn Engine.vcxproj -> C:\Users\Etudiant2\Llyn-Engine\x64\Release\Llyn Engine.exe

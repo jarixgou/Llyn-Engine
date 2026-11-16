@@ -1,8 +1,6 @@
 #ifndef TEXTURE__H
 #define TEXTURE__H
 
-#include <vulkan/vulkan_raii.hpp>
-
 #include "BaseAssetVisitor.h"
 #include "../LlynCore.h"
 

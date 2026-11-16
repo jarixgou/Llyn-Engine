@@ -1,6 +1,6 @@
 #include "VK_SwapChain.h"
 
-#include <iostream>
+#include <algorithm>
 
 #include "VK_Device.h"
 #include "VK_Image.h"
@@ -133,7 +133,7 @@ void VK_SwapChain::CreateSwapChain(const VK_Device* _device, const VK_Instance* 
 
 VkExtent2D VK_SwapChain::ChooseExtent(const VkSurfaceCapabilitiesKHR& _capabilities, const Vec2i& _windowSize)
 {
-	if (_capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+	if (_capabilities.currentExtent.width != (std::numeric_limits<uint32_t>::max)())
 	{
 		return _capabilities.currentExtent;
 	}

@@ -5,6 +5,9 @@
 #include "CompileShader.h"
 #include "Render/Window.h"
 #include "Engine.h"
+#include "Editor/Editor.h"
+
+#include "Vector/Vec2.h"
 
 void Application::Run()
 {
@@ -23,6 +26,11 @@ void Application::Init()
 
 	m_engine = new Engine;
 	m_engine->Init();
+
+#ifndef _NEDITOR
+	m_editor = new Editor;
+	m_editor->Init(m_engine);
+#endif
 }
 
 void Application::MainLoop()
@@ -30,6 +38,10 @@ void Application::MainLoop()
 	while (!Window::Get().GetWindowClosed())
 	{
 		Window::Get().PollEvents();
+
+#ifndef _NEDITOR
+		m_editor->Update();
+#endif
 
 		m_engine->Update();
 	}

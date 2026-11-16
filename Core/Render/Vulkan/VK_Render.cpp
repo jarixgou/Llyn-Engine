@@ -128,18 +128,18 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	}
 
 	m_renderGraph->AddResource("gPosition", VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-	                           VkComponentMapping{}, { 1920, 1080 });
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		VkComponentMapping{}, { 1920, 1080 });
 	VkComponentMapping componentNormal{};
 	componentNormal.a = VK_COMPONENT_SWIZZLE_ONE;
 	m_renderGraph->AddResource("gNormal", VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		componentNormal, { 1920, 1080 });
 	m_renderGraph->AddResource("gAlbedo", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VkComponentMapping{}, { 1920, 1080 });
 	m_renderGraph->AddResource("gSpecular", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		componentNormal, { 1920, 1080 });
 	m_renderGraph->AddResource("gEmissive", VK_FORMAT_R16G16B16A16_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VkComponentMapping{}, { 1920, 1080 });
@@ -147,7 +147,7 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VkComponentMapping{}, { 1920, 1080 });
 	m_renderGraph->AddResource("Depth", VK_FORMAT_D32_SFLOAT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-	                           VK_IMAGE_ASPECT_DEPTH_BIT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+		VK_IMAGE_ASPECT_DEPTH_BIT, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
 		VkComponentMapping{}, { 1920, 1080 });
 
 	m_renderGraph->AddPass("GBuffer", {}, { "gPosition", "gNormal", "gAlbedo", "gSpecular", "gEmissive", "gAO", "Depth" },
@@ -221,7 +221,7 @@ void VK_Render::Init(IUniformManager** _uniformManger)
 	);
 
 	m_renderGraph->AddResource("LightingPass", VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-	                           VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		VkComponentMapping{}, { 1920, 1080 });
 
 	m_renderGraph->AddPass("Lighting", { "gPosition", "gNormal", "gAlbedo", "gSpecular", "gEmissive" }, { "LightingPass" },
@@ -348,6 +348,64 @@ void VK_Render::Update(Scene* _scene, Camera* _camera, LightManager* _lightManag
 	m_viewport->Update(m_renderGraph);
 }
 
+void VK_Render::DrawEditor(Scene* _scene, Camera* _camera, Transform* _cameraTransform, LightManager* _lightManager,
+	IUniformManager* _uniformManager)
+{
+	LLYN_ASSERT(_scene != nullptr && _uniformManager != nullptr);
+
+	auto [imageIndex, cmdBuff] = m_frameSync->Begin(m_renderWindow->GetSwapChain());
+
+	if (!m_indirectCmds.empty())
+	{
+		memcpy(m_indirectDrawBuff[m_frameSync->GetFrameIndex()]->allocationInfo.pMappedData, m_indirectCmds.data(), ARRAY_SIZE_IN_BYTES(m_indirectCmds));
+	}
+
+	m_frameSync->Reset();
+
+	VK_Buffer::BeginCommandBuffer(cmdBuff, 0);
+
+	m_lightingPipeline->SetPushConstant(&_cameraTransform->pos);
+	m_renderGraph->Execute(cmdBuff, *VK_Device::Get().GetGraphicsQueue(), _uniformManager, m_frameSync->GetFrameIndex());
+
+	VK_Resource* finalResource = m_renderGraph->GetResource("LightingPass");
+	finalResource->image.TransitionLayout(cmdBuff, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	VK_DescriptorManager* uniformManager = static_cast<VK_DescriptorManager*>(_uniformManager);
+	uniformManager->StoreImage("FrameBuffer", "srcTexture", m_frameSync->GetFrameIndex(), finalResource->image);
+	uniformManager->PushUniform();
+
+	m_renderWindow->Clear(cmdBuff, imageIndex);
+
+	/*	VkClearValue colorClear;
+		colorClear.color = VkClearColorValue{ 0.0f, 0.0f, 0.0f, 1.0f };
+		VkClearValue depthValue;
+		depthValue.depthStencil = VkClearDepthStencilValue{ 1.0f, 0 };
+
+		m_renderWindow->BeginRendering(cmdBuff, imageIndex, &colorClear, &depthValue);
+
+		std::vector<VkDescriptorSet> descSets = uniformManager->GetDescriptorSets("FrameBuffer", m_frameSync->GetFrameIndex());
+
+		vkCmdBindPipeline(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_frameBufferPipeline->GetPipeline());
+		vkCmdSetViewport(cmdBuff, 0, 1, m_renderWindow->GetWiewport());
+		vkCmdSetScissor(cmdBuff, 0, 1, m_renderWindow->GetScissor());
+		vkCmdBindDescriptorSets(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_frameBufferPipeline->GetPipelineLayout(), 0,
+			static_cast<uint32_t>(descSets.size()), descSets.data(), 0, VK_NULL_HANDLE);
+		vkCmdDraw(cmdBuff, 6, 1, 0, 0);
+		m_renderWindow->EndRendering(cmdBuff);*/
+
+	vkEndCommandBuffer(cmdBuff);
+
+	VkCommandBuffer imGuiCmdBuff = m_imgui->Draw(m_renderWindow, m_frameSync->GetFrameIndex(), imageIndex);
+
+	m_renderWindow->Display(imGuiCmdBuff, imageIndex);
+
+	vkEndCommandBuffer(imGuiCmdBuff);
+
+	std::vector<VkCommandBuffer> cmdBuffList = { cmdBuff, imGuiCmdBuff };
+
+	m_frameSync->End(m_renderWindow->GetSwapChain(), imageIndex, cmdBuffList);
+}
+
 void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform, LightManager* _lightManager, IUniformManager* _uniformManager)
 {
 	LLYN_ASSERT(_scene != nullptr && _uniformManager != nullptr);
@@ -375,7 +433,7 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 
 	m_renderWindow->Clear(cmdBuff, imageIndex);
 
-/*	VkClearValue colorClear;
+	VkClearValue colorClear;
 	colorClear.color = VkClearColorValue{ 0.0f, 0.0f, 0.0f, 1.0f };
 	VkClearValue depthValue;
 	depthValue.depthStencil = VkClearDepthStencilValue{ 1.0f, 0 };
@@ -390,17 +448,13 @@ void VK_Render::Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform
 	vkCmdBindDescriptorSets(cmdBuff, VK_PIPELINE_BIND_POINT_GRAPHICS, *m_frameBufferPipeline->GetPipelineLayout(), 0,
 		static_cast<uint32_t>(descSets.size()), descSets.data(), 0, VK_NULL_HANDLE);
 	vkCmdDraw(cmdBuff, 6, 1, 0, 0);
-	m_renderWindow->EndRendering(cmdBuff);*/
+
+	m_renderWindow->EndRendering(cmdBuff);
 
 	vkEndCommandBuffer(cmdBuff);
 
-	VkCommandBuffer imGuiCmdBuff = m_imgui->Draw(m_renderWindow, m_frameSync->GetFrameIndex(), imageIndex);
 
-	m_renderWindow->Display(imGuiCmdBuff, imageIndex);
-
-	vkEndCommandBuffer(imGuiCmdBuff);
-
-	std::vector<VkCommandBuffer> cmdBuffList = { cmdBuff, imGuiCmdBuff };
+	std::vector<VkCommandBuffer> cmdBuffList = { cmdBuff};
 
 	m_frameSync->End(m_renderWindow->GetSwapChain(), imageIndex, cmdBuffList);
 }

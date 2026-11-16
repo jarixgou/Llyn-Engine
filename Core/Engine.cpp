@@ -94,7 +94,11 @@ void Engine::Update()
 
 	m_cameraEditor->Update(m_cameraTransform, dt);
 
+#ifndef _NEDITOR
+	m_render->DrawEditor(m_scene, m_cameraEditor, m_cameraTransform, m_lightManager, m_uniformManager);
+#else
 	m_render->Draw(m_scene, m_cameraEditor, m_cameraTransform, m_lightManager, m_uniformManager);
+#endif
 }
 
 void Engine::Cleanup()

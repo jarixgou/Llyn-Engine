@@ -38,6 +38,7 @@ public:
 
 	void Init(IUniformManager** _uniformManger) override;
 	void Update(Scene* _scene, Camera* _camera, LightManager* _lightManager, IUniformManager* _uniformManager) override;
+	void DrawEditor(Scene* _scene, Camera* _camera, Transform* _cameraTransform, LightManager* _lightManager, IUniformManager* _uniformManager) override;
 	void Draw(Scene* _scene, Camera* _camera, Transform* _cameraTransform, LightManager* _lightManager, IUniformManager* _uniformManager) override;
 	void Cleanup() override;
 

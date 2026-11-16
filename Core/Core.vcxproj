@@ -188,6 +188,7 @@
     <ClInclude Include="Component\MeshFilterPooler.h" />
     <ClInclude Include="Component\MeshRender.h" />
     <ClInclude Include="Component\Transform.h" />
+    <ClInclude Include="Editor\Editor.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Entities\ECS.h" />
     <ClInclude Include="Entities\Entity.h" />
@@ -279,6 +280,7 @@
     <ClCompile Include="Component\MeshRender.cpp" />
     <ClCompile Include="Asset\Model.cpp" />
     <ClCompile Include="Component\Transform.cpp" />
+    <ClCompile Include="Editor\Editor.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Entities\ECS.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
