@@ -91,7 +91,7 @@ function DrawDirectionalLight(entity)
 
 		Interface.Text("Specular : ")
 		Interface.SameLine()
-		dirty = Interface.Color3(directionalLight.specular)
+		dirty = Interface.Color3(directionalLight.specular) or dirty
 		
 		if dirty then
 			Scene.ECS:SetComponentIsDirty("DirectionalLight", true)
@@ -177,15 +177,15 @@ function DrawSpotLight(entity)
 
 		Interface.Text("Specular : ")
 		Interface.SameLine()
-		dirty = Interface.Color3(spotLight.specular)
+		dirty = Interface.Color3(spotLight.specular) or dirty
 
 		Interface.Text("Cut Off : ")
 		Interface.SameLine()
-		dirty = Interface.Float(spotLight.cutOff)
+		dirty = Interface.Float(spotLight.cutOff) or dirty 
 
 		Interface.Text("Outer Cut Off : ")
 		Interface.SameLine()
-		dirty = Interface.Float(spotLight.outerCutOff)
+		dirty = Interface.Float(spotLight.outerCutOff) or dirty
 	end
 end
 
@@ -221,17 +221,14 @@ function AddComponent(entity)
 			entity:AddComponent("SpotLight")
 		end
 
-		Interface.EnPopup()
+		Interface.EndPopup()
 	end
 end
 
-Script("CustomEditor",
+Script("CustomEditor", "Inspector",
 {
-	title = "Inspector"
-	menu = "Editor/Inspector"
-
 	Draw = function()
-		if not Editor:HasEntitySelected then
+		if not Editor:HasEntitySelected() then
 			return
 		end
 

@@ -207,6 +207,7 @@
     <ClInclude Include="Interface\StatisticsInterface.h" />
     <ClInclude Include="LlynCore.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="LuaInstance.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\Matrix\Mat2.h" />
     <ClInclude Include="Math\Matrix\Mat3.h" />
@@ -295,6 +296,7 @@
     <ClCompile Include="Interface\InspectorInterface.cpp" />
     <ClCompile Include="LlynCore.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="LuaInstance.cpp" />
     <ClCompile Include="Math\Math.cpp" />
     <ClCompile Include="Math\Matrix\Mat2.cpp" />
     <ClCompile Include="Math\Matrix\Mat3.cpp" />

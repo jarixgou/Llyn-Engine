@@ -3,25 +3,35 @@ function DrawTree(entity, count)
 	Interface.NextColumn()
 
 	local sameEntity = false
-	if Editor:HasSelectedEntity then
+	if Editor:HasSelectedEntity() then
 		if Editor.selectedEntity == entity then
 			sameEntity = true
 		end
 	end
 
-	Interface.Tree(entity.name, sameEntity, count)
+	local isOpen = Interface.Tree(entity.name, sameEntity, count)
+
+	local clicked = Interface.IsItemClicked or Interface.IsItemFocused
+
+	if clicked then
+		Editor:SetSelectedEntity(entity)
+	end
 
 	local childs = entity:GetChilds()
-	for i = 0, childs:size() - 1 do
-		DrawTree(childs[i], childs:size())
+
+	if childs == 0 then
+		isOpen = false
+	end
+
+	if isOpen then
+		for i = 0, childs:size() - 1 do
+			DrawTree(childs[i], childs:size())
+		end
 	end
 end
 
-Script("CustomEditor",
+Script("CustomEditor", "Hierarchy",
 {
-	title = "Hierarchy"
-	menu = "Editor/Hierarchy"
-
 	Draw = function()
 		if Interface.IsHovered() and Input.MousePressed("Right") then
 			Interface.OpenPopup("NewEntity")

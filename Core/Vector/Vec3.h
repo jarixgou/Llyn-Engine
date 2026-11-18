@@ -8,6 +8,9 @@ struct Vec3
 	T y = 0;
 	T z = 0;
 
+	Vec3();
+	Vec3(const T& _x, const T& _y, const T& _z);
+
 	Vec3& operator+=(const Vec3& _other);
 	Vec3 operator+(const Vec3& _other) const;
 
@@ -23,9 +26,25 @@ struct Vec3
 	Vec3& operator/=(const Vec3& _other);
 	Vec3 operator/(const Vec3& _other) const;
 
-	bool operator==(const Vec3& _other);
-	bool operator!=(const Vec3& _other);
+	bool operator==(const Vec3& _other) const;
+	bool operator!=(const Vec3& _other) const;
 };
+
+template <typename T>
+Vec3<T>::Vec3()
+{
+	x = 0;
+	y = 0;
+	z = 0;
+}
+
+template <typename T>
+Vec3<T>::Vec3(const T& _x, const T& _y, const T& _z)
+{
+	x = _x;
+	y = _y;
+	z = _z;
+}
 
 template <typename T>
 Vec3<T>& Vec3<T>::operator+=(const Vec3& _other)
@@ -117,13 +136,13 @@ Vec3<T> Vec3<T>::operator/(const Vec3& _other) const
 }
 
 template <typename T>
-bool Vec3<T>::operator==(const Vec3& _other)
+bool Vec3<T>::operator==(const Vec3& _other) const
 {
 	return x == _other.x && y == _other.y && z == _other.z;
 }
 
 template <typename T>
-bool Vec3<T>::operator!=(const Vec3& _other)
+bool Vec3<T>::operator!=(const Vec3& _other) const
 {
 	return !(*this == _other);
 }
