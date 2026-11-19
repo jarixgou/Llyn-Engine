@@ -4,7 +4,7 @@ function DrawTree(entity, count)
 
 	local sameEntity = false
 	if Editor:HasSelectedEntity() then
-		if Editor.selectedEntity == entity then
+		if Editor.selectedEntity:GetID() == entity:GetID() then
 			sameEntity = true
 		end
 	end
@@ -19,7 +19,7 @@ function DrawTree(entity, count)
 
 	local childs = entity:GetChilds()
 
-	if childs == 0 then
+	if childs:size() == 0 then
 		isOpen = false
 	end
 

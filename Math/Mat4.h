@@ -19,6 +19,7 @@ struct Mat4
 	Mat4 operator*(const float& _a);
 
 	float Determinant();
+	Mat4 Inverse();
 };
 
 #endif
