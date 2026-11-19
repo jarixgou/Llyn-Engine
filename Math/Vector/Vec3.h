@@ -242,6 +242,18 @@ public:
 	}
 };
 
+template<typename T>
+Vec3<T> operator*(const float& _a, const Vec3<T>& _b)
+{
+	return _b * _a;
+}
+
+template<typename T>
+Vec3<T> operator/(const float& _a, const Vec3<T>& _b)
+{
+	return _b / _a;
+}
+
 typedef Vec3<float> Vec3f;
 typedef Vec3<int> Vec3i;
 typedef Vec3<unsigned int> Vec3u;

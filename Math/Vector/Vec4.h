@@ -179,4 +179,16 @@ public:
 	}
 };
 
+template<typename T>
+Vec4<T> operator*(const float& _a, const Vec4<T>& _b)
+{
+	return _b * _a;
+}
+
+template<typename T>
+Vec4<T> operator/(const float& _a, const Vec4<T>& _b)
+{
+	return _b / _a;
+}
+
 #endif

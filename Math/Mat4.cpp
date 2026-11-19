@@ -2,6 +2,7 @@
 
 #include <intrin.h>
 
+#include "SSEHelper.h"
 #include "Vector/Vec4.h"
 
 Mat4::Mat4()
@@ -91,5 +92,37 @@ Mat4 Mat4::operator*(const float& _a)
 
 float Mat4::Determinant()
 {
+	const __m128 rowA = _mm_load_ps(m[0]);
+	const __m128 rowB = _mm_load_ps(m[1]);
+	const __m128 rowC = _mm_load_ps(m[2]);
+	const __m128 rowD = _mm_load_ps(m[3]);
 
+	// sub matrix det
+	const __m128 sA = _mm_sub_ps(
+		_mm_mul_ps(SWZ(rowA, 0, 0, 0, 1), SWZ(rowB, 1, 2, 3, 2)),
+		_mm_mul_ps(SWZ(rowA, 1, 2, 3, 2), SWZ(rowB, 0, 0, 0, 1))
+		);
+
+	const __m128 sB = _mm_sub_ps(
+		_mm_mul_ps(SWZ(rowA, 1, 2, 0, 0), SWZ(rowB, 3, 3, 0, 0)),
+		_mm_mul_ps(SWZ(rowA, 3, 3, 0, 0), SWZ(rowB, 1, 2, 0, 0))
+	);
+
+	const __m128 cA = _mm_sub_ps(
+		_mm_mul_ps(SWZ(rowC, 2, 1, 1, 0), SWZ(rowB, 3, 3, 2, 3)),
+		_mm_mul_ps(SWZ(rowC, 3, 3, 2, 3), SWZ(rowD, 2, 1, 1, 0))
+	);
+
+	const __m128 cB = _mm_sub_ps(
+		_mm_mul_ps(SWZ(rowC, 0, 0, 0, 0), SWZ(rowD, 2, 1, 0, 0)),
+		_mm_mul_ps(SWZ(rowC, 2, 1, 0, 0), SWZ(rowD, 0, 0, 0, 0))
+		);
+
+	const __m128 pA = _mm_mul_ps(_mm_mul_ps(sA, cA), _mm_setr_ps(1.f, -1.f, 1.f, 1.f));
+	const __m128 pB = _mm_mul_ps(_mm_mul_ps(sB, cB), _mm_setr_ps(-1.f, 1.f, 0.f, 0.f));
+
+	__m128 s = _mm_add_ps(pA, pB);
+	s = _mm_add_ps(s, _mm_movehl_ps(s, s));
+	s = _mm_add_ss(s, SWZ(s, 1, 1, 1, 1));
+	return _mm_cvtss_f32(s);
 }

@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\SSEHelper.obj",
+            "outputs": [
+                "x64\\Release\\SSEHelper.h.obj.dt.module.json",
+                "x64\\Release\\SSEHelper.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

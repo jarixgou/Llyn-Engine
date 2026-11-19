@@ -190,6 +190,18 @@ public:
 	}
 };
 
+template<typename T>
+Vec2<T> operator*(const float& _a, const Vec2<T>& _b)
+{
+	return _b * _a;
+}
+
+template<typename T>
+Vec2<T> operator/(const float& _a, const Vec2<T>& _b)
+{
+	return _b / _a;
+}
+
 typedef Vec2<float> Vec2f;
 typedef Vec2<int> Vec2i;
 typedef Vec2<unsigned int> Vec2u;
