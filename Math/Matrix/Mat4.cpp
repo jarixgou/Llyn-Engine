@@ -2,8 +2,12 @@
 
 #include <intrin.h>
 
-#include "SSEHelper.h"
-#include "Vector/Vec4.h"
+#include "../SSEHelper.h"
+#include "../Vector/Vec4.h"
+
+__m128 Mat2Mul(const __m128& _a, const __m128& _b);
+__m128 Mat2AdjMul(const __m128& _a, const __m128& _b);
+__m128 Mat2MulAdj(const __m128& _a, const __m128& _b);
 
 Mat4::Mat4()
 {
@@ -127,6 +131,7 @@ float Mat4::Determinant()
 	return _mm_cvtss_f32(s);
 }
 
+// https://lxjk.github.io/2017/09/03/Fast-4x4-Matrix-Inverse-with-SSE-SIMD-Explained.html
 Mat4 Mat4::Inverse()
 {
 	const __m128 rowA = _mm_load_ps(m[0]);
@@ -150,4 +155,84 @@ Mat4 Mat4::Inverse()
 	const __m128 detB = SWZ_1(detSub, 1);
 	const __m128 detC = SWZ_1(detSub, 2);
 	const __m128 detD = SWZ_1(detSub, 3);
+
+	const __m128 d_c = Mat2AdjMul(subD, subC);
+	const __m128 a_b = Mat2AdjMul(subA, subB);
+
+	__m128 x = _mm_sub_ps(_mm_mul_ps(detA, subA), Mat2Mul(rowB, d_c));
+	__m128 w = _mm_sub_ps(_mm_mul_ps(detA, subD), Mat2Mul(subC, a_b));
+
+	__m128 detM = _mm_mul_ps(detA, detD);
+
+	__m128 y = _mm_sub_ps(_mm_mul_ps(detB, subC), Mat2MulAdj(subD, a_b));
+	__m128 z = _mm_sub_ps(_mm_mul_ps(detC, subB), Mat2MulAdj(subA, d_c));
+
+	detM = _mm_add_ps(detM, _mm_mul_ps(detB, detC));
+
+	__m128 tr = _mm_mul_ps(a_b, SWZ(d_c, 0, 2, 1, 3));
+	tr = _mm_hadd_ps(tr, tr);
+	tr = _mm_hadd_ps(tr, tr);
+
+	detM = _mm_sub_ps(detM, tr);
+
+	const __m128 adjSignMask = _mm_setr_ps(1.f, -1.f, -1.f, 1.f);
+	const __m128 rDetM = _mm_div_ps(adjSignMask, detM);
+
+	x = _mm_mul_ps(x, rDetM);
+	y = _mm_mul_ps(y, rDetM);
+	z = _mm_mul_ps(z, rDetM);
+	w = _mm_mul_ps(w, rDetM);
+
+	Mat4 r;
+	_mm_store_ps(r.m[0], VEC_SHUFFLE(x, y, 3, 1, 3, 1));
+	_mm_store_ps(r.m[1], VEC_SHUFFLE(x, y, 2, 0, 2, 0));
+	_mm_store_ps(r.m[2], VEC_SHUFFLE(z, w, 3, 1, 3, 1));
+	_mm_store_ps(r.m[3], VEC_SHUFFLE(z, w, 2, 0, 2, 0));
+
+	return r;
+}
+
+Mat4 Mat4::Transpose()
+{
+	const __m128 rowA = _mm_load_ps(m[0]);
+	const __m128 rowB = _mm_load_ps(m[1]);
+	const __m128 rowC = _mm_load_ps(m[2]);
+	const __m128 rowD = _mm_load_ps(m[3]);
+
+	const __m128 t0 = _mm_unpacklo_ps(rowA, rowB);
+	const __m128 t1 = _mm_unpacklo_ps(rowC, rowD);
+	const __m128 t2 = _mm_unpackhi_ps(rowA, rowB);
+	const __m128 t3 = _mm_unpackhi_ps(rowC, rowD);
+
+	Mat4 r;
+	_mm_store_ps(r.m[0], _mm_movelh_ps(t0, t1)); 
+	_mm_store_ps(r.m[1], _mm_movehl_ps(t1, t0)); 
+	_mm_store_ps(r.m[2], _mm_movelh_ps(t2, t3)); 
+	_mm_store_ps(r.m[3], _mm_movehl_ps(t3, t2)); 
+
+	return r;
+}
+
+__m128 Mat2Mul(const __m128& _a, const __m128& _b)
+{
+	return _mm_add_ps(
+		_mm_mul_ps(_a, SWZ(_b, 0, 3, 0, 3)),
+		_mm_mul_ps(SWZ(_a, 1, 0, 3, 2), SWZ(_b, 2, 1, 2, 1))
+	);
+}
+
+__m128 Mat2AdjMul(const __m128& _a, const __m128& _b)
+{
+	return _mm_sub_ps(
+		_mm_mul_ps(SWZ(_a, 3, 3, 0, 0), _b),
+		_mm_mul_ps(SWZ(_a, 1, 1, 2, 2), SWZ(_b, 2, 3, 0, 1))
+	);
+}
+
+__m128 Mat2MulAdj(const __m128& _a, const __m128& _b)
+{
+	return _mm_sub_ps(
+		_mm_mul_ps(_a, SWZ(_b, 3, 0, 3, 0)),
+		_mm_mul_ps(SWZ(_a, 1, 0, 3, 2), SWZ(_b, 2, 1, 2, 1))
+	);
 }

@@ -1,7 +1,7 @@
 #ifndef MAT_4__H
 #define MAT_4__H
 
-#include "Vector/FwdVec4.h"
+#include "../Vector/FwdVec4.h"
 
 struct Mat4
 {
@@ -20,6 +20,7 @@ struct Mat4
 
 	float Determinant();
 	Mat4 Inverse();
+	Mat4 Transpose();
 };
 
 #endif

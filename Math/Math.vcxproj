@@ -19,8 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Mat4.h" />
+    <ClInclude Include="Matrix\Mat4.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Quaternion.h" />
     <ClInclude Include="SSEHelper.h" />
     <ClInclude Include="Vector\FwdVec2.h" />
     <ClInclude Include="Vector\FwdVec3.h" />
@@ -30,7 +31,8 @@
     <ClInclude Include="Vector\Vec4.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Mat4.cpp" />
+    <ClCompile Include="Matrix\Mat4.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

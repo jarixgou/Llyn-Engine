@@ -36,15 +36,21 @@
     <ClInclude Include="Vector\FwdVec4.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Mat4.h">
+    <ClInclude Include="Matrix\Mat4.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="SSEHelper.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Quaternion.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Mat4.cpp">
+    <ClCompile Include="Matrix\Mat4.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Quaternion.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
