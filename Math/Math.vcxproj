@@ -31,6 +31,7 @@
     <ClInclude Include="Vector\Vec4.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Matrix\Mat4.cpp" />
     <ClCompile Include="Quaternion.cpp" />
   </ItemGroup>

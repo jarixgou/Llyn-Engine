@@ -454,7 +454,7 @@ float Length(const Vec2f& _vec)
 	return std::sqrt(_vec.x * _vec.x + _vec.y * _vec.y);
 }
 
-Vec4f DegToRad(const Vec4f& _vec)
+Vec4f deg_to_rad(const Vec4f& _vec)
 {
 	return { DegToRad(_vec.x), DegToRad(_vec.y), DegToRad(_vec.z), DegToRad(_vec.w) };
 }

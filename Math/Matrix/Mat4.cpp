@@ -159,7 +159,7 @@ Mat4 Mat4::Inverse()
 	const __m128 d_c = Mat2AdjMul(subD, subC);
 	const __m128 a_b = Mat2AdjMul(subA, subB);
 
-	__m128 x = _mm_sub_ps(_mm_mul_ps(detA, subA), Mat2Mul(rowB, d_c));
+	__m128 x = _mm_sub_ps(_mm_mul_ps(detD, subA), Mat2Mul(subB, d_c));
 	__m128 w = _mm_sub_ps(_mm_mul_ps(detA, subD), Mat2Mul(subC, a_b));
 
 	__m128 detM = _mm_mul_ps(detA, detD);

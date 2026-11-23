@@ -2,6 +2,7 @@
 #define QUATERNION__H
 
 #include "Vector/FwdVec3.h"
+struct Mat4;
 
 struct Quaternion
 {
@@ -21,7 +22,7 @@ struct Quaternion
 	bool operator!=(const Quaternion& _a) const;
 
 	Vec3f GetEuler();
-	Vec3f SetEuler();
+	Vec3f SetEuler(const Vec3f& _angle);
 
 	Quaternion Normalize();
 
@@ -30,6 +31,8 @@ struct Quaternion
 	void SetFromToRotation(const Vec3f& _fromDirection, const Vec3f& _toDirection);
 	void SetLookRotation(const Vec3f& _view, const Vec3f& _up);
 	void ToAngleAxis(const float& _angle, const Vec3f& _axis);
+
+	Mat4 GetMatrix();
 
 	static float Angle(const Quaternion& _a, const Quaternion& _b);
 	static Quaternion AngleAxis(const float& _angle, const Vec3f& _axis);
