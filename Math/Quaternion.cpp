@@ -97,7 +97,7 @@ Vec3f Quaternion::GetEuler()
 		r0.z = -1.0f;
 	}
 
-	const Vec4f euler = 
+	const Vec4f euler =
 	{
 		atan2f(r0.y, 1.0f - 2.0f * (r1.y + r1.z)),
 		asinf(r0.z),
@@ -114,19 +114,12 @@ Vec3f Quaternion::SetEuler(const Vec3f& _angle)
 {
 	const Vec3f rad = DegToRad(_angle) / 2;
 
-	const Vec3f cos =
-	{
-		cosf(rad.x),
-		cosf(rad.y),
-		cosf(rad.z),
-	};
+	const Vec4f cos = { cosf(rad.x),cosf(rad.y),cosf(rad.z),0.0f };
+	const Vec4f sin = { sinf(rad.x),sinf(rad.y),sinf(rad.z),0.0f };
 
-	const Vec3f sin = 
-	{
-		sinf(rad.x),
-		sinf(rad.y),
-		sinf(rad.z)
-	};
+	const __m128 a = _mm_load_ps(&cos.x);
+	const __m128 b = _mm_load_ps(&sin.y);
+
 }
 
 Quaternion Quaternion::Normalize()
