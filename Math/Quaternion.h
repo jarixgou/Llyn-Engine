@@ -24,7 +24,7 @@ struct Quaternion
 	Vec3f GetEuler();
 	Vec3f SetEuler(const Vec3f& _angle);
 
-	Quaternion Normalize();
+	Quaternion Normalize() const;
 
 	static Quaternion Identity();
 

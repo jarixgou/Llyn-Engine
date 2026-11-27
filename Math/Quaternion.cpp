@@ -122,12 +122,15 @@ Vec3f Quaternion::SetEuler(const Vec3f& _angle)
 
 }
 
-Quaternion Quaternion::Normalize()
+Quaternion Quaternion::Normalize() const
 {
+
 }
 
 Quaternion Quaternion::Identity()
 {
+	Quaternion quat{};
+	return quat;
 }
 
 void Quaternion::SetFromToRotation(const Vec3f& _fromDirection, const Vec3f& _toDirection)
@@ -140,6 +143,15 @@ void Quaternion::SetLookRotation(const Vec3f& _view, const Vec3f& _up)
 
 void Quaternion::ToAngleAxis(const float& _angle, const Vec3f& _axis)
 {
+	const float halfAngle = _angle / 2;
+
+	const float c = cosf(halfAngle);
+	const float s = sinf(halfAngle);
+
+	w = c;
+	x = _axis.x * s;
+	y = _axis.y * s;
+	z = _axis.z * s;
 }
 
 Mat4 Quaternion::GetMatrix()
@@ -149,14 +161,20 @@ Mat4 Quaternion::GetMatrix()
 
 float Quaternion::Angle(const Quaternion& _a, const Quaternion& _b)
 {
+	return 2 * acosf(Dot(_a.Normalize(), _b.Normalize()));
 }
 
 Quaternion Quaternion::AngleAxis(const float& _angle, const Vec3f& _axis)
 {
+	Quaternion quat{};
+	quat.ToAngleAxis(_angle, _axis);
+
+	return quat;
 }
 
 float Quaternion::Dot(const Quaternion& _a, const Quaternion& _b)
 {
+	return _a.w * _b.w + _a.x * _b.x + _a.y * _b.y + _a.z * _b.z;
 }
 
 Quaternion Quaternion::Euler(const Vec3f& _angle)

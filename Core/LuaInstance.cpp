@@ -19,7 +19,6 @@ void LuaInstance::Init()
 
 		sol::meta_function::addition, [](const Vec3f& _a, const Vec3f& _b) { return _a + _b; },
 		sol::meta_function::subtraction, [](const Vec3f& _a, const Vec3f& _b) { return _a - _b; },
-		sol::meta_function::unary_minus, [](const Vec3f& _a) { return -_a; },
 		sol::meta_function::multiplication, sol::overload(
 			[](const Vec3f& _a, const Vec3f& _b) { return _a * _b; },
 			[](const Vec3f& _a, const float& _b) { return _a * _b; }),

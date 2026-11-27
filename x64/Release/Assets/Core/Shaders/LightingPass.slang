@@ -129,8 +129,8 @@ float3 CalcDirLight(DirLight _light, float4 _pos, float4 _albedo, float4 _specul
 
     // Specular
     const float3 viewDir = normalize(camPos - _pos.xyz);
-    const float3 halfWayDir = normalize(lightDir + viewDir);
-    const float specular = pow(max(dot(normal, halfWayDir), 0.0), SmoothnessToShininess(_specular.w));
+	const float3 reflectDir = reflect(-lightDir, normal);
+    const float specular = pow(max(dot(viewDir, reflectDir), 0.0), SmoothnessToShininess(_specular.w));
     const float3 finalSpecular = _light.specular * specular * _specular.xyz;
 
     return ambient + finalDiffuse + finalSpecular;
@@ -153,8 +153,8 @@ float3 CalcPointLight(PointLight _light, float4 _pos, float4 _albedo, float4 _sp
 
     // Specular
     const float3 viewDir = normalize(camPos - _pos.xyz);
-    const float3 halfwayDir = normalize(lightDir + viewDir);
-    const float specular = pow(max(dot(normal, halfwayDir), 0.0), SmoothnessToShininess(_specular.w));
+    const float3 reflectDir = reflect(-lightDir, normal);
+    const float specular = pow(max(dot(viewDir, reflectDir), 0.0), SmoothnessToShininess(_specular.w));
     const float3 finalSpecular = _light.specular * specular * _specular.xyz * attenuation;
 
     return ambient + finalDiffuse + finalSpecular;
@@ -181,8 +181,8 @@ float3 CalcSpotLight(SpotLight _light, float4 _pos, float4 _albedo, float4 _spec
 
         // Specular
         const float3 viewDir = normalize(_normal.xyz);
-        const float3 halfwayDir = normalize(lightDir + viewDir);
-        const float specular = pow(max(dot(normal, halfwayDir), 0.0), SmoothnessToShininess(_specular.w));
+        const float3 reflectDir = reflect(-lightDir, normal);
+        const float specular = pow(max(dot(viewDir, reflectDir), 0.0), SmoothnessToShininess(_specular.w));
         const float3 finalSpecular = _light.specular * specular * _specular.xyz * intensity;
 
         return ambient + finalDiffuse + finalSpecular;
